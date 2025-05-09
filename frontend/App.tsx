@@ -130,28 +130,23 @@
 
 // export default App;
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MainScreen from './src/screens/MainScreen'; // 네가 만든 화면
-
-export type RootStackParamList = {
-  Main: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import RecycleCalendar from './src/screens/RecycleCalendar';
 
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
-        <Stack.Screen
-          name="Main"
-          component={MainScreen}
-          options={{ title: '메인페이지' }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <RecycleCalendar />
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+});
 
 export default App;
