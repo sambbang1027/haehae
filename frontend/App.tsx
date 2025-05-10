@@ -1,21 +1,27 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
-import RecycleCalendar from './src/screens/RecycleCalendar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-function App(): React.JSX.Element {
+import TestMenuScreen from './src/screens/TestMenuScreen';
+import RecycleCalendarScreen from './src/screens/RecycleCalendarScreen';
+import BulkWasteApplyScreen from './src/screens/BulkWasteApplyScreen';
+import WasteApplyWebViewScreen from './src/screens/WasteApplyWebViewScreen';
+import type { RootStackParamList } from './src/types';
+
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <RecycleCalendar />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="TestMenu">
+        <Stack.Screen name="TestMenu" component={TestMenuScreen} options={{ title: '테스트 메뉴' }} />
+        <Stack.Screen name="RecycleCalendar" component={RecycleCalendarScreen} options={{ title: '분리수거 캘린더' }} />
+        <Stack.Screen name="BulkWasteApply" component={BulkWasteApplyScreen} options={{ title: '폐기물 신청' }} />
+        <Stack.Screen name="WasteApplyWebViewScreen" component={WasteApplyWebViewScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
+};
 
 export default App;
