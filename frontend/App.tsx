@@ -131,13 +131,14 @@
 // export default App;
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
-import RecycleCalendar from './src/screens/RecycleCalendar';
+// import RecycleCalendar from './src/screens/RecycleCalendar';
+import MainScreen from './src/screens/MainScreen';
 
 function App(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <RecycleCalendar />
+      <MainScreen />
     </SafeAreaView>
   );
 }
