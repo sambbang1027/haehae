@@ -131,15 +131,33 @@
 // export default App;
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 // import RecycleCalendar from './src/screens/RecycleCalendar';
 import MainScreen from './src/screens/MainScreen';
+import MissionScreen from './src/screens/MissionScreen';
+
+const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <MainScreen />
-    </SafeAreaView>
+    <NavigationContainer>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <Stack.Navigator initialRouteName="Main">
+          <Stack.Screen
+            name="Main"
+            component={MainScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MissionScreen" 
+            component={MissionScreen}
+            options={{ title: '미션 상세' }} // MissionScreen의 타이틀 설정 (선택 사항)
+          />
+        </Stack.Navigator>
+      </SafeAreaView>
+    </NavigationContainer>
   );
 }
 

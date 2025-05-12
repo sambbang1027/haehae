@@ -5,10 +5,13 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/native';
 
 const MainScreen = () => {
+  const navigation = useNavigation();
   const [day, setDay] = useState('');
   const [plasticType, setPlasticType] = useState('');
 
@@ -23,6 +26,10 @@ const MainScreen = () => {
       setPlasticType('휴무');
     }
   }, []);
+
+   const handleMissionCardPress = () => {
+    navigation.navigate('MissionScreen');
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -54,15 +61,14 @@ const MainScreen = () => {
       </View>
 
       <View style={styles.row}>
-        <View style={styles.missionCard}>
-          <Text style={styles.missionTitle}>환경 미션</Text>
-          <View>
-            <Text style={styles.missionDescription}>일일/주간</Text>
-            <Text style={styles.missionDescription}>미션하러 가기</Text>
-          </View>
-          <Image style={styles.missionImage} source={require('../assets/mission-icon.png')} // 예시 이미지
-          />
-        </View>
+       <TouchableOpacity style={styles.missionCard} onPress={handleMissionCardPress}> {/* TouchableOpacity로 감싸고 onPress 이벤트 추가 */}
+          <Text style={styles.missionTitle}>환경 미션</Text>
+          <View>
+            <Text style={styles.missionDescription}>일일/주간</Text>
+            <Text style={styles.missionDescription}>미션하러 가기</Text>
+          </View>
+          <Image style={styles.missionImage} source={require('../assets/mission-icon.png')} />
+        </TouchableOpacity>
         <View style={styles.communityBoard}>
           <Text style={styles.communityTitle}>우리 동네</Text>
           <View>
@@ -77,13 +83,19 @@ const MainScreen = () => {
       <View style={styles.row}>
         <View style={styles.guideCard}>
           <Text style={styles.guideTitle}>분리수거 가이드</Text>
-          <Text style={styles.guideSubtitle}>사진 촬영/ 분리 배출</Text>
+          <View>
+            <Text style={styles.guideSubtitle}>사진 촬영</Text>
+            <Text style={styles.guideSubtitle}>분리 배출</Text>
+          </View>
           <Image style={styles.guideCameraIcon} source={require('../assets/camera.png')} // 예시 이미지
           />
         </View>
         <View style={styles.collectionCard}>
           <Text style={styles.collectionTitle}>수거함 위치</Text>
-          <Text style={styles.collectionSubtitle}>우리 동네 의류, 건전지 등 위치</Text>
+          <View>
+          <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
+          <Text style={styles.collectionSubtitle}>및 건전지 등 위치</Text>
+          </View>
           <Image style={styles.collectionLocationIcon} source={require('../assets/placeholder.png')} // 예시 이미지
           />
         </View>
@@ -255,7 +267,7 @@ const styles = StyleSheet.create({
     height: wp('15%'),
     position: 'absolute',
     right: wp('1%'),
-    top: wp('10%'),
+    top: wp('12%'),
     aspectRatio: 1,
   },
   communityBoard: {
@@ -306,7 +318,7 @@ const styles = StyleSheet.create({
   guideSubtitle: {
     fontSize: wp('3.5%'),
     color: '#555',
-    marginTop: hp('1%'),
+    top : hp('-0.5%')
   },
   guideCameraIcon: {
     width: wp('15%'),
@@ -314,6 +326,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: wp('3%'),
     right: wp('3%'),
+    top: wp('12%'),
     aspectRatio: 1,
   },
   collectionCard: {
@@ -335,7 +348,7 @@ const styles = StyleSheet.create({
   collectionSubtitle: {
     fontSize: wp('3.5%'),
     color: '#555',
-    marginTop: hp('1%'),
+    top : hp('-0.5%')
   },
   collectionLocationIcon: {
     width: wp('15%'),
@@ -343,6 +356,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: wp('3%'),
     right: wp('3%'),
+    top: wp('12%'),
     aspectRatio: 1,
   },
   bottomNavigation: {
