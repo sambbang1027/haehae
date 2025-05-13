@@ -137,6 +137,7 @@ import RecycleCalendar from './src/screens/RecycleCalendar';
 import MainScreen from './src/screens/MainScreen';
 import MissionScreen from './src/screens/MissionScreen';
 import Alarm from './src/screens/Alarm';
+import RewardList from './src/screens/RewardList';
 
 const Stack = createStackNavigator();
 
@@ -165,6 +166,11 @@ function App(): React.JSX.Element {
             name='Alarm'
             component={Alarm}
             options={{title: '알람 목록'}}
+            />
+            <Stack.Screen
+              name='RewardList'
+              component={RewardList}
+              options={{title : '리워드 상점 '}}
             />
         </Stack.Navigator>
       </SafeAreaView>

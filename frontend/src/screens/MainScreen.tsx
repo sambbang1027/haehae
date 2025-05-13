@@ -39,6 +39,10 @@ const MainScreen = () => {
     navigation.navigate('Alarm');
   };
 
+    const handleRewardPress = () => {
+    navigation.navigate('RewardList');
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -103,7 +107,7 @@ const MainScreen = () => {
           <Image style={styles.guideCameraIcon} source={require('../assets/camera.png')} // 예시 이미지
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.collectionCard}>
+        <TouchableOpacity style={styles.collectionCard} onPress={handleRewardPress}>
           <Text style={styles.collectionTitle}>수거함 위치</Text>
           <View>
           <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
