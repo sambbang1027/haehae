@@ -35,6 +35,10 @@ const MainScreen = () => {
     navigation.navigate('MissionScreen');
   };
 
+  const handleAlarmPress = () => {
+    navigation.navigate('Alarm');
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -42,7 +46,9 @@ const MainScreen = () => {
           <Image style={styles.locationIcon} source={require('../assets/location-icon.png')} />
           <Text style={styles.locationText}>서울특별시 강남구 xx로</Text>
         </View>
-        <Image style={styles.alarmIcon} source={require('../assets/alarm-icon.png')} />
+        <TouchableOpacity onPress={handleAlarmPress}>
+          <Image style={styles.alarmIcon} source={require('../assets/alarm-icon.png')} />
+        </TouchableOpacity>
       </View>
 
       

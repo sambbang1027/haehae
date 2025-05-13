@@ -136,6 +136,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RecycleCalendar from './src/screens/RecycleCalendar';
 import MainScreen from './src/screens/MainScreen';
 import MissionScreen from './src/screens/MissionScreen';
+import Alarm from './src/screens/Alarm';
 
 const Stack = createStackNavigator();
 
@@ -160,6 +161,11 @@ function App(): React.JSX.Element {
             component={RecycleCalendar}
             options={{  headerShown: false  }}
           />
+          <Stack.Screen
+            name='Alarm'
+            component={Alarm}
+            options={{title: '알람 목록'}}
+            />
         </Stack.Navigator>
       </SafeAreaView>
     </NavigationContainer>
