@@ -133,7 +133,7 @@ import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-// import RecycleCalendar from './src/screens/RecycleCalendar';
+import RecycleCalendar from './src/screens/RecycleCalendar';
 import MainScreen from './src/screens/MainScreen';
 import MissionScreen from './src/screens/MissionScreen';
 
@@ -153,7 +153,12 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="MissionScreen" 
             component={MissionScreen}
-            options={{ title: '미션 상세' }} // MissionScreen의 타이틀 설정 (선택 사항)
+            options={{ title: '미션 목록' }} // MissionScreen의 타이틀 설정 (선택 사항)
+          />
+          <Stack.Screen
+            name='RecycleCalendar'
+            component={RecycleCalendar}
+            options={{  headerShown: false  }}
           />
         </Stack.Navigator>
       </SafeAreaView>

@@ -27,7 +27,11 @@ const MainScreen = () => {
     }
   }, []);
 
-   const handleMissionCardPress = () => {
+  const handleRecycleCalendarPress = () => {
+    navigation.navigate('RecycleCalendar');
+  }
+
+  const handleMissionCardPress = () => {
     navigation.navigate('MissionScreen');
   };
 
@@ -41,14 +45,17 @@ const MainScreen = () => {
         <Image style={styles.alarmIcon} source={require('../assets/alarm-icon.png')} />
       </View>
 
-      <Image
-        style={styles.mainImage}
-        source={require('../assets/main-Image.png')}
-      />
-      <Text style={styles.dayText}>{day}요일</Text>
-      <Text style={styles.dayRecycleText}>{plasticType || '“플라스틱”' + ' 입니다.'}</Text>
+      
+       <TouchableOpacity onPress={handleRecycleCalendarPress}>  
+        <Image
+          style={styles.mainImage}
+          source={require('../assets/main-Image.png')}
+        />
+        <Text style={styles.dayText}>{day}요일</Text>
+        <Text style={styles.dayRecycleText}>{plasticType || '“플라스틱”' + ' 입니다.'}</Text>
+        </TouchableOpacity>
 
-      <View style={styles.pointCard}>
+      <TouchableOpacity style={styles.pointCard}>
         <Text style={styles.pointTitle}>도훈님의 포인트</Text>
         <Text style={styles.pointValue}>1,080 P</Text>
         <View style={styles.pointDetailContainer}>
@@ -58,7 +65,7 @@ const MainScreen = () => {
             style={styles.pointCoinIcon}
             source={require('../assets/coin.png')} // 예시 이미지
           />
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.row}>
        <TouchableOpacity style={styles.missionCard} onPress={handleMissionCardPress}> {/* TouchableOpacity로 감싸고 onPress 이벤트 추가 */}
@@ -69,7 +76,7 @@ const MainScreen = () => {
           </View>
           <Image style={styles.missionImage} source={require('../assets/mission-icon.png')} />
         </TouchableOpacity>
-        <View style={styles.communityBoard}>
+        <TouchableOpacity style={styles.communityBoard}>
           <Text style={styles.communityTitle}>우리 동네</Text>
           <View>
           <Text style={styles.communityText}>우리동네</Text>
@@ -77,11 +84,11 @@ const MainScreen = () => {
           </View>
           <Image style={styles.communityImage} source={require('../assets/village.png')} // 예시 이미지
           />
-        </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.row}>
-        <View style={styles.guideCard}>
+        <TouchableOpacity style={styles.guideCard}>
           <Text style={styles.guideTitle}>분리수거 가이드</Text>
           <View>
             <Text style={styles.guideSubtitle}>사진 촬영</Text>
@@ -89,8 +96,8 @@ const MainScreen = () => {
           </View>
           <Image style={styles.guideCameraIcon} source={require('../assets/camera.png')} // 예시 이미지
           />
-        </View>
-        <View style={styles.collectionCard}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.collectionCard}>
           <Text style={styles.collectionTitle}>수거함 위치</Text>
           <View>
           <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
@@ -98,7 +105,7 @@ const MainScreen = () => {
           </View>
           <Image style={styles.collectionLocationIcon} source={require('../assets/placeholder.png')} // 예시 이미지
           />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* <View style={styles.bottomNavigation}>
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: wp('6%'),
     fontWeight: 'bold',
     position: 'absolute',
-    top: hp('20%'),
+    top: hp('9%'),
     left: wp('9%'),
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
@@ -190,7 +197,7 @@ const styles = StyleSheet.create({
     fontSize: wp('9%'),
     fontWeight: 'bold',
     position: 'absolute',
-    top: hp('25%'),
+    top: hp('13%'),
     left: wp('7%'),
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
@@ -359,42 +366,42 @@ const styles = StyleSheet.create({
     top: wp('12%'),
     aspectRatio: 1,
   },
-  bottomNavigation: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#f8f8f8',
-    height: hp('8%'),
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIcon: {
-    width: wp('5%'),
-    height: wp('5%'),
-    aspectRatio: 1,
-    tintColor: '#555',
-  },
-  navIconCenter: {
-    width: wp('10%'),
-    height: wp('10%'),
-    aspectRatio: 1,
-    tintColor: '#ffb300', // Sun icon color
-    marginBottom: hp('1%'), // Adjust as needed
-  },
-  navText: {
-    fontSize: wp('3%'),
-    color: '#555',
-    marginTop: hp('0.5%'),
-  },
+  // bottomNavigation: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-around',
+  //   alignItems: 'center',
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   left: 0,
+  //   right: 0,
+  //   backgroundColor: '#f8f8f8',
+  //   height: hp('8%'),
+  //   borderTopWidth: 1,
+  //   borderTopColor: '#eee',
+  // },
+  // navItem: {
+  //   flex: 1,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
+  // navIcon: {
+  //   width: wp('5%'),
+  //   height: wp('5%'),
+  //   aspectRatio: 1,
+  //   tintColor: '#555',
+  // },
+  // navIconCenter: {
+  //   width: wp('10%'),
+  //   height: wp('10%'),
+  //   aspectRatio: 1,
+  //   tintColor: '#ffb300', // Sun icon color
+  //   marginBottom: hp('1%'), // Adjust as needed
+  // },
+  // navText: {
+  //   fontSize: wp('3%'),
+  //   color: '#555',
+  //   marginTop: hp('0.5%'),
+  // },
 });
 
 export default MainScreen;
