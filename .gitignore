@@ -10,6 +10,9 @@
 .gradle/
 build/
 
+# gradle-wrapper는 반드시 포함시켜야 하니까 예외 추가
+!android/gradle/wrapper/gradle-wrapper.jar
+
 # Android Studio
 .idea/
 *.iml
