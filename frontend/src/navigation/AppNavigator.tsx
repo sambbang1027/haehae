@@ -9,6 +9,7 @@ export type AppStackParamList = {
   category: undefined;
   LoginStack: undefined;
   MyPageStack: undefined;
+  
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -42,7 +43,7 @@ const AppNavigator = () => {
         name="MyPageStack"
         component={MyPageNavigator}
         options={{ headerShown: false }}
-      />
+      />      
     </Stack.Navigator>
   );
 };
