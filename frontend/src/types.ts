@@ -1,5 +1,6 @@
 // 타입 정의 파일.
 export type RootStackParamList = {
+  SettingPage:  {screen: string; params: object} ; 
   TestMenu: undefined;
   RecycleCalendar: undefined;
   BulkWasteApply: undefined;
