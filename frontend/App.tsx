@@ -9,9 +9,7 @@ import WasteApplyWebViewScreen from './src/screens/WasteApplyWebViewScreen';
 import WasteRestrictionGuideScreen from './src/screens/WasteRestrictionGuideScreen';
 import CollectionBoxLocationScreen from './src/screens/CollectionBoxLocationScreen';
 import PloggingPlaceScreen from './src/screens/PloggingPlaceScreen';
-
 import type { RootStackParamList } from './src/types';
-
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
