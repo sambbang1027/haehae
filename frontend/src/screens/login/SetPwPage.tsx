@@ -1,18 +1,25 @@
-import React from 'react';
-import { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableOpacity
+} from 'react-native';
 
-const SetPwPage = () => {
-    const [oldPwd, setOldPwd] = useState('');
-    const [newPwd, setNewPwd] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+const SetPwPage: React.FC = () => {
+  const [oldPwd, setOldPwd] = useState<string>('');
+  const [newPwd, setNewPwd] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-    const validatePassword = (newPwd) => ({
-        length: newPwd.length >= 8 && newPwd.length <= 12,
-        hasLetter: /[a-zA-Z]/.test(newPwd),
-        hasNumber: /[0-9]/.test(newPwd),
-        hasSpecial: /[^a-zA-Z0-9]/.test(newPwd),
-      });
+  const validatePassword = (pwd: string) => ({
+    length: pwd.length >= 8 && pwd.length <= 12,
+    hasLetter: /[a-zA-Z]/.test(pwd),
+    hasNumber: /[0-9]/.test(pwd),
+    hasSpecial: /[^a-zA-Z0-9]/.test(pwd),
+  });
+
       const pwRules = validatePassword(newPwd);
     
     

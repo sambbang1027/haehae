@@ -1,12 +1,23 @@
-import React from 'react';
-import { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableOpacity
+} from 'react-native';
 
-const FindPwPage = ({navigation}) => {
-    const [email, setEmail] = useState('');
-    const [authCode, setAuthCode] = useState('');
-    const [timer, setTimer] = useState(0);
-    const [intervalId, setIntervalId] = useState(null);
+interface Props {
+  navigation: any;
+}
+
+const FindPwPage: React.FC<Props> = ({ navigation }) => {
+  const [email, setEmail] = useState<string>('');
+  const [authCode, setAuthCode] = useState<string>('');
+  const [timer, setTimer] = useState<number>(0);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+
 
     const handleTimer = () => {
         if(intervalId){

@@ -2,11 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 
-const FindIdPage = () => {
-    const [name, setName] = useState('');
-    const [birth, setBirth] = useState('');
-    const [phone, setPhone] = useState('');
-
+const FindIdPage: React.FC = () => {
+  const [name, setName] = useState<string>('');
+  const [birth, setBirth] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
 
   return (
     <View style={styles.container}>

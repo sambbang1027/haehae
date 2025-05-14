@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  TouchableOpacity
+} from 'react-native';
+import {
+  useNavigation,
+  useRoute,
+  NavigationProp,
+  RouteProp
+} from '@react-navigation/native';
+
+// 내비게이션 스택 타입 (필요 시 정확히 수정하세요)
+type RootStackParamList = {
+  EditUserInfo: undefined;
+  VerifySocialUser: undefined;
+  LoginStack: { screen: string };
+};
 
 const PasswordConfirmScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<Partial<Record<string, { loginType?: string }>>, string>>();
   const userType = route.params?.loginType || 'email';
   const [password, setPassword] = useState('');
 

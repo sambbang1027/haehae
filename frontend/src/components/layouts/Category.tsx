@@ -2,16 +2,21 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const CategoryItem = ({ label, route }) => {
+type CategoryItemProps = {
+  label: string;
+  route: string;
+};
+
+const CategoryItem: React.FC<CategoryItemProps> = ({ label, route }) => {
   const navigation = useNavigation();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(route)}>
+    <TouchableOpacity onPress={() => navigation.navigate(route as never)}>
       <Text style={styles.item}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
-const Category = () => {
+const Category: React.FC = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>

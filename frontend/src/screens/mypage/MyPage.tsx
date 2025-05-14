@@ -2,23 +2,27 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const CategoryItem = ({ label, route }) => {
+const CategoryItem = ({ label, route }: { label: string; route: string }) => {
   const navigation = useNavigation();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(route)}>
+    <TouchableOpacity onPress={() => navigation.navigate(route as never)}>
       <Text style={styles.menuItem}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
-const MyPage = () => {
+const MyPage: React.FC = () => {
   const navigation = useNavigation();
-  const handleLogout = ()=>{
-    console.log('로그아웃 고고')
-  }
+  const handleLogout = () => {
+    console.log('로그아웃 고고');
+  };
   const goToSettings = () => {
-    navigation.navigate('SettingPage')
-  }
+    navigation.navigate('SettingPage' as never);
+  };
+  const goToLevelInfo = () => {
+    navigation.navigate('LevelInfo' as never);
+  };
+
   return (
     <View style={styles.container}>
 
@@ -33,10 +37,12 @@ const MyPage = () => {
 
       {/* Point and Level */}
       <View style={styles.pointLevel}>
-        <View style={styles.levelBox}>
-          <Image source={require('../../assets/icons/sprout_level.png')} style={styles.icon} />
-          <Text style={styles.level}>새싹 등급</Text>
-        </View>
+        
+          <TouchableOpacity style={styles.levelBox} onPress={goToLevelInfo}>
+            <Image source={require('../../assets/icons/sprout_level.png')} style={styles.icon} />
+            <Text style={styles.level}>새싹 등급</Text>
+          </TouchableOpacity>
+
         <View style={styles.pointBox}>
           <Image source={require('../../assets/icons/point-icon.png')} style={styles.icon} />
           <Text style={styles.points}>1,030P</Text>

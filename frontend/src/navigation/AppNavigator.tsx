@@ -5,35 +5,41 @@ import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
 
-const Stack = createNativeStackNavigator();
+export type AppStackParamList = {
+  category: undefined;
+  LoginStack: undefined;
+  MyPageStack: undefined;
+};
+
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-    initialRouteName="MyPageStack"
-    screenOptions={{
-      headerTitleAlign: 'center', 
-    }}
-  >
+      initialRouteName="LoginStack"
+      screenOptions={{
+        headerTitleAlign: 'center',
+      }}
+    >
       <Stack.Screen 
-        name='category'
+        name="category"
         component={Category}
         options={({ navigation }) => ({
           title: '카테고리',
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-               <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
+              <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
             </TouchableOpacity>
-           ),
-         })}
+          ),
+        })}
       />
       <Stack.Screen 
-        name='LoginStack'
+        name="LoginStack"
         component={LoginNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen 
-        name='MyPageStack'
+        name="MyPageStack"
         component={MyPageNavigator}
         options={{ headerShown: false }}
       />

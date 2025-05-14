@@ -10,11 +10,32 @@ import {
   Modal,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import CustomCheckbox from '../../components/layouts/CustomCheckBox.js';
+import CustomCheckbox from '../../components/layouts/CustomCheckBox';
 import dayjs from 'dayjs';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 
-const initialState = {
+type SignupParams = {
+  params?: {
+    loginType?: string;
+  };
+};
+
+type State = {
+  email: string;
+  authCode: string;
+  password: string;
+  confirmPassword: string;
+  nickname: string;
+  name: string;
+  phone: string;
+  birthDate: Date;
+  address: string;
+  residenceType: string;
+};
+
+type Action = { type: 'SET_FIELD'; field: keyof State; value: any } | { type: 'RESET' };
+
+const initialState: State = {
   email: '',
   authCode: '',
   password: '',
@@ -27,7 +48,7 @@ const initialState = {
   residenceType: '',
 };
 
-function reducer(state, action) {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'SET_FIELD':
       return { ...state, [action.field]: action.value };
@@ -38,13 +59,14 @@ function reducer(state, action) {
   }
 }
 
-const SignupPage = () => {
-  const route = useRoute();
+const SignupPage: React.FC = () => {
+  const route = useRoute<RouteProp<SignupParams>>();
   const isSocial = route.params?.loginType === 'social';
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [timer, setTimer] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   const handleSignup = () => {
     console.log('회원가입 완료', state);

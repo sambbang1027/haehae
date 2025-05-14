@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Image,
-  StyleSheet,
+  StyleSheet
 } from 'react-native';
-import CustomCheckbox from '../../components/layouts/CustomCheckBox.js';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import CustomCheckbox from '../../components/layouts/CustomCheckBox.tsx';
 
-const LoginPage = ({ navigation }) => {
-  const [autoLogin, setAutoLogin] = React.useState(false);
-  const [saveId, setSaveId] = React.useState(false);
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+type RootStackParamList = {
+  Signup: undefined;
+  FindId: undefined;
+  FindPw: undefined;
+};
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const LoginPage: React.FC = () => {
+  const navigation = useNavigation<NavigationProp>();
+
+  const [autoLogin, setAutoLogin] = useState<boolean>(false);
+  const [saveId, setSaveId] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  
   const handleGoogleLogin = () => {
     console.log('Google 로그인');
   };

@@ -1,13 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const CustomCheckbox = ({ label, checked, onToggle }) => {
+interface CustomCheckboxProps {
+  label?: string;
+  checked: boolean;
+  onToggle: () => void;
+}
+
+const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ label, checked, onToggle }) => {
   return (
     <TouchableOpacity style={styles.wrapper} onPress={onToggle}>
       <View style={[styles.box, checked && styles.checkedBox]}>
         {checked && <Text style={styles.checkmark}>✓</Text>}
       </View>
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
     </TouchableOpacity>
   );
 };

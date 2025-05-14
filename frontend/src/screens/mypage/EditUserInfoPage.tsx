@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import CustomCheckbox from '../../components/layouts/CustomCheckBox'; 
+import CustomCheckbox from '../../components/layouts/CustomCheckBox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-native-date-picker';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const EditUserInfo = () => {
-  const navigation = useNavigation();
-  const [residenceType, setResidenceType] = React.useState('apt'); // 기본값: 아파트/오피스텔
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [birthDate, setBirthDate] = useState(new Date()); // 초기값: 오늘 
-
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const [residenceType, setResidenceType] = useState<string>('apt');
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [birthDate, setBirthDate] = useState<Date>(new Date());
 
   const handleAddressSearch = () => {
-    // TODO: 카카오맵 주소 검색 모듈 연결 예정
     console.log('주소 검색 실행');
   };
 
   const handleVerify = () => {
-    // TODO: pass 본인인증 연동 예정
     console.log('본인인증 실행');
   };
 
@@ -47,27 +53,24 @@ const EditUserInfo = () => {
 
       <Text style={styles.label}>생년월일</Text>
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.birthButton}>
-        <Text style={styles.birthText}>
-            {dayjs(birthDate).format('YYYY년 MM월 DD일')}
-        </Text>
-        </TouchableOpacity>
+        <Text style={styles.birthText}>{dayjs(birthDate).format('YYYY년 MM월 DD일')}</Text>
+      </TouchableOpacity>
 
-        <Modal visible={showDatePicker} transparent animationType="slide">
+      <Modal visible={showDatePicker} transparent animationType="slide">
         <View style={styles.modalContainer}>
-            <View style={styles.calendarWrapper}>
+          <View style={styles.calendarWrapper}>
             <DatePicker
-                date={birthDate}
-                mode="date"
-                maximumDate={new Date()}
-                onDateChange={(date) => setBirthDate(date)}
+              date={birthDate}
+              mode="date"
+              maximumDate={new Date()}
+              onDateChange={(date: Date) => setBirthDate(date)}
             />
             <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.calendarCloseBtn}>
-                <Text style={{ fontWeight: 'bold' }}>닫기</Text>
+              <Text style={{ fontWeight: 'bold' }}>닫기</Text>
             </TouchableOpacity>
-            </View>
+          </View>
         </View>
-        </Modal>
-
+      </Modal>
 
       <Text style={styles.label}>주소</Text>
       <View style={styles.addressRow}>
@@ -108,29 +111,29 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
-    padding: 20
+    padding: 20,
   },
   sectionTitle: {
     color: '#006831',
     fontSize: 18,
     fontWeight: '700',
     marginTop: 30,
-    marginBottom: 10
+    marginBottom: 10,
   },
   label: {
     marginTop: 25,
     marginBottom: 6,
     fontSize: 15,
-    color: '#000'
+    color: '#000',
   },
   value: {
     fontSize: 15,
-    color: '#006831'
+    color: '#006831',
   },
   tip: {
     fontSize: 13,
     color: '#000',
-    marginTop: 10
+    marginTop: 10,
   },
   verifyButton: {
     backgroundColor: '#fff',
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
   },
   verifyButtonText: {
     fontWeight: '700',
-    fontSize: 15
+    fontSize: 15,
   },
   birthButton: {
     borderWidth: 1,
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
   },
   birthText: {
     fontSize: 15,
-    color: '#000'
+    color: '#000',
   },
   modalContainer: {
     flex: 1,
@@ -174,10 +177,10 @@ const styles = StyleSheet.create({
   calendarCloseBtn: {
     marginTop: 10,
     alignSelf: 'flex-end',
-  },  
+  },
   addressRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   addressInput: {
     borderWidth: 1,
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     height: 55,
     flex: 1,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   addressSearchButton: {
     borderWidth: 1,
@@ -193,11 +196,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    marginLeft: 10
+    marginLeft: 10,
   },
   addressSearchText: {
     color: '#5da000',
-    fontWeight: '700'
+    fontWeight: '700',
   },
   residenceContainer: {
     flexDirection: 'row',
@@ -206,16 +209,16 @@ const styles = StyleSheet.create({
     borderColor: '#959595',
     borderRadius: 4,
     padding: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   checkboxItem: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   residenceLabel: {
     marginLeft: 5,
     fontSize: 15,
-    color: '#898989'
+    color: '#898989',
   },
   updateButton: {
     backgroundColor: '#C8F589',
@@ -223,14 +226,14 @@ const styles = StyleSheet.create({
     height: 55,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 30
+    marginTop: 30,
   },
   updateButtonText: {
     fontWeight: '700',
-    fontSize: 17
+    fontSize: 17,
   },
   infoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
-  }
+    justifyContent: 'space-between',
+  },
 });
