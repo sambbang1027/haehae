@@ -38,7 +38,7 @@ const MainScreen = () => {
   const handleAlarmPress = () => {
     navigation.navigate('Alarm');
   };
-
+7
     const handleRewardPress = () => {
     navigation.navigate('RewardList');
   };
@@ -56,14 +56,14 @@ const MainScreen = () => {
       </View>
 
       
-       <TouchableOpacity onPress={handleRecycleCalendarPress}>  
+      <TouchableOpacity onPress={handleRecycleCalendarPress}>  
         <Image
           style={styles.mainImage}
           source={require('../assets/main-Image.png')}
         />
         <Text style={styles.dayText}>{day}요일</Text>
         <Text style={styles.dayRecycleText}>{plasticType || '“플라스틱”' + ' 입니다.'}</Text>
-        </TouchableOpacity>
+ 7         </TouchableOpacity>
 
       <TouchableOpacity style={styles.pointCard}>
         <Text style={styles.pointTitle}>도훈님의 포인트</Text>
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   collectionCard: {
-     borderColor: 'rgba(147, 235, 24, 0.5)',
+    borderColor: 'rgba(147, 235, 24, 0.5)',
     borderWidth: 1.2,
     borderRadius: wp('5%'),
     width: wp('45.5%'),

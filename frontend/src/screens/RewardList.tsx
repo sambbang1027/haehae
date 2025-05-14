@@ -6,13 +6,20 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    } from 'react-native';
+} from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/native';
 
-    const RewardList = () => {
-    const handleItemClick = (itemId: number) => {
-        console.log(`아이템 ID ${itemId} 클릭됨`);
-        // 여기에 클릭 시 동작을 구현 (예: 상세 페이지 이동)
+const RewardList = () => {
+    const navigation = useNavigation(); 
+
+    // const handleItemClick = (itemId: number) => {
+    //     navigation.navigate('RewardDetail');
+    //     console.log(`아이템 ID ${itemId} 클릭됨`);
+    // };
+
+    const handleItemClick = () => {
+        navigation.navigate('RewardDetail');
     };
 
     const rewardItems = [
@@ -24,43 +31,44 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 
     return (
         <ScrollView style={styles.container}>
-        <View style={styles.header}>
-            {/* <Text style={styles.backArrow}>&lt;</Text> */}
-            {/* <Text style={styles.rewardTitle}>리워드 상점</Text> */}
-        </View>
-        <Image style={styles.pointIcon} source={require('../assets/reward-coin.png')} resizeMode="contain" /> 
-        <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
-        <Text style={styles.totalPoints}>1,080P</Text>
-        <View style={styles.tabContainer}>
-            <TouchableOpacity style={styles.pointDonationButton}>
-            <Text style={styles.pointDonationText}>포인트 기부</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.tabButton}>
-            <Text style={styles.tabText}>상품권</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.tabButton}>
-            <Text style={styles.tabText}>쿠폰/기프티콘</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.header}>
+                {/* <Text style={styles.backArrow}>&lt;</Text> */}
+                {/* <Text style={styles.rewardTitle}>리워드 상점</Text> */}
+            </View>
+            <Image style={styles.pointIcon} source={require('../assets/reward-coin.png')} resizeMode="contain" />
+            <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
+            <Text style={styles.totalPoints}>1,080P</Text>
+            <View style={styles.tabContainer}>
+                <TouchableOpacity style={styles.pointDonationButton}>
+                    <Text style={styles.pointDonationText}>포인트 기부</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.tabButton}>
+                    <Text style={styles.tabText}>상품권</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.tabButton}>
+                    <Text style={styles.tabText}>쿠폰/기프티콘</Text>
+                </TouchableOpacity>
+            </View>
 
-         {rewardItems.map((item) => (
-            <TouchableOpacity
-            key={item.id}
-            style={[styles.listItem, { top: item.topPosition }]}
-            onPress={() => handleItemClick(item.id)}
-            >
-            <Image style={styles.itemImage} source={item.imageSrc} />
-            <Text style={styles.itemTitle}>{item.title}</Text>
-            <Text style={styles.itemPoints}>{item.points}</Text>
-            </TouchableOpacity>
-        ))} 
+            {rewardItems.map((item) => (
+                <TouchableOpacity
+                    key={item.id}
+                    style={[styles.listItem, { top: item.topPosition }]}
+                    // onPress={() => handleItemClick(item.id)}
+                    onPress={handleItemClick}
+                >
+                    <Image style={styles.itemImage} source={item.imageSrc} />
+                    <Text style={styles.itemTitle}>{item.title}</Text>
+                    <Text style={styles.itemPoints}>{item.points}</Text>
+                </TouchableOpacity>
+            ))}
 
-        <View style={styles.bottomBar} />
+            <View style={styles.bottomBar} />
         </ScrollView>
     );
-    };
+};
 
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         backgroundColor: '#ffffff',
         paddingBottom: hp('10%'),
@@ -77,16 +85,16 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
         paddingHorizontal: wp('4%'),
     },
     // backArrow: {
-    //     fontSize: hp('3%'),
-    //     marginRight: wp('2%'),
+    //  fontSize: hp('3%'),
+    //  marginRight: wp('2%'),
     // },
     // rewardTitle: {
-    //     color: '#000000',
-    //     textAlign: 'center',
-    //     fontFamily: 'Inter-Regular',
-    //     fontSize: hp('2.5%'),
-    //     fontWeight: 'bold',
-    //     flex: 1,
+    //  color: '#000000',
+    //  textAlign: 'center',
+    //  fontFamily: 'Inter-Regular',
+    //  fontSize: hp('2.5%'),
+    //  fontWeight: 'bold',
+    //  flex: 1,
     // },
     pointIcon: {
         width: wp('30%'),
@@ -161,7 +169,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
         marginTop: hp('-5%'),
         marginLeft: wp('-3%'),
         marginBottom: hp('1%'),
-        
+
     },
     itemImage: {
         width: wp('14%'),
@@ -191,6 +199,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
         bottom: 0,
         marginTop : '10%'
     },
-    });
+});
 
 export default RewardList;
