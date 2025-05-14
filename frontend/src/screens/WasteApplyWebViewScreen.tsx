@@ -22,20 +22,13 @@ const WasteApplyWebViewScreen = ({ navigation } : Props) => {
       console.warn('신청 정보 누락');
       return;
       }
-        
-      navigation.replace('QrResultScreen', {
-        applyId,
-        date,
-        items,
-        address,
-      });
     }
   };
 
   return (
     <View style={{ flex: 1 }}>
       <WebView
-        source={{ uri: 'https://gunpo-largewaste.kr/apply' }}
+        source={{ uri: 'https://www.15990903.or.kr' }}
         onNavigationStateChange={handleNavigationChange}
       />
     </View>

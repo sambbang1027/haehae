@@ -19,6 +19,27 @@ const TestMenuScreen = ({ navigation }: any) => {
       >
         <Text style={styles.buttonText}>🗑️ 대형 폐기물 신청</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('WasteRestrictionGuide')}
+      >
+        <Text style={styles.buttonText}>🚮 배출 제한 가이드 보기</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('CollectionBoxLocation')}
+      >
+        <Text style={styles.buttonText}>📍 수거함 위치 보기</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('PloggingPlace')}
+      >
+        <Text style={styles.buttonText}>🚶 플로깅 위치 보기</Text>
+      </TouchableOpacity>
     </View>
   );
 };
