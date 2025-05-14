@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import {
   View,
   Text,
@@ -112,8 +113,8 @@ export default RecycleCalendar;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
-    paddingTop: 48,
+    padding: wp('6%'),
+    paddingTop: hp('6%'),
     backgroundColor: '#fff',
     flexGrow: 1,
   },
@@ -121,12 +122,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    paddingBottom: 16,
+    paddingBottom: hp('2%'),
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
     color: '#000',
   },
@@ -134,65 +135,65 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    padding: 8,
+    padding: wp('2%'),
   },
   closeText: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     color: '#000',
   },
   locationBox: {
-    marginTop: 24,
-    padding: 12,
+    marginTop: hp('3%'),
+    padding: wp('4%'),
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
+    borderRadius: wp('2%'),
   },
   locationText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: '500',
   },
   calendar: {
-    marginTop: 32,
-    borderRadius: 8,
+    marginTop: hp('4%'),
+    borderRadius: wp('2%'),
     overflow: 'hidden',
   },
   bottomArea: {
     marginTop: 'auto',
-    marginBottom: 40,
+    marginBottom: hp('5%'),
   },
   guideTitle: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: '300',
-    marginTop: 40,
-    marginBottom: 8,
+    marginTop: hp('5%'),
+    marginBottom: hp('1.5%'),
   },
   noticeBox: {
-    height: 80,
+    height: hp('10%'),
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
+    borderRadius: wp('2%'),
   },
   moreButton: {
     alignSelf: 'flex-end',
-    marginTop: 8,
+    marginTop: hp('1%'),
   },
   moreText: {
-    fontSize: 10,
+    fontSize: wp('2.5%'),
     fontWeight: 'bold',
   },
   dayContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 48,
+    height: hp('6%'),
   },
   dateText: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     fontWeight: '600',
     color: '#333',
   },
   memoText: {
-    fontSize: 10,
-    marginTop: 2,
+    fontSize: wp('2.5%'),
+    marginTop: hp('0.5%'),
     color: '#339966',
   },
   modalBackdrop: {
@@ -203,23 +204,23 @@ const styles = StyleSheet.create({
   },
   modalContentWrapper: {
     width: '100%',
-    paddingHorizontal: 32,
+    paddingHorizontal: wp('8%'),
   },
   modalContent: {
     backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
+    padding: wp('5%'),
+    borderRadius: wp('2%'),
   },
   modalTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: wp('4.5%'),
+    marginBottom: hp('1.5%'),
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 12,
+    borderRadius: wp('2%'),
+    padding: wp('3%'),
+    marginBottom: hp('2%'),
   },
 });
