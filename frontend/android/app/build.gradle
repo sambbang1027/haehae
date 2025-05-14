@@ -84,6 +84,10 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        // 빌드 속도 높이기 (x86, x86_64 아키텍처 생략)
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
     }
     signingConfigs {
         debug {
@@ -116,4 +120,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation project(':react-native-gesture-handler')
 }
