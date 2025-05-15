@@ -12,7 +12,7 @@ import Footer from '../../components/Footer';
 import MainHeader from '../../components/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../navigation/types';
+import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
 
 type PostSummary = {
   id: number;
@@ -23,7 +23,7 @@ type PostSummary = {
 
 export default function CommunityScreen() {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
 
   const moveToDetail = (post: PostSummary) => {
     switch (post.type) {
@@ -108,7 +108,7 @@ export default function CommunityScreen() {
             <Text style={styles.title}>봉사</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ShairingMain')}
+            onPress={() => navigation.navigate('SharingMain')}
             style={styles.rectangleBox}
           >
             <Image

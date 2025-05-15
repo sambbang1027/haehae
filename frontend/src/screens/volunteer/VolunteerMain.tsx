@@ -12,14 +12,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from "../../navigation/types";
 import Footer from "../../components/Footer";
 import CustomSearchBar from "../../components/CustomSearchBar";
+import { VolunteerParamList } from "../../navigation/VolunteerNavigator";
 
 export default function VolunteerMain() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<VolunteerParamList>>();
 
   const handleSearch = () => {
     console.log('검색 실행:', searchQuery);

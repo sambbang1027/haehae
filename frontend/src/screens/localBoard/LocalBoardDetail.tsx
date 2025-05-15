@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/types';
+import { LocalBoardStackParamList } from "../../navigation/LocalBoardNavigator";
 
-type LocalBoardDetailRouteProps = RouteProp<RootStackParamList, "LocalBoardDetail">;
+type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
 export default function LocalBoardDetail() {
   const route = useRoute<LocalBoardDetailRouteProps>();
