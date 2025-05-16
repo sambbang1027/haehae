@@ -13,10 +13,10 @@ const Stack = createNativeStackNavigator<LocalBoardStackParamList>();
 
 export default function LocalBoardNavigator() {
     return(
-        <Stack.Navigator>
-            <Stack.Screen name="LocalBoardMain" component={LocalBoardMain} />
-            <Stack.Screen name="LocalBoardDetail" component={LocalBoardDetail}/>
-            <Stack.Screen name="WriteLocalPost" component={WriteLocalPost}/>
+        <Stack.Navigator initialRouteName="LocalBoardMain">
+            <Stack.Screen name="LocalBoardMain" component={LocalBoardMain} options={{ title: '우리 동네 게시판', headerShadowVisible: false}}/>
+            <Stack.Screen name="LocalBoardDetail" component={LocalBoardDetail} options={{ title: '', headerShadowVisible: false}}/>
+            <Stack.Screen name="WriteLocalPost" component={WriteLocalPost} options={{ title: '', headerShadowVisible: false }}/>
         </Stack.Navigator>
     );
 }

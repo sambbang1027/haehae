@@ -88,9 +88,8 @@ export default function CommunityScreen() {
         {/* 네비게이션 박스 */}
         <View style={styles.grid}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('LocalBoardMain')}
-            style={styles.rectangleBox}
-          >
+            onPress={() =>navigation.navigate('LocalBoardStack', {screen: 'LocalBoardMain',})}
+            style={styles.rectangleBox}>
             <Image
               source={require('../../assets/localBoardEntry.png')}
               style={styles.icon}
@@ -98,7 +97,7 @@ export default function CommunityScreen() {
             <Text style={styles.title}>우리동네</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('VolunteerMain')}
+            onPress={() => navigation.navigate('VolunteerStack', {screen: 'VolunteerMain',})}
             style={styles.rectangleBox}
           >
             <Image
@@ -108,7 +107,7 @@ export default function CommunityScreen() {
             <Text style={styles.title}>봉사</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('SharingMain')}
+            onPress={() => navigation.navigate('SharingStack', {screen: 'SharingMain'})}
             style={styles.rectangleBox}
           >
             <Image
