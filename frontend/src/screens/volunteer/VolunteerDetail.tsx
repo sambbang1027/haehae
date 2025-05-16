@@ -1,6 +1,5 @@
 import React from "react";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "../../navigation/types";
 import {
   StyleSheet,
   Text,
@@ -11,8 +10,9 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { VolunteerParamList } from "../../navigation/VolunteerNavigator";
 
-type VolunteerDetailRouteProps = RouteProp<RootStackParamList, "VolunteerDetail">;
+type VolunteerDetailRouteProps = RouteProp<VolunteerParamList, "VolunteerDetail">;
 
 export default function VolunteerDetail() {
   const route = useRoute<VolunteerDetailRouteProps>();
