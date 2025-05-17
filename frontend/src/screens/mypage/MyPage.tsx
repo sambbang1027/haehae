@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MyPageStackParamList } from '../../navigation/MyPageNavigator'; 
+
+type Navigation = NativeStackNavigationProp<MyPageStackParamList, 'MyPage'>;
 
 const CategoryItem = ({ label, route }: { label: string; route: string }) => {
   const navigation = useNavigation();
@@ -11,17 +15,20 @@ const CategoryItem = ({ label, route }: { label: string; route: string }) => {
   );
 };
 
-const MyPage: React.FC = () => {
-  const navigation = useNavigation();
+const MyPage = () => {
+  const navigation = useNavigation<Navigation>();
   const handleLogout = () => {
     console.log('로그아웃 고고');
   };
   const goToSettings = () => {
-    navigation.navigate('SettingPage' as never);
+    navigation.navigate('SettingPage');
   };
   const goToLevelInfo = () => {
-    navigation.navigate('LevelInfo' as never);
+    navigation.navigate('LevelInfo');
   };
+  const goToPointRecord = () => {
+    navigation.navigate('PointRecord');
+  }
 
   return (
     <View style={styles.container}>
@@ -43,19 +50,20 @@ const MyPage: React.FC = () => {
             <Text style={styles.level}>새싹 등급</Text>
           </TouchableOpacity>
 
-        <View style={styles.pointBox}>
+        <TouchableOpacity style={styles.pointBox} onPress={goToPointRecord}>
           <Image source={require('../../assets/icons/point-icon.png')} style={styles.icon} />
           <Text style={styles.points}>1,030P</Text>
-        </View>
+        </TouchableOpacity>
+   
       </View>
       <View style={styles.thickDivider} />
       {/* My Activities */}
       <ScrollView style={styles.sectionWrapper}>
         <Text style={styles.sectionTitle}>나의 활동</Text>
-        <CategoryItem label="봉사 활동" route="Volunteer" />
-        <CategoryItem label="미션 참여" route="Mission" />
-        <CategoryItem label="나의동네 게시판" route="LocalBoard" />
-        <CategoryItem label="나의나눔 게시판" route="ShareBoard" />
+        <CategoryItem label="봉사 활동" route="MyVolunteer" />
+        <CategoryItem label="미션 참여" route="MyMission" />
+        <CategoryItem label="나의동네 게시판" route="MyLocalBoard" />
+        <CategoryItem label="나의나눔 게시판" route="MyShareBoard" />
         <View style={styles.divder}/>
 
         <Text style={styles.sectionTitle}>고객센터</Text>

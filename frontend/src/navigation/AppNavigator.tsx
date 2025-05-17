@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="LoginStack"
+      initialRouteName="MyPageStack"
       screenOptions={{
         headerTitleAlign: 'center',
       }}

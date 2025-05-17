@@ -5,7 +5,11 @@ import SettingPage from '../screens/mypage/SettingPage';
 import CheckPw from '../screens/mypage/CheckPwPage';
 import EditUserInfo from '../screens/mypage/EditUserInfoPage';
 import EditProfile from '../screens/mypage/EditProfilePage';
-import LevelInfo from '../screens/mypage/LevelInfo';
+import LevelInfo from '../screens/mypage/LevelInfoPage';
+import PointRecord from '../screens/mypage/PointRecordPage';
+import MyVolunteer from '../screens/mypage/MyVolunteerPage';
+import MyMission from '../screens/mypage/MyMissonPage';
+import MyLocalBoard from '../screens/mypage/MyLocalBoardPage';
 
 // 네비게이션 스택 타입 정의
 export type MyPageStackParamList = {
@@ -15,6 +19,10 @@ export type MyPageStackParamList = {
   EditUserInfo: undefined;
   EditProfile: undefined;
   LevelInfo: undefined;
+  PointRecord: undefined;
+  MyVolunteer: undefined;
+  MyMission: undefined;
+  MyLocalBoard: undefined;
 };
 
 const Stack = createNativeStackNavigator<MyPageStackParamList>();
@@ -56,6 +64,26 @@ const MyPageNavigator = () => {
         name="LevelInfo"
         component={LevelInfo}
         options={{ title: '등급' }}
+      />
+      <Stack.Screen 
+        name='PointRecord'
+        component={PointRecord}
+        options={{title: '포인트 내역'}}
+      />
+      <Stack.Screen
+        name='MyVolunteer'
+        component={MyVolunteer}
+        options={{title: '봉사활동'}}
+      />
+       <Stack.Screen
+        name='MyMission'
+        component={MyMission}
+        options={{title: '미션 참여'}}
+      />
+      <Stack.Screen 
+        name='MyLocalBoard'
+        component={MyLocalBoard}
+        options={{title: '나의 동네 게시판'}}
       />
     </Stack.Navigator>
   );
