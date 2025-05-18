@@ -4,11 +4,13 @@ import { TouchableOpacity, Text } from 'react-native';
 import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
+import MainNavigator from './MainNavigator';
 
 export type AppStackParamList = {
   category: undefined;
   LoginStack: undefined;
   MyPageStack: undefined;
+  MainStack : undefined;
   
 };
 
@@ -17,7 +19,7 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="LoginStack"
+      initialRouteName="MainStack"
       screenOptions={{
         headerTitleAlign: 'center',
       }}
@@ -43,7 +45,12 @@ const AppNavigator = () => {
         name="MyPageStack"
         component={MyPageNavigator}
         options={{ headerShown: false }}
-      />      
+      />
+      <Stack.Screen
+        name="MainStack"
+        component={MainNavigator}
+        options ={{headerShown : false}}
+        />
     </Stack.Navigator>
   );
 };
