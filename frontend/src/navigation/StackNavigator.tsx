@@ -10,6 +10,8 @@ import VolunteerMain from '../screens/volunteer/VolunteerMain';
 import VolunteerDetail from '../screens/volunteer/VolunteerDetail';
 import WriteSharingPost from '../screens/sharing/WriteSharingPost';
 
+import TestStack from './TestStack';           // 테스트 Stack
+
 const Stack = createNativeStackNavigator();
 
 export default function StackNavigator() {
@@ -24,6 +26,10 @@ export default function StackNavigator() {
         <Stack.Screen name="SharingDetail" component={SharingDetail}/>
         <Stack.Screen name="VolunteerDetail" component={VolunteerDetail}/>
         <Stack.Screen name="WriteSharingPost" component={WriteSharingPost}/>
+
+        
+        <Stack.Screen name="TestStack" component={TestStack} options={{ headerShown: false }} />
+        
     </Stack.Navigator>
   );
 }

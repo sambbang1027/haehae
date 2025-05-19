@@ -5,11 +5,15 @@ import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
 
+import TestMenuScreen from './TestMenuScreen';  // 테스트용 추가
+
 export type AppStackParamList = {
   category: undefined;
   LoginStack: undefined;
   MyPageStack: undefined;
-  
+
+  TestMenu: undefined; // 테스트용 추가
+  TestStack: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -42,6 +46,12 @@ const AppNavigator = () => {
       <Stack.Screen 
         name="MyPageStack"
         component={MyPageNavigator}
+        options={{ headerShown: false }}
+      />
+      
+      <Stack.Screen 
+        name="TestMenu"
+        component={TestMenuScreen}
         options={{ headerShown: false }}
       />      
     </Stack.Navigator>

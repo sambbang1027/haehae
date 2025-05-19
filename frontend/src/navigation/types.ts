@@ -8,4 +8,5 @@ export type RootStackParamList = {
     SharingDetail: { id: number };
     VolunteerDetail: { id: number };
     WriteSharingPost: undefined;
+
 };
