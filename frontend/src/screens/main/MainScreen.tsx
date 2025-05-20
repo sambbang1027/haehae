@@ -158,14 +158,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: hp('5%'),
+    paddingTop: hp('1%'),
     paddingHorizontal: wp('2.5%'),
   },
    locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: 'auto', // 내용물에 맞춰 너비 자동 조정
-    borderWidth: 2, // 테두리 두께 조정
+    borderWidth: 2, // 테 두리 두께 조정
     borderColor: '#c0c0c0', // 테두리 색상
     borderRadius: 25, // 둥근 테두리 정도 (원하는 값으로 조절)
     paddingVertical: hp('0.1%'), // 위아래 패딩 (원하는 값으로 조절)

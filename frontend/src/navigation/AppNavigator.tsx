@@ -5,12 +5,15 @@ import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
 import MainNavigator from './MainNavigator';
+import ChatList from '../screens/chat/ChatList'; 
+
 
 export type AppStackParamList = {
   category: undefined;
   LoginStack: undefined;
   MyPageStack: undefined;
   MainStack : undefined;
+  chat: undefined;
   
 };
 
@@ -19,7 +22,7 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="MainStack"
+      initialRouteName="chat"
       screenOptions={{
         headerTitleAlign: 'center',
       }}
@@ -51,6 +54,23 @@ const AppNavigator = () => {
         component={MainNavigator}
         options ={{headerShown : false}}
         />
+      <Stack.Screen
+        name="chat"
+        component={ChatList}
+        options={({ navigation }) => ({
+          title: '채팅',
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ fontSize: 18, marginRight: 10 }}>삭제</Text>
+          </TouchableOpacity>
+        )
+        })}
+      />
     </Stack.Navigator>
   );
 };
