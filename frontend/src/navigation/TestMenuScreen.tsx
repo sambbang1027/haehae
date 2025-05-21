@@ -40,6 +40,13 @@ const TestMenuScreen = ({ navigation }: any) => {
       >
         <Text style={styles.buttonText}>🚶 플로깅 위치 보기</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('AiDisposalEntry')}
+      >
+        <Text style={styles.buttonText}>🤖 AI 분리배출 가이드</Text>
+      </TouchableOpacity>
     </View>
   );
 };

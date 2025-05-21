@@ -1,15 +1,27 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Touchable, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
+import { AppStackParamList } from '../navigation/AppNavigator';
 
 export default function Footer() {
+
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+
   return (
     <View style={styles.footer}>
       <View style={styles.topLine} />
       <View style={styles.row}>
-        <View style={styles.item}>
+
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => navigation.navigate('TestStack')}
+        >
           <Image source={require('../assets/menuEntry.png')} style={styles.icon} />
           <Text style={styles.label}>카테고리</Text>
-        </View>
+        </TouchableOpacity>
+
+        
         <View style={styles.item}>
           <Image source={require('../assets/communityEntry.png')} style={styles.icon} />
           <Text style={styles.label}>커뮤니티</Text>
