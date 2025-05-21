@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Footer from '../../components/Footer';
 import MainHeader from '../../components/MainHeader';
 import { useNavigation } from '@react-navigation/native';
@@ -22,8 +23,7 @@ type PostSummary = {
 };
 
 export default function CommunityScreen() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
 
   const moveToDetail = (post: PostSummary) => {
     switch (post.type) {
@@ -91,7 +91,7 @@ export default function CommunityScreen() {
             onPress={() =>navigation.navigate('LocalBoardStack', {screen: 'LocalBoardMain',})}
             style={styles.rectangleBox}>
             <Image
-              source={require('../../assets/localBoardEntry.png')}
+              source={require('../../assets/icons/localBoardEntry.png')}
               style={styles.icon}
             />
             <Text style={styles.title}>우리동네</Text>
@@ -101,7 +101,7 @@ export default function CommunityScreen() {
             style={styles.rectangleBox}
           >
             <Image
-              source={require('../../assets/volunteerEntry.png')}
+              source={require('../../assets/icons/volunteerEntry.png')}
               style={styles.icon}
             />
             <Text style={styles.title}>봉사</Text>
@@ -111,14 +111,14 @@ export default function CommunityScreen() {
             style={styles.rectangleBox}
           >
             <Image
-              source={require('../../assets/sharingEntry.png')}
+              source={require('../../assets/icons/sharingEntry.png')}
               style={styles.icon}
             />
             <Text style={styles.title}>나눔</Text>
           </TouchableOpacity>
           <View style={styles.rectangleBox}>
             <Image
-              source={require('../../assets/chatEntry.png')}
+              source={require('../../assets/icons/chatEntry.png')}
               style={styles.icon}
             />
             <Text style={styles.title}>채팅</Text>
@@ -172,69 +172,69 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 120,
+    padding: wp('5%'),
+    paddingBottom: hp('15%'),
   },
   div4: {
-    fontSize: 20,
+    fontSize: wp('5%'),
     fontWeight: '700',
     opacity: 0.5,
-    marginBottom: 10,
+    marginBottom: hp('1.5%'),
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: hp('2.5%'),
   },
   rectangleBox: {
     backgroundColor: '#ffffff',
-    borderRadius: 10,
+    borderRadius: wp('2.5%'),
     borderWidth: 1,
     borderColor: '#ccc',
     width: '48%',
-    height: 150,
+    height: hp('20%'),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15,
-    padding: 10,
+    marginBottom: hp('2%'),
+    padding: wp('2.5%'),
   },
   icon: {
-    width: 75,
-    height: 75,
-    marginBottom: 10,
+    width: wp('20%'),
+    height: wp('20%'),
+    marginBottom: hp('1%'),
   },
   title: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: '600',
   },
   div5: {
-    fontSize: 20,
+    fontSize: wp('5%'),
     fontWeight: '700',
     opacity: 0.5,
-    marginBottom: 10,
+    marginBottom: hp('1.5%'),
   },
   postRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: hp('0.8%'),
     borderBottomWidth: 1,
     borderColor: '#eee',
-    gap: 10,
+    gap: wp('2%'),
   },
   badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
+    paddingHorizontal: wp('2.5%'),
+    paddingVertical: hp('0.5%'),
+    borderRadius: wp('5%'),
     borderWidth: 1,
     flexShrink: 0,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     fontWeight: '700',
   },
   post: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     flexShrink: 1,
     flexGrow: 1,
     flexBasis: 'auto',
@@ -245,3 +245,4 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+

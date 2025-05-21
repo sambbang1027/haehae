@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from '../../components/Footer';
@@ -32,12 +33,14 @@ export default function LocalBoardMain() {
       author: '서샘이',
       date: '2025년 4월 24일',
       content: '서샘이의 광주 VS 강재현의 광주 누가 더 시골인인가요?',
+      commentCount: 3,
     },
     {
       id: 2,
       author: '김도훈',
       date: '2025년 4월 24일',
       content: '같이 봉사하실 분 구합니다.',
+      commentCount: 2,
     },
     {
       id: 3,
@@ -91,14 +94,29 @@ export default function LocalBoardMain() {
             >
               <View style={styles.postCard}>
                 <View style={styles.profileWrapper}>
-                  <Image
-                    source={require('../../assets/defaultProfile.png')}
-                    style={styles.profileImage}
-                  />
-                  <Text style={styles.author}>{post.author}</Text>
+                  <View style={styles.userInfo}>
+                    <Image
+                      source={require('../../assets/icons/defaultProfile.png')}
+                      style={styles.profileImage}
+                    />
+                    <Text style={styles.author}>{post.author}</Text>
+                  </View>
                 </View>
+
                 <Text style={styles.content}>{post.content}</Text>
-                <Text style={styles.date}>{post.date}</Text>
+
+                <View style={styles.dateRow}>
+                  <Text style={styles.date}>{post.date}</Text>
+                  {post.commentCount !== undefined && (
+                    <View style={styles.commentCountWrapper}>
+                      <Image
+                        source={require('../../assets/icons/commentCount.png')}
+                        style={styles.commentIcon}
+                      />
+                      <Text style={styles.commentText}>{post.commentCount}</Text>
+                    </View>
+                  )}
+                </View>
               </View>
             </TouchableOpacity>
           ))}
@@ -107,7 +125,7 @@ export default function LocalBoardMain() {
         {!isKeyboardVisible && (
           <TouchableOpacity onPress={() => navigation.navigate('WriteLocalPost')}>
             <Image
-              source={require('../../assets/writePostLogo.png')}
+              source={require('../../assets/icons/writePostLogo.png')}
               style={styles.icon}
             />
           </TouchableOpacity>
@@ -127,57 +145,81 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   searchWrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingHorizontal: wp('4%'),
+    paddingTop: hp('1.5%'),
+    paddingBottom: hp('1%'),
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
+    paddingHorizontal: wp('4%'),
+    paddingBottom: hp('8%'),
   },
   postCard: {
     backgroundColor: '#FFF',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-    minHeight: 120,
+    padding: wp('4%'),
+    borderRadius: wp('2.5%'),
+    marginBottom: hp('1.2%'),
+    minHeight: hp('18%'),
     position: 'relative',
   },
   profileWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    justifyContent: 'space-between',
+    marginBottom: hp('1%'),
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   profileImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 12,
-    marginRight: 8,
+    width: wp('9%'),
+    height: wp('9%'),
+    borderRadius: wp('4.5%'),
+    marginRight: wp('2.5%'),
   },
   author: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: wp('4%'),
   },
   content: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: wp('3.8%'),
+    lineHeight: hp('3%'),
+  },
+  dateRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: hp('1.5%'),
   },
   date: {
-    position: 'absolute',
-    bottom: 12,
-    left: 12,
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: '#888',
+  },
+  commentCountWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: wp('2%'),
+    paddingVertical: hp('0.5%'),
+  },
+  commentIcon: {
+    width: wp('5%'),
+    height: wp('5%'),
+    marginRight: wp('1%'),
+  },
+  commentText: {
+    fontSize: wp('4%'),
+    color: '#333',
   },
   footerWrapper: {
     width: '100%',
   },
   icon: {
     position: 'absolute',
-    bottom: 30,
-    right: 20,
-    width: 60,
-    height: 60,
+    bottom: hp('4%'),
+    right: wp('5%'),
+    width: wp('15%'),
+    height: wp('15%'),
     zIndex: 10,
   },
 });
+
