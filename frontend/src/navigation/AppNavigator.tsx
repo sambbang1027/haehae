@@ -22,7 +22,7 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="chat"
+      initialRouteName="MainStack"
       screenOptions={{
         headerTitleAlign: 'center',
       }}
@@ -54,7 +54,7 @@ const AppNavigator = () => {
         component={MainNavigator}
         options ={{headerShown : false}}
         />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="chat"
         component={ChatList}
         options={({ navigation }) => ({
@@ -66,11 +66,11 @@ const AppNavigator = () => {
           ),
           headerRight: () => (
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ fontSize: 18, marginRight: 10 }}>삭제</Text>
+            <Text style={{ fontSize: 18, marginRight: 10 }}>나가기</Text>
           </TouchableOpacity>
         )
         })}
-      />
+      /> 도훈이 chatList UI */}
     </Stack.Navigator>
   );
 };
