@@ -13,9 +13,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Footer from '../../components/Footer';
-import CustomSearchBar from '../../components/CustomSearchBar';
+import CustomSearchBar from '../../components/common/CustomSearchBar';
 import { LocalBoardStackParamList } from '../../navigation/LocalBoardNavigator';
+
 
 export default function LocalBoardMain() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -112,10 +112,6 @@ export default function LocalBoardMain() {
             />
           </TouchableOpacity>
         )}
-
-        <View style={styles.footerWrapper}>
-          {!isKeyboardVisible && <Footer />}
-        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

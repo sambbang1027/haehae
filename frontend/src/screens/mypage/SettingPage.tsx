@@ -1,28 +1,36 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MyPageStackParamList } from '../../navigation/MyPageNavigator'; 
+import { LoginStackParamList } from '../../navigation/LoginNavigator';
+
 
 type SettingItemProps = {
   label: string;
-  route: string | { stack: string; screen: string; params?: object };
+  route:
+    | keyof MyPageStackParamList
+    | {
+        stack: 'LoginStack';
+        screen: keyof LoginStackParamList;
+        params?: LoginStackParamList[keyof LoginStackParamList];
+      };
   style?: object;
 };
 
-const SettingItem: React.FC<SettingItemProps> = ({ label, route, style }) => {
-  const navigation = useNavigation();
+const SettingItem = ({ label, route, style }: SettingItemProps) => {
+  const navigation = useNavigation<any>();
 
   const handlePress = () => {
     if (typeof route === 'string') {
-      navigation.navigate(route as never);
-    } else if (route.stack && route.screen) {
-      navigation.navigate(route.stack as never, {
-        screen: route.screen,
-        params: route.params || {}
-      });
+      navigation.navigate(route); // 같은 스택 내 단일 스크린 이동
     } else {
-      console.warn('Invalid route format:', route);
+      navigation.navigate(route.stack, {
+        screen: route.screen,
+        params: route.params,
+      });
     }
   };
+
 
   return (
     <TouchableOpacity onPress={handlePress}>
@@ -31,7 +39,7 @@ const SettingItem: React.FC<SettingItemProps> = ({ label, route, style }) => {
   );
 };
 
-const SettingPage: React.FC = () => {
+const SettingPage = () => {
   const userName = '김정우';
   const residenceType = '아파트';
 

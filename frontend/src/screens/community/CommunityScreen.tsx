@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Footer from '../../components/Footer';
-import MainHeader from '../../components/MainHeader';
+import Footer from '../../components/layouts/Footer';
+import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
