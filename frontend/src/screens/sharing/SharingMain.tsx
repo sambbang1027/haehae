@@ -177,4 +177,3 @@ const styles = StyleSheet.create({
     height: wp('15%'),
   },
 });
-

@@ -85,7 +85,7 @@ export default function VolunteerMain() {
         </ScrollView>
 
         {/* 푸터 */}
-        {!isKeyboardVisible && <Footer />}
+//         {!isKeyboardVisible && <Footer />}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -146,4 +146,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-

@@ -23,7 +23,8 @@ type PostSummary = {
 };
 
 export default function CommunityScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
 
   const moveToDetail = (post: PostSummary) => {
     switch (post.type) {
@@ -245,4 +246,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-

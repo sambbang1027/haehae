@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import CustomCheckbox from '../../components/layouts/CustomCheckBox.tsx';
+import CustomCheckbox from '../../components/common/CustomCheckBox.tsx';
 
 type RootStackParamList = {
   Signup: undefined;

@@ -10,7 +10,7 @@ import {
   Modal,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import CustomCheckbox from '../../components/layouts/CustomCheckBox';
+import CustomCheckbox from '../../components/common/CustomCheckBox';
 import dayjs from 'dayjs';
 import { useRoute, RouteProp } from '@react-navigation/native';
 
