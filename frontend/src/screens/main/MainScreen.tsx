@@ -49,11 +49,11 @@ const Main = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <View style={styles.locationContainer}>
-          <Image style={styles.locationIcon} source={require('../../assets/location-icon.png')} />
+          <Image style={styles.locationIcon} source={require('../../assets/icons/location-icon.png')} />
           <Text style={styles.locationText}>서울특별시 강남구 xx로</Text>
         </View>
         <TouchableOpacity onPress={handleAlarmPress}>
-          <Image style={styles.alarmIcon} source={require('../../assets/alarm-icon.png')} />
+          <Image style={styles.alarmIcon} source={require('../../assets/icons/alarm-icon.png')} />
         </TouchableOpacity>
       </View>
 
@@ -61,7 +61,7 @@ const Main = () => {
       <TouchableOpacity onPress={handleRecycleCalendarPress}>  
         <Image
           style={styles.mainImage}
-          source={require('../../assets/main-Image.png')}
+          source={require('../../assets/images/main-Image.png')}
         />
         <Text style={styles.dayText}>{day}요일</Text>
         <Text style={styles.dayRecycleText}>{plasticType || '“플라스틱”' + ' 입니다.'}</Text>
@@ -75,7 +75,7 @@ const Main = () => {
         </View>
           <Image
             style={styles.pointCoinIcon}
-            source={require('../../assets/coin.png')} // 예시 이미지
+            source={require('../../assets/images/coin.png')} // 예시 이미지
           />
       </TouchableOpacity>
 
@@ -86,7 +86,7 @@ const Main = () => {
             <Text style={styles.missionDescription}>일일/주간</Text>
             <Text style={styles.missionDescription}>미션하러 가기</Text>
           </View>
-          <Image style={styles.missionImage} source={require('../../assets/mission-icon.png')} />
+          <Image style={styles.missionImage} source={require('../../assets/icons/mission-icon.png')} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.communityBoard}>
           <Text style={styles.communityTitle}>우리 동네</Text>
@@ -94,7 +94,7 @@ const Main = () => {
           <Text style={styles.communityText}>우리동네</Text>
           <Text style={styles.communityText}>커뮤니티</Text>
           </View>
-          <Image style={styles.communityImage} source={require('../../assets/village.png')} // 예시 이미지
+          <Image style={styles.communityImage} source={require('../../assets/images/village.png')} // 예시 이미지
           />
         </TouchableOpacity>
       </View>
@@ -106,7 +106,7 @@ const Main = () => {
             <Text style={styles.guideSubtitle}>사진 촬영</Text>
             <Text style={styles.guideSubtitle}>분리 배출</Text>
           </View>
-          <Image style={styles.guideCameraIcon} source={require('../../assets/camera.png')} // 예시 이미지
+          <Image style={styles.guideCameraIcon} source={require('../../assets/images/camera.png')} // 예시 이미지
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.collectionCard} onPress={handleRewardPress}>
@@ -115,7 +115,7 @@ const Main = () => {
           <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
           <Text style={styles.collectionSubtitle}>및 건전지 등 위치</Text>
           </View>
-          <Image style={styles.collectionLocationIcon} source={require('../../assets/placeholder.png')} // 예시 이미지
+          <Image style={styles.collectionLocationIcon} source={require('../../assets/images/placeholder.png')} // 예시 이미지
           />
         </TouchableOpacity>
       </View>

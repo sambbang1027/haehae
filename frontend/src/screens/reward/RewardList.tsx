@@ -25,10 +25,10 @@ const RewardList = () => {
     };
 
     const rewardItems = [
-        { id: 1, title: '인천시 나무심기 기부', points: '1,000p', imageSrc: require('../../assets/tree.png'), topPosition: hp('50%') },
-        { id: 2, title: '산불 피해 이웃 돕기', points: '1,000p', imageSrc: require('../../assets/chimchack.png'), topPosition: hp('57%') },
-        { id: 3, title: '불우이웃 재헌이 돕기', points: '1,000p', imageSrc: require('../../assets/faker.png'), topPosition: hp('64%') },
-        { id: 4, title: '불우이웃 도훈이 돕기', points: '100,000p', imageSrc: require('../../assets/iu.png'), topPosition: hp('71%') },
+        { id: 1, title: '인천시 나무심기 기부', points: '1,000p', imageSrc: require('../../assets/images/tree.png'), topPosition: hp('50%') },
+        { id: 2, title: '산불 피해 이웃 돕기', points: '1,000p', imageSrc: require('../../assets/images/chimchack.png'), topPosition: hp('57%') },
+        { id: 3, title: '불우이웃 재헌이 돕기', points: '1,000p', imageSrc: require('../../assets/images/faker.png'), topPosition: hp('64%') },
+        { id: 4, title: '불우이웃 도훈이 돕기', points: '100,000p', imageSrc: require('../../assets/images/iu.png'), topPosition: hp('71%') },
     ];
 
     return (
@@ -36,7 +36,7 @@ const RewardList = () => {
         <ScrollView style={styles.container}
         contentContainerStyle={styles.scrollViewContent}>
             <Header />
-            <Image style={styles.pointIcon} source={require('../../assets/reward-coin.png')} resizeMode="contain" />
+            <Image style={styles.pointIcon} source={require('../../assets/images/reward-coin.png')} resizeMode="contain" />
             <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
             <Text style={styles.totalPoints}>1,080P</Text>
             <View style={styles.tabContainer}>

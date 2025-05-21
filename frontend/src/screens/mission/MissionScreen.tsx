@@ -48,7 +48,7 @@
       contentContainerStyle={styles.contentContainerStyle}>
         <Header/>
         <View style={styles.headerContainer}>
-          <Image style={styles.sproutIcon} source={require('../../assets/sprout.png')} />
+          <Image style={styles.sproutIcon} source={require('../../assets/images/sprout.png')} />
           <Text style={styles.currentGradeTitle}>현재 킹도훈님의 등급</Text>
           <Text style={styles.currentGrade}>새싹</Text>
           <Text style={styles.remainingPoints}>꽃 등급까진 3000p 남았습니다.</Text>
@@ -106,7 +106,7 @@
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Image
-              source={require('../../assets/reward-coin.png')} // 이미지 경로를 실제 경로로 변경
+              source={require('../../assets/images/reward-coin.png')} // 이미지 경로를 실제 경로로 변경
               style={styles.modalImage}
             />
             <Text style={styles.modalText}>300p가 지급되었습니다.</Text>

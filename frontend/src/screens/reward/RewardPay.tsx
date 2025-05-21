@@ -25,7 +25,7 @@ const RewardPay = () => {
         contentContainerStyle={styles.scrollViewContentContainer} 
       >
         <Text style={styles.paymentCompleteText}>결제가 완료 되었습니다!</Text>
-        <Image source={require('../../assets/chimchak.png')} style={styles.paymentImage} />
+        <Image source={require('../../assets/images/chimchak.png')} style={styles.paymentImage} />
         <Text style={styles.donationTitle}>불우이웃 재헌이 돕기</Text>
         <Text style={styles.paymentDate}>결제일시 : 2025.04.28 17시 59분</Text>
         <Text style={styles.usedPoints}>사용한 포인트 : 1,000P</Text>

@@ -53,14 +53,14 @@ const RewardDetail = () => {
                         <Text style={styles.date}>2024년 4월 23일</Text>
                         <Text style={styles.organization}>동서남북 기부단체</Text>
                     </View>
-                    <Image style={styles.donationImage} source={require('../../assets/chimchak.png')} resizeMode="cover" />
+                    <Image style={styles.donationImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover" />
                     <Text style={styles.donationDescription}>
                         세상을 구하는게 영웅이 아닙니다. 배고픈 재헌이에게 작은 도움의 손길을 내미는 것. 작지만 따뜻한 손길이 재헌이한테 영웅이 될 수 있습니다. 밥 한 끼 사주세요.
                     </Text>
                     <View style={styles.paymentSummary}>
                         <View style={styles.paymentItem}>
                             <View style={styles.paymentHeader}>
-                                <Image style={styles.paymentImage} source={require('../../assets/chimchak.png')} resizeMode="cover"/>
+                                <Image style={styles.paymentImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover"/>
                                 <View style={{ flexDirection: 'column', justifyContent: 'center' }}> {/* 텍스트들을 세로로 배치 */}
                                     <Text style={styles.paymentOrganization}>동서남북 기부단체</Text>
                                     <Text style={styles.paymentTitle}>불우이웃 재헌이 돕기</Text>

@@ -16,10 +16,10 @@ const RewardPayList = () => {
     const navigation = useNavigation();
 
     const rewardItems = [
-        { id: 1, title: '인천시 나무심기 기부', points: '1,000p', imageSrc: require('../../assets/tree.png'), paymentDate: '2025.04.28 17시 59분' },
-        { id: 2, title: '산불 피해 이웃 돕기', points: '1,000p', imageSrc: require('../../assets/chimchack.png'), paymentDate: '2025.04.28 17시 59분' },
-        { id: 3, title: '불우이웃 재헌이 돕기', points: '1,000p', imageSrc: require('../../assets/faker.png'), paymentDate: '2025.04.28 17시 59분' },
-        { id: 4, title: '불우이웃 도훈이 돕기', points: '100,000p', imageSrc: require('../../assets/iu.png'), paymentDate: '2025.04.28 17시 59분' },
+        { id: 1, title: '인천시 나무심기 기부', points: '1,000p', imageSrc: require('../../assets/images/tree.png'), paymentDate: '2025.04.28 17시 59분' },
+        { id: 2, title: '산불 피해 이웃 돕기', points: '1,000p', imageSrc: require('../../assets/images/chimchack.png'), paymentDate: '2025.04.28 17시 59분' },
+        { id: 3, title: '불우이웃 재헌이 돕기', points: '1,000p', imageSrc: require('../../assets/images/faker.png'), paymentDate: '2025.04.28 17시 59분' },
+        { id: 4, title: '불우이웃 도훈이 돕기', points: '100,000p', imageSrc: require('../../assets/images/iu.png'), paymentDate: '2025.04.28 17시 59분' },
     ];
 
     return (

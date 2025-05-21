@@ -43,7 +43,7 @@ function Alarm() {
                 {/* 하드 코딩된 알림 1 */}
                 <Swipeable renderRightActions={renderRightActions}>
                     <View style={styles.alarmItem}>
-                        <Image style={styles.profileImage} source={require('../../assets/image7.png')} alt="ellipse" />
+                        <Image style={styles.profileImage} source={require('../../assets/images/image7.png')} alt="ellipse" />
                         <Text style={styles.alarmText}>
                             수요일은 플라스틱을 수거하는 날이에요. 오늘도 열심히 재활용을 해봐요!
                         </Text>
@@ -54,7 +54,7 @@ function Alarm() {
                 {/* 하드 코딩된 알림 2 */}
                 <Swipeable renderRightActions={renderRightActions}>
                     <View style={styles.alarmItem}>
-                        <Image style={styles.profileImageSecondary} source={require('../../assets/image7.png')} alt="ellipse" />
+                        <Image style={styles.profileImageSecondary} source={require('../../assets/images/image7.png')} alt="ellipse" />
                         <Text style={styles.alarmText}>
                             오늘은 지구의 날이에요. 오늘 하루도 지구를 구해봅시다!
                         </Text>
@@ -68,7 +68,7 @@ function Alarm() {
                     <View style={styles.alarmItem}>
                         <Image
                             style={styles.userProfileIcon}
-                            source={require('../../assets/image7.png')}
+                            source={require('../../assets/images/image7.png')}
                             alt="user profile"
                         />
                         <Text style={styles.alarmText}>xxx님으로부터 나눔 거래 메세지가 도착했어요.</Text>
