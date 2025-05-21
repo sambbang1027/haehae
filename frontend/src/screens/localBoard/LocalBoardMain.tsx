@@ -15,12 +15,12 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from '../../components/Footer';
 import CustomSearchBar from '../../components/CustomSearchBar';
-import { RootStackParamList } from '../../navigation/types';
+import { LocalBoardStackParamList } from '../../navigation/LocalBoardNavigator';
 
 export default function LocalBoardMain() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<LocalBoardStackParamList>>();
 
   const handleSearch = () => {
     console.log('검색 실행:', searchQuery);
@@ -124,7 +124,7 @@ export default function LocalBoardMain() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
   },
   searchWrapper: {
     paddingHorizontal: 16,

@@ -16,11 +16,12 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from "../../components/Footer";
 import CustomSearchBar from "../../components/CustomSearchBar";
 import { RootStackParamList } from "../../navigation/types";
+import { SharingParamList } from "../../navigation/SharingNavigator";
 
 export default function ShairingMain() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<SharingParamList>>();
 
   const handleSearch = () => {
     console.log('검색 실행:', searchQuery);

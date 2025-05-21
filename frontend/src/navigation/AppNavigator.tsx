@@ -4,6 +4,7 @@ import { TouchableOpacity, Text } from 'react-native';
 import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
+import CommunityNavigator from './CommunityNavigator';
 
 import TestMenuScreen from './TestMenuScreen';  // 테스트용 추가
 
@@ -11,9 +12,9 @@ export type AppStackParamList = {
   category: undefined;
   LoginStack: undefined;
   MyPageStack: undefined;
-
   TestMenu: undefined; // 테스트용 추가
   TestStack: undefined;
+  CommunityStack: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -47,12 +48,15 @@ const AppNavigator = () => {
         name="MyPageStack"
         component={MyPageNavigator}
         options={{ headerShown: false }}
-      />
-      
+      />      
       <Stack.Screen 
         name="TestMenu"
         component={TestMenuScreen}
         options={{ headerShown: false }}
+
+      <Stack.Screen
+        name="CommunityStack"
+        component={CommunityNavigator}
       />      
     </Stack.Navigator>
   );
