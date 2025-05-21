@@ -4,8 +4,8 @@ import { View, Image, StyleSheet } from 'react-native';
 export default function Header() {
   return (
     <View style={styles.header}>
-      <Image source={require('../assets/appLogo.png')} style={styles.logo} />
-      <Image source={require('../assets/appTitle.png')} style={styles.title} />
+      <Image source={require('../../assets/appLogo.png')} style={styles.logo} />
+      <Image source={require('../../assets/appTitle.png')} style={styles.title} />
     </View>
   );
 }

@@ -10,10 +10,9 @@ import ModalHost from './src/components/modal/HostModal';
 import Footer from './src/components/layouts/Footer';
 import { ToastProvider } from './src/context/ToastContext';
 import AppNavigator from './src/navigation/AppNavigator';
-
-
 export default function App() {
-  return (
+
+  return ( 
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TextSizeProvider>
         <SafeAreaProvider>
