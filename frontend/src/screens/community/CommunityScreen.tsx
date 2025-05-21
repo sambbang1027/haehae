@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Footer from '../../components/Footer';
-import MainHeader from '../../components/MainHeader';
+import Footer from '../../components/layouts/Footer';
+import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
@@ -159,9 +159,9 @@ export default function CommunityScreen() {
         })}
       </ScrollView>
 
-      <View style={styles.footerWrapper}>
+      {/* <View style={styles.footerWrapper}>
         <Footer />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }

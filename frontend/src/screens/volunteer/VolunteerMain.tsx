@@ -13,8 +13,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Footer from "../../components/Footer";
-import CustomSearchBar from "../../components/CustomSearchBar";
+import Footer from "../../components/layouts/Footer";
+import CustomSearchBar from "../../components/common/CustomSearchBar";
 import { VolunteerStackParamList } from "../../navigation/VolunteerNavigator";
 
 export default function VolunteerMain() {
@@ -85,7 +85,7 @@ export default function VolunteerMain() {
         </ScrollView>
 
         {/* 푸터 */}
-//         {!isKeyboardVisible && <Footer />}
+        {/* {!isKeyboardVisible && <Footer />} */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

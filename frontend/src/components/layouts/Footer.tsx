@@ -15,23 +15,23 @@ export default function Footer() {
       <View style={styles.topLine} />
       <View style={styles.row}>
         <TouchableOpacity style={styles.item} onPress={()=> navigation.navigate('category')}>
-          <Image source={require('../../assets/menuEntry.png')} style={styles.icon} />
+          <Image source={require('../../assets/icons/menuEntry.png')} style={styles.icon} />
           <Text style={styles.label}>카테고리</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.item}>
-          <Image source={require('../../assets/communityEntry.png')} style={styles.icon} />
+          <Image source={require('../../assets/icons/communityEntry.png')} style={styles.icon} />
           <Text style={styles.label}>커뮤니티</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.centerItem}>
-          <Image source={require('../../assets/footerLogo.png')} style={styles.centerLogo} />
+          <Image source={require('../../assets/icons/footerLogo.png')} style={styles.centerLogo} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.item}>
-          <Image source={require('../../assets/recycleEntryLogo.png')} style={styles.icon} />
+          <Image source={require('../../assets/icons/recycleEntryLogo.png')} style={styles.icon} />
           <Text style={styles.label}>분리수거</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.item} 
         onPress={() => navigation.navigate('MyPageStack', {screen:'MyPage'})}>
-          <Image source={require('../../assets/profileLogo.png')} style={styles.icon} />
+          <Image source={require('../../assets/icons/profileLogo.png')} style={styles.icon} />
           <Text style={styles.label}>마이</Text>
         </TouchableOpacity>
       </View>
