@@ -7,12 +7,13 @@ import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
 import { LoginStackParamList } from './LoginNavigator';
 import { MyPageStackParamList } from './MyPageNavigator';
-
+import CommunityNavigator from './CommunityNavigator';
 
 export type AppStackParamList = {
   category: undefined;
   LoginStack: NavigatorScreenParams<LoginStackParamList>;
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
+  CommunityStack: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -46,6 +47,10 @@ const AppNavigator = () => {
         name="MyPageStack"
         component={MyPageNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CommunityStack"
+        component={CommunityNavigator}
       />      
     </Stack.Navigator>
   );

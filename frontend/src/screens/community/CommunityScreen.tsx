@@ -12,7 +12,7 @@ import Footer from '../../components/layouts/Footer';
 import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../navigation/types';
+import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
 
 type PostSummary = {
   id: number;
@@ -23,7 +23,7 @@ type PostSummary = {
 
 export default function CommunityScreen() {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
 
   const moveToDetail = (post: PostSummary) => {
     switch (post.type) {
@@ -88,9 +88,8 @@ export default function CommunityScreen() {
         {/* 네비게이션 박스 */}
         <View style={styles.grid}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('LocalBoardMain')}
-            style={styles.rectangleBox}
-          >
+            onPress={() =>navigation.navigate('LocalBoardStack', {screen: 'LocalBoardMain',})}
+            style={styles.rectangleBox}>
             <Image
               source={require('../../assets/localBoardEntry.png')}
               style={styles.icon}
@@ -98,7 +97,7 @@ export default function CommunityScreen() {
             <Text style={styles.title}>우리동네</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('VolunteerMain')}
+            onPress={() => navigation.navigate('VolunteerStack', {screen: 'VolunteerMain',})}
             style={styles.rectangleBox}
           >
             <Image
@@ -108,7 +107,7 @@ export default function CommunityScreen() {
             <Text style={styles.title}>봉사</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ShairingMain')}
+            onPress={() => navigation.navigate('SharingStack', {screen: 'SharingMain'})}
             style={styles.rectangleBox}
           >
             <Image
