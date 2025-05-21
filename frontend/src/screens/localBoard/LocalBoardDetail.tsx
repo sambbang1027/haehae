@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef,  useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -11,38 +11,59 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { LocalBoardStackParamList } from "../../navigation/LocalBoardNavigator";
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import OptionModal from "../../components/OptionModal";
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
 export default function LocalBoardDetail() {
   const route = useRoute<LocalBoardDetailRouteProps>();
-  // const { setPostingInfo, postingInfo} = useState([]); axios를 통해서 받아올 게시물 정보
-  // const { setPostingComment, postingComment} = useState([]); axios를 통해서 받아올 게시물 댓글
-  // const { setLeaveComment, LeaveComment} = useState(''); axios를 통해서 댓글 저장
-  // const { setLeaveReply, LeaveReply } = useState(''); axios를 통해서 대댓글 저장 생각해보니깐 대댓글 페이지를 만들어야 되네;;? ㅅㅂㅂ
-  const { id } = route.params; //LocalBoardMain에서 param값 전달
+  const navigation = useNavigation<NativeStackNavigationProp<LocalBoardStackParamList>>();
+  const { id } = route.params;
+  const modalRef = useRef<BottomSheetModal>(null);
+  const optionModalRef = useRef<BottomSheetModal>(null);
 
-  //postingInfo 더미데이터
+  const currentUserId = 1001; // 로그인한 사용자 ID
+  
+  //옵션 모달 활성화
+    const activeOptionModal = () =>{
+      optionModalRef.current?.present()
+    };
+  
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerRight: () => (
+        <TouchableOpacity onPress={()=>{activeOptionModal()}} style={{marginRight:20}}>
+          <Text style={{ fontSize: 25, fontWeight:'bold' }}>⁝</Text>
+        </TouchableOpacity>
+        ),
+        title:'',
+        headerShadowVisible:false,
+      });
+    },[navigation])
+
   const postingInfo = [
     {
       id: 1,
+      authorId: 1001,
       author: '서샘이',
       date: '2025년 4월 24일',
-      title: '서샘이의 광주 VS 강재현의 광주 누가 더 시골인인가요?',
-      content: '경기도 광주는 CGV도 없다면서요? Fact인가요?',
+      title: '광주 vs 광주',
+      content: '경기도 광주 vs 광주광역시 누가 더 시골이라고 생각하시나요?',
       image: 'https://via.placeholder.com/350x200',
     },
   ];
 
-  //param으로 넘어온 id와 post내의 id가 일치하는 아이디 여부 확인인
   const post = postingInfo.find((p) => p.id === id);
 
-  //postingComment(대댓글까지 포함됨) 더미데이터
   const postingComment = [
     {
       id: 1,
+      authorId: 1002,
       author: '강재현',
       date: '2025년 4월 24일 오후 3시 52분',
       content: '경기도가 더 도시입니다. 불만있으면 한 판 뜨든가',
@@ -50,7 +71,8 @@ export default function LocalBoardDetail() {
       replies: [
         {
           id: 11,
-          author: '서쌤이',
+          authorId: 1001,
+          author: '서샘이',
           date: '2025년 4월 24일 오후 4시 02분',
           content: '140만명의 광주시민의 저항을 받고싶으세요?',
           image: null,
@@ -59,6 +81,7 @@ export default function LocalBoardDetail() {
     },
     {
       id: 2,
+      authorId: 1003,
       author: '윤태현',
       date: '2025년 4월 24일 오후 4시 10분',
       content: '군포가 더 시골입니다',
@@ -67,20 +90,42 @@ export default function LocalBoardDetail() {
     },
   ];
 
+  const goToReplyScreen = (commentId: number) => {
+    navigation.navigate("LocalBoardReplyStack", {
+      screen: "LocalBoardReply",
+      params: { commentId },
+    });
+  };
+
   const renderComments = () => {
     return postingComment.map((comment) => (
       <View key={comment.id} style={styles.commentBox}>
         <View style={styles.commentHeaderRow}>
-          <Image source={require('../../assets/defaultProfile.png')} style={styles.commentProfile} />
+          <Image source={require('../../assets/icons/defaultProfile.png')} style={styles.commentProfile} />
           <View style={{ marginLeft: 10, flex: 1 }}>
             <View style={styles.commentTopRow}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={styles.commentAuthor}>{comment.author}</Text>
                 <Text style={styles.commentDate}> {comment.date}</Text>
               </View>
-              <TouchableOpacity>
-                <Text style={styles.replyButton}>답글</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => goToReplyScreen(comment.id)}>
+                  <Text style={styles.replyButton}>답글</Text>
+                </TouchableOpacity>
+                {comment.authorId !== currentUserId && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ReportScreen", {
+                        type: "comment",
+                        commentId: comment.id,
+                      })
+                    }
+                    style={{ marginLeft: 12 }}
+                  >
+                    <Text style={styles.reportButton}>신고</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
             <Text style={styles.commentText}>{comment.content}</Text>
             {comment.image && (
@@ -89,10 +134,9 @@ export default function LocalBoardDetail() {
           </View>
         </View>
 
-        {/* 대댓글 */}
         {comment.replies.map((reply) => (
           <View key={reply.id} style={styles.replyBox}>
-            <Image source={require('../../assets/defaultProfile.png')} style={styles.replyProfile} />
+            <Image source={require('../../assets/icons/defaultProfile.png')} style={styles.replyProfile} />
             <View style={styles.replyContent}>
               <View style={styles.commentTopRow}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -126,20 +170,16 @@ export default function LocalBoardDetail() {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* 작성자 영역 */}
           <View style={styles.authorContainer}>
-            <Image source={require('../../assets/defaultProfile.png')} style={styles.profile} />
+            <Image source={require('../../assets/icons/defaultProfile.png')} style={styles.profile} />
             <View style={styles.authorText}>
               <Text style={styles.authorName}>{post.author}</Text>
-              <Text style={styles.date}>{post.date}</Text>
             </View>
-            <TouchableOpacity style={styles.options}>
-              <Text>⋮</Text>
-            </TouchableOpacity>
           </View>
 
-          {/* 제목 및 본문 */}
+          <View style={styles.separator} />
           <Text style={styles.title}>{post.title}</Text>
+          <Text style={styles.date}>{post.date}</Text>
           <Text style={styles.content}>{post.content}</Text>
 
           {post.image && (
@@ -158,55 +198,157 @@ export default function LocalBoardDetail() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      <OptionModal
+        ref={optionModalRef}
+        isAuthor={post.authorId === currentUserId}
+        postId={post.id}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  scrollContent: { padding: 20, paddingBottom: 100 },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContent: {
+    padding: wp('5%'),
+    paddingTop: hp('2%'),
+    paddingBottom: hp('13%'),
+  },
 
-  authorContainer: { flexDirection: 'row', alignItems: 'center' },
-  profile: { width: 50, height: 50, borderRadius: 25 },
-  authorText: { marginLeft: 10 },
-  authorName: { fontWeight: 'bold' },
-  date: { color: '#888', fontSize: 12 },
-  options: { marginLeft: 'auto', padding: 10 },
+  authorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profile: {
+    width: wp('16%'),
+    height: wp('16%'),
+    borderRadius: wp('6%'),
+  },
+  authorText: {
+    marginLeft: wp('2.5%'),
+  },
+  authorName: {
+    fontWeight: 'bold',
+    fontSize: wp('4.5%'),
+  },
+  date: {
+    color: '#888',
+    fontSize: wp('3%'),
+  },
+  options: {
+    marginLeft: 'auto',
+    padding: wp('2.5%'),
+  },
+  optionsIcon: {
+    fontSize: wp('7%'),
+  },
 
-  title: { fontSize: 18, fontWeight: 'bold', marginTop: 20 },
-  content: { fontSize: 16, marginVertical: 15 },
-  postImage: { width: '100%', height: 200, borderRadius: 8 },
-  separator: { borderBottomWidth: 1, borderColor: '#ccc', marginVertical: 20 },
+  title: {
+    fontSize: wp('4.5%'),
+    fontWeight: 'bold',
+    marginTop: hp('2%'),
+  },
+  content: {
+    fontSize: wp('4%'),
+    marginVertical: hp('2%'),
+  },
+  postImage: {
+    width: '100%',
+    height: hp('25%'),
+    borderRadius: wp('2%'),
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginVertical: hp('2.5%'),
+  },
 
-  commentHeader: { fontWeight: 'bold', fontSize: 16, marginBottom: 10 },
-  commentBox: { marginBottom: 20 },
-  commentHeaderRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  commentProfile: { width: 30, height: 30, borderRadius: 15 },
+  commentHeader: {
+    fontWeight: 'bold',
+    fontSize: wp('4%'),
+    marginBottom: hp('1.5%'),
+  },
+  commentBox: {
+    marginBottom: hp('2.5%'),
+  },
+  commentHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  commentProfile: {
+    width: wp('8%'),
+    height: wp('8%'),
+    borderRadius: wp('4%'),
+  },
   commentTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: hp('0.5%'),
   },
-  commentAuthor: { fontWeight: 'bold' },
-  commentDate: { fontSize: 12, color: '#777', marginLeft: 8 },
-  commentText: { fontSize: 15, marginBottom: 4 },
-  commentImage: { width: 100, height: 80, borderRadius: 6, marginBottom: 4 },
-  replyButton: { fontSize: 13, color: '#555' },
+  commentAuthor: {
+    fontWeight: 'bold',
+  },
+  commentDate: {
+    fontSize: wp('3%'),
+    color: '#777',
+    marginLeft: wp('2%'),
+  },
+  commentText: {
+    fontSize: wp('3.8%'),
+    marginBottom: hp('0.5%'),
+  },
+  commentImage: {
+    width: wp('25%'),
+    height: hp('10%'),
+    borderRadius: wp('1.5%'),
+    marginBottom: hp('0.5%'),
+  },
+  replyButton: {
+    fontSize: wp('3.3%'),
+    color: '#555',
+  },
+  reportButton: {
+    fontSize: wp('3.3%'),
+    color: '#d00',
+  },
 
-  replyBox: { flexDirection: 'row', marginLeft: 40, marginTop: 10 },
-  replyProfile: { width: 25, height: 25, borderRadius: 12.5 },
-  replyContent: { marginLeft: 10, flex: 1 },
-  deleteButton: { fontSize: 13, color: '#d00' },
+  replyBox: {
+    flexDirection: 'row',
+    marginLeft: wp('10%'),
+    marginTop: hp('1%'),
+  },
+  replyProfile: {
+    width: wp('6.5%'),
+    height: wp('6.5%'),
+    borderRadius: wp('3.25%'),
+  },
+  replyContent: {
+    marginLeft: wp('2.5%'),
+    flex: 1,
+  },
+  deleteButton: {
+    fontSize: wp('3.3%'),
+    color: '#d00',
+  },
 
   inputBar: {
     flexDirection: 'row',
     borderTopWidth: 1,
     borderColor: '#ddd',
-    padding: 10,
+    padding: wp('2.5%'),
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  input: { flex: 1, paddingHorizontal: 10 },
-  send: { fontSize: 20, paddingHorizontal: 10 },
+  input: {
+    flex: 1,
+    paddingHorizontal: wp('2.5%'),
+  },
+  send: {
+    fontSize: wp('5%'),
+    paddingHorizontal: wp('2.5%'),
+  },
 });

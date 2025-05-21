@@ -1,5 +1,5 @@
-import React from 'react';
 import 'react-native-reanimated';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,9 +10,11 @@ import ModalHost from './src/components/modal/HostModal';
 import Footer from './src/components/layouts/Footer';
 import { ToastProvider } from './src/context/ToastContext';
 import AppNavigator from './src/navigation/AppNavigator';
-export default function App() {
+import CommunityNavigator from './src/navigation/CommunityNavigator';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
-  return ( 
+export default function App() {
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TextSizeProvider>
         <SafeAreaProvider>
@@ -20,9 +22,12 @@ export default function App() {
             <ToastProvider>
               <ModalProvider>
                 <NavigationContainer>
-                  <AppNavigator />
-                  <ModalHost />
-                  <Footer />
+                    <BottomSheetModalProvider>
+                      {/* <AppNavigator /> */}
+                      <CommunityNavigator></CommunityNavigator>
+                      <ModalHost />
+                      <Footer />
+                    </BottomSheetModalProvider>
                 </NavigationContainer>
               </ModalProvider>
             </ToastProvider>

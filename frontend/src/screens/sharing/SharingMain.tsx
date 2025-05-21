@@ -12,16 +12,16 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Footer from "../../components/layouts/Footer";
 import CustomSearchBar from "../../components/common/CustomSearchBar";
-import { RootStackParamList } from "../../navigation/types";
-import { SharingParamList } from "../../navigation/SharingNavigator";
+import { SharingStackParamList } from "../../navigation/SharingNavigator";
 
 export default function ShairingMain() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const navigation = useNavigation<NativeStackNavigationProp<SharingParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<SharingStackParamList>>();
 
   const handleSearch = () => {
     console.log('검색 실행:', searchQuery);
@@ -90,7 +90,7 @@ export default function ShairingMain() {
             style={styles.iconWrapper}
           >
             <Image
-              source={require('../../assets/writePostLogo.png')}
+              source={require('../../assets/icons/writePostLogo.png')}
               style={styles.icon}
             />
           </TouchableOpacity>
@@ -109,34 +109,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   searchWrapper: {
-    marginTop: 10,
-    paddingHorizontal: 16,
+    marginTop: hp('1.2%'),
+    paddingHorizontal: wp('4%'),
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
+    paddingHorizontal: wp('4%'),
+    paddingBottom: hp('13%'),
   },
   shairingPostCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    borderRadius: 12,
+    borderRadius: wp('3%'),
     borderWidth: 1,
     backgroundColor: '#fff',
-    padding: 16,
-    marginBottom: 12,
-    minHeight: 120,
+    padding: wp('4%'),
+    marginBottom: hp('1.5%'),
+    minHeight: hp('15%'),
     position: 'relative',
   },
   textArea: {
     flex: 1,
-    marginRight: 12,
+    marginRight: wp('3%'),
     position: 'relative',
-    paddingBottom: 60,
+    paddingBottom: hp('7%'),
   },
   title: {
-    fontSize: 16,
+    fontSize: wp('4.2%'),
     fontWeight: 'bold',
-    marginBottom: 6,
+    marginBottom: hp('0.7%'),
   },
   metaBox: {
     position: 'absolute',
@@ -144,36 +144,36 @@ const styles = StyleSheet.create({
     left: 0,
   },
   nickname: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: '#555',
-    marginBottom: 2,
+    marginBottom: hp('0.2%'),
   },
   createdAt: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: '#999',
   },
   shairingStatus: {
     position: 'absolute',
-    right: 16,
-    bottom: 16,
-    width: 70,
-    height: 28,
-    borderRadius: 14,
+    right: wp('4%'),
+    bottom: hp('2%'),
+    width: wp('18%'),
+    height: hp('4%'),
+    borderRadius: wp('7%'),
     alignItems: 'center',
     justifyContent: 'center',
   },
   statusText: {
-    fontSize: 13,
+    fontSize: wp('3.4%'),
     fontWeight: '600',
   },
   iconWrapper: {
     position: 'absolute',
-    bottom: 130,
-    right: 25,
+    bottom: hp('16%'),
+    right: wp('6%'),
     zIndex: 10,
   },
   icon: {
-    width: 60,
-    height: 60,
+    width: wp('15%'),
+    height: wp('15%'),
   },
 });
