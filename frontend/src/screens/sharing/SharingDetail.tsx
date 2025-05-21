@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,18 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Image } from 'react-native-elements';
-
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { SharingStackParamList } from '../../navigation/SharingNavigator';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import OptionModal from '../../components/OptionModal';
 const { height: screenHeight } = Dimensions.get('window');
 
 export default function SharingDetail() {
+  const navigation = useNavigation<NativeStackNavigationProp<SharingStackParamList>>();
+  const optionModalRef = useRef<BottomSheetModal>(null);
   const post = {
     title: '중고 세탁기 나눕니다.',
     content: '세탁기 나눕니다. 고장 없음. 직접 오셔서 가져가셔야합니다. \n-잔기스 있음 \n-사용기간 5년 \n-장소: 인천광역시 성북구 무슨역인지 기억안남 \n-일시: 5월 15일 14시',
@@ -22,6 +29,22 @@ export default function SharingDetail() {
     imageUri: 'https://via.placeholder.com/100',
   };
 
+  //옵션 모달 활성화
+  const activeOptionModal = () =>{
+    optionModalRef.current?.present()
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+      <TouchableOpacity onPress={()=>{activeOptionModal()}} style={{marginRight:20}}>
+        <Text style={{ fontSize: 25, fontWeight:'bold' }}>⁝</Text>
+      </TouchableOpacity>
+      ),
+      title:'',
+      headerShadowVisible:false,
+    });
+  },[navigation])
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -31,7 +54,6 @@ export default function SharingDetail() {
           <View style={styles.userText}>
             <Text style={styles.nickname}>{post.nickname}</Text>
           </View>
-          <Text style={styles.icon}>⋮</Text>
         </View>
 
         {/* 제목 */}
@@ -53,9 +75,10 @@ export default function SharingDetail() {
       </ScrollView>
 
       {/* 하단 고정 버튼 */}
-      <TouchableOpacity style={styles.chatBox}>
+      <TouchableOpacity style={styles.chatBox} onPress={()=>navigation.navigate('ChatingStack', {screen: 'ChatingDetail',})}>
         <Text style={styles.chatText}>채팅하기</Text>
       </TouchableOpacity>
+      <OptionModal ref={optionModalRef} isAuthor={false} postId={1} />
     </SafeAreaView>
   );
 }
@@ -66,83 +89,79 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: wp('5%'),
   },
   scrollContent: {
-    paddingBottom: screenHeight * 0.13,
-    paddingTop: 20,
+    paddingBottom: hp('13%'),
+    paddingTop: hp('2.5%'),
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: hp('2%'),
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: wp('15%'),
+    height: wp('15%'),
+    borderRadius: wp('7.5%'),
   },
   userText: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: wp('2.5%'),
   },
   nickname: {
     fontWeight: 'bold',
-    fontSize: 20,
-  },
-  icon: {
-    fontSize: 40,
-    color: '#444',
-    paddingHorizontal: 6,
-  },
+    fontSize: wp('5%'),
+  },  
   title: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
   },
   subDate: {
-    fontSize: 12,
+    fontSize: wp('3%'),
     fontWeight: 'bold',
-    marginTop: 4,
+    marginTop: hp('0.5%'),
   },
   category: {
-    fontSize: 13,
+    fontSize: wp('3.3%'),
     color: '#888',
-    marginTop: 10,
+    marginTop: hp('1.2%'),
   },
   divider: {
     height: 1,
     backgroundColor: '#ccc',
-    marginVertical: 15,
+    marginVertical: hp('2%'),
   },
   content: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: wp('3.7%'),
+    lineHeight: hp('3.3%'),
   },
   imageSection: {
-    marginTop: 10,
+    marginTop: hp('1.2%'),
     flexDirection: 'row',
   },
   thumbnail: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
+    width: wp('20%'),
+    height: wp('20%'),
+    borderRadius: wp('3%'),
     borderColor: '#000',
     borderWidth: 1,
   },
   chatBox: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    height: 50,
+    bottom: hp('2.5%'),
+    left: wp('5%'),
+    right: wp('5%'),
+    height: hp('6.5%'),
     backgroundColor: '#D7F7B5',
-    borderRadius: 25,
+    borderRadius: wp('12.5%'),
     justifyContent: 'center',
     alignItems: 'center',
   },
   chatText: {
     color: 'black',
-    fontSize: 16,
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
   },
 });
+
