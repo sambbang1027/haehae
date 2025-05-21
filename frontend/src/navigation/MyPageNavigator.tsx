@@ -10,6 +10,12 @@ import PointRecord from '../screens/mypage/PointRecordPage';
 import MyVolunteer from '../screens/mypage/MyVolunteerPage';
 import MyMission from '../screens/mypage/MyMissonPage';
 import MyLocalBoard from '../screens/mypage/MyLocalBoardPage';
+import MySharing from '../screens/mypage/MySharingPage';
+import FontSize from '../screens/mypage/FontSizeSettingPage';
+import NotificationSettings from '../screens/mypage/NotificationSettingPage';
+import Faq from '../screens/mypage/FaqPage';
+import Notice from '../screens/mypage/NoticePage';
+import Inquiry from '../screens/mypage/InquiryPage';
 
 // 네비게이션 스택 타입 정의
 export type MyPageStackParamList = {
@@ -23,6 +29,12 @@ export type MyPageStackParamList = {
   MyVolunteer: undefined;
   MyMission: undefined;
   MyLocalBoard: undefined;
+  MySharing: undefined;
+  FontSize: undefined;
+  NotificationSettings: undefined;
+  Faq: undefined;
+  Notice: undefined;
+  Inquiry: undefined;
 };
 
 const Stack = createNativeStackNavigator<MyPageStackParamList>();
@@ -84,6 +96,36 @@ const MyPageNavigator = () => {
         name='MyLocalBoard'
         component={MyLocalBoard}
         options={{title: '나의 동네 게시판'}}
+      />
+      <Stack.Screen 
+        name='MySharing'
+        component={MySharing}
+        options={{title: '나의 나눔 게시판'}}
+      />
+      <Stack.Screen 
+        name='FontSize'
+        component={FontSize}
+        options={{title: '텍스트 크기'}}
+      />
+      <Stack.Screen 
+        name='NotificationSettings'
+        component={NotificationSettings}
+        options={{title: '알림 설정'}}
+      />
+      <Stack.Screen 
+        name='Faq'
+        component={Faq}
+        options={{title: 'FAQ'}}
+      />
+      <Stack.Screen 
+        name='Notice'
+        component={Notice}
+        options={{title:'공지사항'}}
+      />
+      <Stack.Screen 
+        name='Inquiry'
+        component={Inquiry}
+        options={{title:'1 : 1 문의'}}
       />
     </Stack.Navigator>
   );

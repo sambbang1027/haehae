@@ -1,15 +1,18 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { TouchableOpacity, Text } from 'react-native';
 import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
+import { LoginStackParamList } from './LoginNavigator';
+import { MyPageStackParamList } from './MyPageNavigator';
+
 
 export type AppStackParamList = {
   category: undefined;
-  LoginStack: undefined;
-  MyPageStack: undefined;
-  
+  LoginStack: NavigatorScreenParams<LoginStackParamList>;
+  MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();

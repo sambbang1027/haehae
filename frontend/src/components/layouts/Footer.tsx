@@ -1,30 +1,39 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet,TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../../navigation/AppNavigator';
+
+type Navigation = NativeStackNavigationProp<AppStackParamList>;
+
 
 export default function Footer() {
+  const navigation = useNavigation<Navigation>();
+
   return (
     <View style={styles.footer}>
       <View style={styles.topLine} />
       <View style={styles.row}>
-        <View style={styles.item}>
-          <Image source={require('../assets/menuEntry.png')} style={styles.icon} />
+        <TouchableOpacity style={styles.item} onPress={()=> navigation.navigate('category')}>
+          <Image source={require('../../assets/menuEntry.png')} style={styles.icon} />
           <Text style={styles.label}>카테고리</Text>
-        </View>
-        <View style={styles.item}>
-          <Image source={require('../assets/communityEntry.png')} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.item}>
+          <Image source={require('../../assets/communityEntry.png')} style={styles.icon} />
           <Text style={styles.label}>커뮤니티</Text>
-        </View>
-        <View style={styles.centerItem}>
-          <Image source={require('../assets/footerLogo.png')} style={styles.centerLogo} />
-        </View>
-        <View style={styles.item}>
-          <Image source={require('../assets/recycleEntryLogo.png')} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.centerItem}>
+          <Image source={require('../../assets/footerLogo.png')} style={styles.centerLogo} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.item}>
+          <Image source={require('../../assets/recycleEntryLogo.png')} style={styles.icon} />
           <Text style={styles.label}>분리수거</Text>
-        </View>
-        <View style={styles.item}>
-          <Image source={require('../assets/profileLogo.png')} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.item} 
+        onPress={() => navigation.navigate('MyPageStack', {screen:'MyPage'})}>
+          <Image source={require('../../assets/profileLogo.png')} style={styles.icon} />
           <Text style={styles.label}>마이</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -62,7 +71,7 @@ const styles = StyleSheet.create({
   },
   centerItem: {
     alignItems: 'center',
-    marginTop: -20, // 로고가 살짝 위로 올라오게
+    marginTop: -50, // 로고가 살짝 위로 올라오게
   },
   centerLogo: {
     width: 83,
