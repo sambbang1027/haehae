@@ -10,8 +10,8 @@ import {
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import axios from 'axios';
 import { Swipeable } from 'react-native-gesture-handler'; // Swipeable import
-import Header from '../../components/MainHeader';
-import Footer from '../../components/Footer';
+// import Header from '../../components/MainHeader';
+// import Footer from '../../components/Footer';
 
 function Alarm() {
     const [notifications, setNotifications] = useState([]);
@@ -103,7 +103,7 @@ function Alarm() {
                 */}
             </View>
         </ScrollView>
-        <Footer/>
+        {/* <Footer/> */}
         </View>   
     );
 } 

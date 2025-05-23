@@ -1,20 +1,32 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { TouchableOpacity, Text } from 'react-native';
 import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
+import { LoginStackParamList } from './LoginNavigator';
+import { MyPageStackParamList } from './MyPageNavigator';
+import { CommuntiyStackParamList } from './CommunityNavigator';
+
+import TestMenuScreen from './TestMenuScreen';
+import CommunityNavigator from './CommunityNavigator';
 import MainNavigator from './MainNavigator';
 import ChatList from '../screens/chat/ChatList'; 
 
 
+
+
 export type AppStackParamList = {
   category: undefined;
-  LoginStack: undefined;
-  MyPageStack: undefined;
+  LoginStack: NavigatorScreenParams<LoginStackParamList>;
+  MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
+  TestMenu: undefined; // 테스트용 추가
+  TestStack: undefined;
+  CommunityStack: NavigatorScreenParams<CommuntiyStackParamList>;
   MainStack : undefined;
   chat: undefined;
-  
+
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -54,7 +66,16 @@ const AppNavigator = () => {
         component={MainNavigator}
         options ={{headerShown : false}}
         />
-      {/* <Stack.Screen
+      <Stack.Screen 
+        name="TestMenu"
+        component={TestMenuScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CommunityStack"
+        component={CommunityNavigator}
+      />    
+        {/* <Stack.Screen
         name="chat"
         component={ChatList}
         options={({ navigation }) => ({
@@ -70,7 +91,7 @@ const AppNavigator = () => {
           </TouchableOpacity>
         )
         })}
-      /> 도훈이 chatList UI */}
+      /> 도훈이 chatList UI */}  
     </Stack.Navigator>
   );
 };

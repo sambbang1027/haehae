@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
-import Footer from '../../components/Footer';
+// import Footer from '../../components/Footer';
 
 const RewardPay = () => {
   const navigation = useNavigation(); 
@@ -33,7 +33,7 @@ const RewardPay = () => {
           <Text>확인용-결제목록 페이지 이동</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Footer />
+      {/* <Footer /> */}
     </View>
   );
 };

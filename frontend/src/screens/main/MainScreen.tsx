@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
-import Footer from '../../components/Footer';
+//import Footer from '../../components/Footer';
 
 const Main = () => {
   const navigation = useNavigation();
@@ -142,7 +142,7 @@ const Main = () => {
         </View>
       </View> */}
     </ScrollView>
-    <Footer/>
+    {/* <Footer/> */}
     </View>
   );
 };

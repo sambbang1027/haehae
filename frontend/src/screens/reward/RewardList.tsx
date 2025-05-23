@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
-import Header from '../../components/MainHeader';
-import Footer from '../../components/Footer';
+// import Header from '../../components/MainHeader';
+// import Footer from '../../components/Footer';
 
 const RewardList = () => {
     const navigation = useNavigation(); 
@@ -35,7 +35,7 @@ const RewardList = () => {
         <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}
         contentContainerStyle={styles.scrollViewContent}>
-            <Header />
+            {/* <Header /> */}
             <Image style={styles.pointIcon} source={require('../../assets/images/reward-coin.png')} resizeMode="contain" />
             <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
             <Text style={styles.totalPoints}>1,080P</Text>
@@ -64,7 +64,7 @@ const RewardList = () => {
             ))}
     
         </ScrollView>
-        <Footer/>
+        {/* <Footer/> */}
         </View>
     );
 };

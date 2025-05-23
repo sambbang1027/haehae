@@ -1,8 +1,8 @@
   import React, { useState } from 'react';
   import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
   import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-  import Header from '../../components/MainHeader';
-  import Footer from '../../components/Footer';
+  // import Header from '../../components/MainHeader';
+  // import Footer from '../../components/Footer';
 
   interface Mission {
     id: number;
@@ -46,7 +46,7 @@
       <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}
       contentContainerStyle={styles.contentContainerStyle}>
-        <Header/>
+        {/* <Header/> */}
         <View style={styles.headerContainer}>
           <Image style={styles.sproutIcon} source={require('../../assets/images/sprout.png')} />
           <Text style={styles.currentGradeTitle}>현재 킹도훈님의 등급</Text>
@@ -99,7 +99,7 @@
         )}
 
       </ScrollView>
-      <Footer/>
+      {/* <Footer/> */}
 
 
       {isModalVisible && (
