@@ -1,14 +1,13 @@
 import React from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { TouchableOpacity, Text } from 'react-native';
 
 import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
 import CommunityNavigator from './CommunityNavigator';
-<<<<<<< HEAD
-=======
 import AiDisposalNavigator from './AiDisposalNavigator';
 import RecycleCalendarNavigator from './RecycleCalendarNavigator';
 import LocationNavigator from './LocationNavigator';
@@ -22,19 +21,10 @@ import { AiDisposalParamList } from './AiDisposalNavigator';
 import { RecycleCalendarStackParamList } from './RecycleCalendarNavigator';
 import { LocationStackParamList } from './LocationNavigator';
 import { WasteStackParamList } from './WasteNavigator';
->>>>>>> 8aceb85 ([FEAT] : Navigator 구조화 및 적용)
 
 
 export type AppStackParamList = {
   category: undefined;
-<<<<<<< HEAD
-  LoginStack: undefined;
-  MyPageStack: undefined;
-  TestMenu: undefined; // 테스트용 추가
-  TestStack: undefined;
-  CommunityStack: undefined;
-};
-=======
 
   LoginStack: NavigatorScreenParams<LoginStackParamList>;
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
@@ -50,14 +40,13 @@ export type AppStackParamList = {
   DayWeekMission: undefined;
 
 }
->>>>>>> 8aceb85 ([FEAT] : Navigator 구조화 및 적용)
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="LoginStack"
+      initialRouteName="MyPageStack"
       screenOptions={{
         headerTitleAlign: 'center',
       }}
@@ -84,14 +73,6 @@ const AppNavigator = () => {
         component={MyPageNavigator}
         options={{ headerShown: false }}
       />      
-<<<<<<< HEAD
-      <Stack.Screen 
-        name="TestMenu"
-        component={TestMenuScreen}
-        options={{ headerShown: false }}
-
-=======
->>>>>>> 8aceb85 ([FEAT] : Navigator 구조화 및 적용)
       <Stack.Screen
         name="CommunityStack"
         component={CommunityNavigator}
