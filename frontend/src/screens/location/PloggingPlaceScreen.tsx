@@ -13,9 +13,9 @@ const PloggingPlaceScreen = () => {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: hp('10%') }}>
       {/* 헤더 */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>플로깅 장소</Text>
-      </View>
+      </View> */}
 
       {/* 현재 위치 */}
       <View style={styles.locationBox}>

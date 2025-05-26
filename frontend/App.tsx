@@ -23,8 +23,7 @@ export default function App() {
               <ModalProvider>
                 <NavigationContainer>
                     <BottomSheetModalProvider>
-                      {/* <AppNavigator /> */}
-                      <CommunityNavigator></CommunityNavigator>
+                      <AppNavigator />
                       <ModalHost />
                       <Footer />
                     </BottomSheetModalProvider>

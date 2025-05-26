@@ -7,12 +7,12 @@ const WasteRestrictionGuideScreen = () => {
   return (
     <ScrollView style={styles.container}>
       {/* 상단 헤더 */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>배출 제한 가이드</Text>
         <TouchableOpacity style={styles.closeButton}>
             <Text style={styles.closeText}>X</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* 경고 박스 */}
       <View style={styles.warningBox}>
