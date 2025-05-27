@@ -10,9 +10,10 @@ import {
   ScrollView,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../types'; // 정확한 경로로 수정
+import type { WasteStackParamList } from '../../navigation/WasteNavigator';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'BulkWasteApply'>;
+
+type Props = NativeStackScreenProps<WasteStackParamList, 'BulkWasteApplyScreen'>;
 
 
 const BulkWasteApplyScreen = ({navigation}: Props) => {
@@ -46,7 +47,7 @@ const BulkWasteApplyScreen = ({navigation}: Props) => {
         {/* 다음 버튼 */}
         <TouchableOpacity 
         style={styles.nextBtn}
-        onPress={() => navigation.navigate('WasteApplyWebViewScreen')}>
+        onPress={() => navigation.navigate('WasteApplyWebViewScreen', {url: 'https://www.15990903.or.kr',})}>
           <Text style={styles.nextText}>다음</Text>
         </TouchableOpacity>
       </ScrollView>

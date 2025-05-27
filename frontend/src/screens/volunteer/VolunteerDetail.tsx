@@ -10,9 +10,10 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { VolunteerParamList } from "../../navigation/VolunteerNavigator";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { VolunteerStackParamList } from "../../navigation/VolunteerNavigator";
 
-type VolunteerDetailRouteProps = RouteProp<VolunteerParamList, "VolunteerDetail">;
+type VolunteerDetailRouteProps = RouteProp<VolunteerStackParamList, "VolunteerDetail">;
 
 export default function VolunteerDetail() {
   const route = useRoute<VolunteerDetailRouteProps>();
@@ -92,64 +93,66 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 80,
+    padding: wp('5%'),
+    paddingBottom: hp('10%'),
   },
   title: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: hp('0.7%'),
   },
   subInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginBottom: hp('2%'),
   },
   date: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: "#444",
   },
   region: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: "#444",
   },
   imageBox: {
     width: "100%",
-    height: 300,
+    height: hp('35%'),
     backgroundColor: "#eee",
-    borderRadius: 10,
+    borderRadius: wp('3%'),
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: hp('2.5%'),
   },
   description: {
-    fontSize: 14,
-    marginBottom: 20,
-    lineHeight: 20,
+    fontSize: wp('3.8%'),
+    marginBottom: hp('2.5%'),
+    lineHeight: hp('2.8%'),
   },
   row: {
     flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: hp('1.2%'),
   },
   label: {
     fontWeight: "bold",
-    marginRight: 10,
+    marginRight: wp('2.5%'),
+    fontSize: wp('3.8%'),
   },
   value: {
-    fontSize: 14,
+    fontSize: wp('3.8%'),
   },
   button: {
     position: "absolute",
-    bottom: 10,
-    left: 20,
-    right: 20,
-    padding: 16,
-    borderRadius: 10,
+    bottom: hp('1.5%'),
+    left: wp('5%'),
+    right: wp('5%'),
+    paddingVertical: hp('2%'),
+    borderRadius: wp('2.5%'),
     alignItems: "center",
   },
   buttonText: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: wp('4.2%'),
     color: "#000",
   },
 });
+

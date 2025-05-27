@@ -11,10 +11,11 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Footer from "../../components/layouts/Footer";
 import CustomSearchBar from "../../components/common/CustomSearchBar";
 import { VolunteerStackParamList } from "../../navigation/VolunteerNavigator";
-
 
 export default function VolunteerMain() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -82,7 +83,9 @@ export default function VolunteerMain() {
             </TouchableOpacity>
           ))}
         </ScrollView>
+
         {/* 푸터 */}
+        {/* {!isKeyboardVisible && <Footer />} */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -94,20 +97,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   searchWrapper: {
-    marginTop: 10,
-    paddingHorizontal: 16,
+    marginTop: hp('1.2%'),
+    paddingHorizontal: wp('4%'),
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 80,
+    paddingHorizontal: wp('4%'),
+    paddingBottom: hp('10%'),
   },
   shairingPostCard: {
-    height: 120,
-    borderRadius: 12,
+    height: hp('15%'),
+    borderRadius: wp('3%'),
     borderWidth: 1,
     backgroundColor: '#fff',
-    padding: 16,
-    marginBottom: 12,
+    padding: wp('4%'),
+    marginBottom: hp('1.5%'),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -117,29 +120,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 16,
+    fontSize: wp('4.2%'),
     fontWeight: 'bold',
   },
   nickname: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: '#555',
-    marginTop: 10,
+    marginTop: hp('1.2%'),
   },
   createdAt: {
-    fontSize: 12,
+    fontSize: wp('3.2%'),
     color: '#999',
-    marginTop: 2,
+    marginTop: hp('0.3%'),
   },
   shairingStatus: {
-    marginTop: 50,
-    width: 80,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
+    marginTop: hp('6.5%'),
+    width: wp('20%'),
+    paddingVertical: hp('1%'),
+    paddingHorizontal: wp('3%'),
+    borderRadius: wp('5%'),
     alignItems: 'center',
   },
   statusText: {
-    fontSize: 13,
+    fontSize: wp('3.5%'),
     fontWeight: '600',
   },
 });
