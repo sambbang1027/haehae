@@ -13,26 +13,29 @@ import AppNavigator from './src/navigation/AppNavigator';
 import CommunityNavigator from './src/navigation/CommunityNavigator';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
+import TestApiScreen from './src/screens/TestApiScreen';
+
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <TextSizeProvider>
-        <SafeAreaProvider>
-          <PaperProvider>
-            <ToastProvider>
-              <ModalProvider>
-                <NavigationContainer>
-                    <BottomSheetModalProvider>
-                      <AppNavigator />
-                      <ModalHost />
-                      <Footer />
-                    </BottomSheetModalProvider>
-                </NavigationContainer>
-              </ModalProvider>
-            </ToastProvider>
-          </PaperProvider>
-        </SafeAreaProvider>
-      </TextSizeProvider>
-    </GestureHandlerRootView>
+    // <GestureHandlerRootView style={{ flex: 1 }}>
+    //   <TextSizeProvider>
+    //     <SafeAreaProvider>
+    //       <PaperProvider>
+    //         <ToastProvider>
+    //           <ModalProvider>
+    //             <NavigationContainer>
+    //                 <BottomSheetModalProvider>
+    //                   <AppNavigator />
+    //                   <ModalHost />
+    //                   <Footer />
+    //                 </BottomSheetModalProvider>
+    //             </NavigationContainer>
+    //           </ModalProvider>
+    //         </ToastProvider>
+    //       </PaperProvider>
+    //     </SafeAreaProvider>
+    //   </TextSizeProvider>
+    // </GestureHandlerRootView>
+    <TestApiScreen/>
   );
 }
