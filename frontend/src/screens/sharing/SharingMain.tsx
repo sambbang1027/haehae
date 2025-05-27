@@ -90,7 +90,7 @@ export default function ShairingMain() {
             style={styles.iconWrapper}
           >
             <Image
-              source={require('../../assets/writePostLogo.png')}
+              source={require('../../assets/icons/writePostLogo.png')}
               style={styles.icon}
             />
           </TouchableOpacity>

@@ -107,7 +107,7 @@ export default function LocalBoardMain() {
         {!isKeyboardVisible && (
           <TouchableOpacity onPress={() => navigation.navigate('WriteLocalPost')}>
             <Image
-              source={require('../../assets/writePostLogo.png')}
+              source={require('../../assets/icons/writePostLogo.png')}
               style={styles.icon}
             />
           </TouchableOpacity>
