@@ -15,29 +15,26 @@ import LocalBoardNavigator from './LocalBoardNavigator';
 import VolunteerNavigator from './VolunteerNavigator';
 import SharingNavigator from './SharingNavigator';
 
-export type CommuntiyStackParamList = {
+export type CommunityStackParamList = {
     Community: undefined;
-    // LocalBoardMain: undefined;
-    // VolunteerMain: undefined;
-    // SharingMain: undefined;
-    LocalBoardDetail:  {id : number};
-    VolunteerDetail: {id : number};
-    SharingDetail: {id : number};
+    // LocalBoardDetail:  {id : number};
+    // VolunteerDetail: {id : number};
+    // SharingDetail: {id : number};
     LocalBoardStack: NavigatorScreenParams<LocalBoardStackParamList>;
     VolunteerStack: NavigatorScreenParams<VolunteerStackParamList>;
     SharingStack: NavigatorScreenParams<SharingStackParamList>;
 };
 
 
-const Stack = createNativeStackNavigator<CommuntiyStackParamList>();
+const Stack = createNativeStackNavigator<CommunityStackParamList>();
 
 export default function CommunityNavigator() {
   return (
     <Stack.Navigator initialRouteName="Community">
         <Stack.Screen name="Community" component={CommunityScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="LocalBoardDetail" component={LocalBoardDetail} options={{ title: '', headerShadowVisible: false }}/>
+        {/* <Stack.Screen name="LocalBoardDetail" component={LocalBoardDetail} options={{ title: '', headerShadowVisible: false }}/>
         <Stack.Screen name="VolunteerDetail" component={VolunteerDetail} options={{ title: '', headerShadowVisible: false }}/>
-        <Stack.Screen name="SharingDetail" component={SharingDetail} options={{ title: '', headerShadowVisible: false }}/> 
+        <Stack.Screen name="SharingDetail" component={SharingDetail} options={{ title: '', headerShadowVisible: false }}/>  */}
         <Stack.Screen name="LocalBoardStack" component={LocalBoardNavigator} options={{ headerShown: false }}/>
         <Stack.Screen name="SharingStack" component={SharingNavigator} options={{ headerShown: false }}/>
         <Stack.Screen name="VolunteerStack" component={VolunteerNavigator} options={{ headerShown: false }}/>
