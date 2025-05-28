@@ -28,7 +28,7 @@ const PloggingPlaceScreen = () => {
       </View>
 
       {/* 코스 리스트 제목 */}
-      <Text style={styles.listTitle}>주변 플로깅 코스 리스트</Text>
+        <Text style={styles.listTitle}>주변 플로깅 코스 리스트</Text>
 
       {/* 리스트 박스 */}
       <View style={styles.listBox}>
