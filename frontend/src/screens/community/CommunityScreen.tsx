@@ -13,7 +13,7 @@ import Footer from '../../components/layouts/Footer';
 import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
+import { CommunityStackParamList } from '../../navigation/CommunityNavigator';
 
 type PostSummary = {
   id: number;
@@ -24,7 +24,7 @@ type PostSummary = {
 
 export default function CommunityScreen() {
   const navigation =
-    useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
+    useNavigation<NativeStackNavigationProp<CommunityStackParamList>>();
 
   const moveToDetail = (post: PostSummary) => {
     switch (post.type) {

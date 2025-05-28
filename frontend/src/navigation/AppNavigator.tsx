@@ -1,33 +1,48 @@
 import React from 'react';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { TouchableOpacity, Text } from 'react-native';
+
 import LoginNavigator from './LoginNavigator';
 import Category from '../components/layouts/Category';
 import MyPageNavigator from './MyPageNavigator';
+import CommunityNavigator from './CommunityNavigator';
+import AiDisposalNavigator from './AiDisposalNavigator';
+import RecycleCalendarNavigator from './RecycleCalendarNavigator';
+import LocationNavigator from './LocationNavigator';
+import WasteNavigator from './WasteNavigator';
+import MainNavigator from './MainNavigator';
+
+
+
 import { LoginStackParamList } from './LoginNavigator';
 import { MyPageStackParamList } from './MyPageNavigator';
-import { CommuntiyStackParamList } from './CommunityNavigator';
-
-import TestMenuScreen from './TestMenuScreen';
-import CommunityNavigator from './CommunityNavigator';
-import MainNavigator from './MainNavigator';
-import ChatList from '../screens/chat/ChatList'; 
+import { CommunityStackParamList } from './CommunityNavigator';
+import { AiDisposalParamList } from './AiDisposalNavigator';
+import { RecycleCalendarStackParamList } from './RecycleCalendarNavigator';
+import { LocationStackParamList } from './LocationNavigator';
+import { WasteStackParamList } from './WasteNavigator';
+import { MainStackParamList } from './MainNavigator';
 
 
 
 
 export type AppStackParamList = {
   category: undefined;
+
   LoginStack: NavigatorScreenParams<LoginStackParamList>;
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
-  TestMenu: undefined; // 테스트용 추가
-  TestStack: undefined;
-  CommunityStack: NavigatorScreenParams<CommuntiyStackParamList>;
-  MainStack : undefined;
-  chat: undefined;
-
-};
+  CommunityStack: NavigatorScreenParams<CommunityStackParamList>;
+  MainStack : NavigatorScreenParams<MainStackParamList>;
+  AiDisposalStack: NavigatorScreenParams<AiDisposalParamList>;
+  RecycleCalendarStack: NavigatorScreenParams<RecycleCalendarStackParamList>;
+  LocationStack: NavigatorScreenParams<LocationStackParamList>;
+  WasteStack: NavigatorScreenParams<WasteStackParamList>;
+  VolunteerClass: undefined;
+  PointRecord: undefined;
+  DayWeekMission: undefined;
+}
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -39,18 +54,18 @@ const AppNavigator = () => {
         headerTitleAlign: 'center',
       }}
     >
-      <Stack.Screen 
-        name="category"
-        component={Category}
-        options={({ navigation }) => ({
-          title: '카테고리',
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
-            </TouchableOpacity>
-          ),
-        })}
-      />
+    <Stack.Screen 
+      name="category"
+      component={Category}
+      options={({ navigation }) => ({
+        title: '카테고리',
+        headerRight: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
+          </TouchableOpacity>
+        ),
+      })}
+    />
       <Stack.Screen 
         name="LoginStack"
         component={LoginNavigator}
@@ -66,32 +81,38 @@ const AppNavigator = () => {
         component={MainNavigator}
         options ={{headerShown : false}}
         />
-      <Stack.Screen 
-        name="TestMenu"
-        component={TestMenuScreen}
-        options={{ headerShown: false }}
-      />
       <Stack.Screen
         name="CommunityStack"
         component={CommunityNavigator}
       />    
-        {/* <Stack.Screen
-        name="chat"
-        component={ChatList}
-        options={({ navigation }) => ({
-          title: '채팅',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ fontSize: 18, marginRight: 10 }}>나가기</Text>
-          </TouchableOpacity>
-        )
-        })}
-      /> 도훈이 chatList UI */}  
+      <Stack.Screen
+        name="CommunityStack"
+        component={CommunityNavigator}
+      />
+
+      <Stack.Screen
+        name='AiDisposalStack'
+        component={AiDisposalNavigator}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name='RecycleCalendarStack'
+        component={RecycleCalendarNavigator}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name='LocationStack'
+        component={LocationNavigator}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name='WasteStack'
+        component={WasteNavigator}
+        options={{ headerShown: false }}
+      /> 
     </Stack.Navigator>
   );
 };

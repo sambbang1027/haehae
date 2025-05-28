@@ -1,8 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import ChatingDetail from "../screens/chat/ChatingDetail";
-// import ChatingList from "../screens/chat/ChatingList";
-// import Header from "../components/MainHeader";
+import ChatingList from "../screens/chat/ChatList";
 import { Text, TouchableOpacity } from "react-native";
 
 export type ChatStackParamList = {
@@ -25,6 +24,24 @@ export default function ChatNavigator(){
             {/* <Stack.Screen name="ChatingList" 
             component={ChatingList} 
             /> */}
+
+            {/* <Stack.Screen
+                name="ChatingList"
+                component={ChatList}
+                options={({ navigation }) => ({
+                title: '채팅',
+                headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text style={{ fontSize: 18, marginRight: 10 }}>✕</Text>
+                    </TouchableOpacity>
+                ),
+                headerRight: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text style={{ fontSize: 18, marginRight: 10 }}>나가기</Text>
+                </TouchableOpacity>
+                )
+                })}
+            /> 도훈이 chatList UI */}  
 
         </Stack.Navigator>
     );

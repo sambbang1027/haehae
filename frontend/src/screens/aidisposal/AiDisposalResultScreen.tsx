@@ -6,10 +6,10 @@ const AiDisposalResultScreen = () => {
   return (
     <View style={styles.container}>
       {/* 헤더 */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>배출 제한 가이드</Text>
         <Text style={styles.close}>✕</Text>
-      </View>
+      </View> */}
 
       {/* 현재 위치 */}
       <View style={styles.locationBox}>
