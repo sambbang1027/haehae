@@ -4,19 +4,19 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';
+import { AiDisposalParamList } from '../../navigation/AiDisposalNavigator';
 
 const AiDisposalLoadingScreen = () => {
 
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<AiDisposalParamList>>();
 
   return (
     <View style={styles.container}>
       {/* 상단 헤더 */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>배출 제한 가이드</Text>
         <Text style={styles.close}>✕</Text>
-      </View>
+      </View> */}
 
       {/* 본문 */}
       <View style={styles.content}>
@@ -29,7 +29,7 @@ const AiDisposalLoadingScreen = () => {
 
       <TouchableOpacity
         style={[styles.button, { marginTop: hp('4%'), backgroundColor: '#86EFAC' }]}
-        onPress={() => navigation.navigate('AiDisposalResult')}
+        onPress={() => navigation.navigate('AiDisposalResultScreen')}
       >
         <Text style={styles.buttonText}>다음</Text>  
       </TouchableOpacity>  

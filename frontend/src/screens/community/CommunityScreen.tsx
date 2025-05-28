@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import Footer from '../../components/layouts/Footer';
 import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
 import axios from 'axios';
+import { CommunityStackParamList } from '../../navigation/CommunityNavigator';
 
 //최신 게시글 타입 비교
 type PostSummary = {
@@ -121,7 +123,7 @@ export default function CommunityScreen() {
 
         {/* 네비게이션 박스 */}
         <View style={styles.grid}>
-          
+
           <TouchableOpacity
             onPress={goToLocalBoardMain}
             style={styles.rectangleBox}>

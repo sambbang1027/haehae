@@ -15,7 +15,7 @@ import LocalBoardNavigator from './LocalBoardNavigator';
 import VolunteerNavigator from './VolunteerNavigator';
 import SharingNavigator from './SharingNavigator';
 
-export type CommuntiyStackParamList = {
+export type CommunityStackParamList = {
     Community: undefined;
     // LocalBoardDetail:  {id : number};
     // VolunteerDetail: {id : number};
@@ -26,7 +26,7 @@ export type CommuntiyStackParamList = {
 };
 
 
-const Stack = createNativeStackNavigator<CommuntiyStackParamList>();
+const Stack = createNativeStackNavigator<CommunityStackParamList>();
 
 export default function CommunityNavigator() {
   return (

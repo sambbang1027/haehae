@@ -5,15 +5,15 @@ import React, {
   useState,
   ReactNode,
 } from 'react';
-import { View, StyleSheet, Dimensions, Animated, Easing} from 'react-native';
+import { StyleSheet, Dimensions, Animated, Easing} from 'react-native';
 import AppText from '../components/common/AppText';
-import FastImage from 'react-native-fast-image';
+import Video from 'react-native-video';
 
 const { width, height } = Dimensions.get('window');
 
 type ToastOptions = {
   message: string;
-  gif?: any; // require(...) 형태로 넘겨받음
+  video?: any; // require(...) 형태로 넘겨받음
 };
 
 type ToastState = ToastOptions & {
@@ -30,13 +30,13 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toast, setToast] = useState<ToastState>({
     visible: false,
     message: '',
-    gif: undefined,
+    video: undefined,
   });
 
   const opacity = useRef(new Animated.Value(0)).current;
 
-  const showToast = ({ message, gif }: ToastOptions) => {
-    setToast({ visible: true, message, gif });
+  const showToast = ({ message, video }: ToastOptions) => {
+    setToast({ visible: true, message, video });
 
     // fade in
     Animated.timing(opacity, {
@@ -66,9 +66,14 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       {/* Toast View */}
       {toast.visible && (
         <Animated.View style={[styles.toast, { opacity }]}>
-          <FastImage 
-           source={toast.gif?? require('../assets/icons/environment_transparent.gif')} 
-            style={styles.gif} resizeMode={FastImage.resizeMode.contain} />
+          <Video
+            source={require('../assets/images/toast.mp4')} 
+            style={styles.video}
+            repeat       // 무한 반복
+            muted        // 음소거
+            resizeMode="contain" 
+            paused={false} // 자동 재생
+          />
           <AppText style={styles.text}>{toast.message}</AppText>
         </Animated.View>
       )}
@@ -102,7 +107,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
   },
-  gif: {
+  video: {
     width: 80,
     height: 80,
     marginVertical: 20,

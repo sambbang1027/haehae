@@ -25,7 +25,7 @@ LocaleConfig.locales['ko'] = {
 } as any;
 LocaleConfig.defaultLocale = 'ko';
 
-const RecycleCalendar = () => {
+const RecycleCalendarScreen = () => {
   const [memoMap, setMemoMap] = useState<{ [date: string]: string }>({});
   const [selectedDate, setSelectedDate] = useState('');
   const [memoInput, setMemoInput] = useState('');
@@ -60,12 +60,12 @@ const RecycleCalendar = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 헤더 */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>분리수거 캘린더</Text>
         <TouchableOpacity style={styles.closeButton}>
           <Text style={styles.closeText}>X</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* 위치 박스 */}
       <View style={styles.locationBox}>
@@ -109,7 +109,7 @@ const RecycleCalendar = () => {
   );
 };
 
-export default RecycleCalendar;
+export default RecycleCalendarScreen;
 
 const styles = StyleSheet.create({
   container: {

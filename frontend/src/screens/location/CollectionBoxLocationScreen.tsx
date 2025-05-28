@@ -14,10 +14,9 @@ const CollectionBoxLocationScreen = () => {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={styles.container}>
       {/* 헤더 */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>수거함 위치 탐색</Text>
-        {/* 닫기 아이콘은 생략 가능 */}
-      </View>
+      </View> */}
 
       {/* 위치 표시 바 */}
       <View style={styles.locationBox}>
