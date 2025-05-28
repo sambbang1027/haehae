@@ -52,8 +52,8 @@ const Category: React.FC = () => {
             <Image source={require('../../assets/icons/map.png')} style={styles.icon} />
             <Text style={styles.sectionTitle}>지도</Text>
           </View>
-          <CategoryItem label="수거함 위치 탐색" to={{ stack: 'LocationStack', screen: 'CollectionBoxLocationScreen' }} />
-          <CategoryItem label="플로깅 장소" to={{ stack: 'LocationStack', screen: 'PloggingPlaceScreen' }} />
+          {/* <CategoryItem label="수거함 위치 탐색" to={{ stack: 'LocationStack', screen: 'CollectionBoxLocationScreen' }} />
+          <CategoryItem label="플로깅 장소" to={{ stack: 'LocationStack', screen: 'PloggingPlaceScreen' }} /> */}
         </View>
 
         <View style={styles.divider} />
@@ -77,8 +77,8 @@ const Category: React.FC = () => {
             <Image source={require('../../assets/icons/point.png')} style={styles.icon} />
             <Text style={styles.sectionTitle}>포인트</Text>
           </View>
-          {/* <CategoryItem label="포인트 사용 내역" route="PointRecord" />
-          <CategoryItem label="포인트 상점" route="PointShop" /> */}
+          <CategoryItem label="포인트 사용 내역" route="PointRecord" />
+          <CategoryItem label="포인트 상점" route="PointShop" />
         </View>
 
         <View style={styles.divider} />

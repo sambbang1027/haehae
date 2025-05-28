@@ -39,7 +39,7 @@ const Main = () => {
   const handleAlarmPress = () => {
     navigation.navigate('Alarm');
   };
-7
+
     const handleRewardPress = () => {
     navigation.navigate('Reward', { screen: 'RewardList' });
   };
@@ -64,7 +64,7 @@ const Main = () => {
           source={require('../../assets/images/main-Image.png')}
         />
         <Text style={styles.dayText}>{day}요일</Text>
-        <Text style={styles.dayRecycleText}>{plasticType || '“플라스틱”' + ' 입니다.'}</Text>
+        <Text style={styles.dayRecycleText}>{plasticType || '플라스틱' + ' 입니다.'}</Text>
         </TouchableOpacity>
 
       <TouchableOpacity style={styles.pointCard}>
@@ -91,8 +91,8 @@ const Main = () => {
         <TouchableOpacity style={styles.communityBoard}>
           <Text style={styles.communityTitle}>우리 동네</Text>
           <View>
-          <Text style={styles.communityText}>우리동네</Text>
-          <Text style={styles.communityText}>커뮤니티</Text>
+            <Text style={styles.communityText}>우리동네</Text>
+            <Text style={styles.communityText}>커뮤니티</Text>
           </View>
           <Image style={styles.communityImage} source={require('../../assets/images/village.png')} // 예시 이미지
           />
@@ -112,8 +112,8 @@ const Main = () => {
         <TouchableOpacity style={styles.collectionCard} onPress={handleRewardPress}>
           <Text style={styles.collectionTitle}>수거함 위치</Text>
           <View>
-          <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
-          <Text style={styles.collectionSubtitle}>및 건전지 등 위치</Text>
+            <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
+            <Text style={styles.collectionSubtitle}>및 건전지 등 위치</Text>
           </View>
           <Image style={styles.collectionLocationIcon} source={require('../../assets/images/placeholder.png')} // 예시 이미지
           />
