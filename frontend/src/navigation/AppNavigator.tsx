@@ -2,22 +2,14 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { TouchableOpacity, Text } from 'react-native';
-
 import LoginNavigator, { LoginStackParamList } from './LoginNavigator';
 import MyPageNavigator, { MyPageStackParamList } from './MyPageNavigator';
-import CommunityNavigator, { CommuntiyStackParamList } from './CommunityNavigator';
-
+import CommunityNavigator, { CommunityStackParamList } from './CommunityNavigator';
 import Category from '../components/layouts/Category';
-import RootLayout from '../components/layouts/FooterLayout'; // Footer 포함된 레이아웃
 import AiDisposalNavigator from './AiDisposalNavigator';
 import RecycleCalendarNavigator from './RecycleCalendarNavigator';
 import LocationNavigator from './LocationNavigator';
 import WasteNavigator from './WasteNavigator';
-
-
-import { LoginStackParamList } from './LoginNavigator';
-import { MyPageStackParamList } from './MyPageNavigator';
-import { CommuntiyStackParamList } from './CommunityNavigator';
 import { AiDisposalParamList } from './AiDisposalNavigator';
 import { RecycleCalendarStackParamList } from './RecycleCalendarNavigator';
 import { LocationStackParamList } from './LocationNavigator';
@@ -29,7 +21,7 @@ export type AppStackParamList = {
   category: undefined;
   LoginStack: NavigatorScreenParams<LoginStackParamList>;
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
-  CommunityStack: NavigatorScreenParams<CommuntiyStackParamList>;
+  CommunityStack: NavigatorScreenParams<CommunityStackParamList>;
 
   AiDisposalStack: NavigatorScreenParams<AiDisposalParamList>;
   RecycleCalendarStack: NavigatorScreenParams<RecycleCalendarStackParamList>;
