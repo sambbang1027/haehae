@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
+// import Header from '../../components/MainHeader';
+// import Footer from '../../components/Footer';
 
 const RewardList = () => {
     const navigation = useNavigation(); 
@@ -23,19 +25,18 @@ const RewardList = () => {
     };
 
     const rewardItems = [
-        { id: 1, title: '인천시 나무심기 기부', points: '1,000p', imageSrc: require('../assets/tree.png'), topPosition: hp('50%') },
-        { id: 2, title: '산불 피해 이웃 돕기', points: '1,000p', imageSrc: require('../assets/chimchack.png'), topPosition: hp('57%') },
-        { id: 3, title: '불우이웃 재헌이 돕기', points: '1,000p', imageSrc: require('../assets/faker.png'), topPosition: hp('64%') },
-        { id: 4, title: '불우이웃 도훈이 돕기', points: '100,000p', imageSrc: require('../assets/iu.png'), topPosition: hp('71%') },
+        { id: 1, title: '인천시 나무심기 기부', points: '1,000p', imageSrc: require('../../assets/images/tree.png'), topPosition: hp('50%') },
+        { id: 2, title: '산불 피해 이웃 돕기', points: '1,000p', imageSrc: require('../../assets/images/chimchack.png'), topPosition: hp('57%') },
+        { id: 3, title: '불우이웃 재헌이 돕기', points: '1,000p', imageSrc: require('../../assets/images/faker.png'), topPosition: hp('64%') },
+        { id: 4, title: '불우이웃 도훈이 돕기', points: '100,000p', imageSrc: require('../../assets/images/iu.png'), topPosition: hp('71%') },
     ];
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                {/* <Text style={styles.backArrow}>&lt;</Text> */}
-                {/* <Text style={styles.rewardTitle}>리워드 상점</Text> */}
-            </View>
-            <Image style={styles.pointIcon} source={require('../assets/reward-coin.png')} resizeMode="contain" />
+        <View style={{ flex: 1 }}>
+        <ScrollView style={styles.container}
+        contentContainerStyle={styles.scrollViewContent}>
+            {/* <Header /> */}
+            <Image style={styles.pointIcon} source={require('../../assets/images/reward-coin.png')} resizeMode="contain" />
             <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
             <Text style={styles.totalPoints}>1,080P</Text>
             <View style={styles.tabContainer}>
@@ -49,11 +50,10 @@ const RewardList = () => {
                     <Text style={styles.tabText}>쿠폰/기프티콘</Text>
                 </TouchableOpacity>
             </View>
-
             {rewardItems.map((item) => (
                 <TouchableOpacity
                     key={item.id}
-                    style={[styles.listItem, { top: item.topPosition }]}
+                    style={[styles.listItem]}
                     // onPress={() => handleItemClick(item.id)}
                     onPress={handleItemClick}
                 >
@@ -62,9 +62,10 @@ const RewardList = () => {
                     <Text style={styles.itemPoints}>{item.points}</Text>
                 </TouchableOpacity>
             ))}
-
-            <View style={styles.bottomBar} />
+    
         </ScrollView>
+        {/* <Footer/> */}
+        </View>
     );
 };
 
@@ -74,16 +75,21 @@ const styles = StyleSheet.create({
         paddingBottom: hp('10%'),
         paddingHorizontal: wp('2.5%'),
     },
-    header: {
-        width: wp('100%'),
-        height: hp('8%'),
-        position: 'absolute',
-        top: 0,
-        backgroundColor: '#ffffff',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: wp('4%'),
+    scrollViewContent: {
+    paddingBottom: hp('10%'),
+    minHeight: hp('100%'), // 예시: 최소 화면 높이만큼 스크롤 영역 확보
     },
+
+    // header: {
+    //     width: wp('100%'),
+    //     height: hp('8%'),
+    //     position: 'absolute',
+    //     top: 0,
+    //     backgroundColor: '#ffffff',
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     paddingHorizontal: wp('4%'),
+    // },
     // backArrow: {
     //  fontSize: hp('3%'),
     //  marginRight: wp('2%'),
@@ -99,9 +105,9 @@ const styles = StyleSheet.create({
     pointIcon: {
         width: wp('30%'),
         height: hp('14%'),
-        marginTop: hp('5%'),
+        marginTop: hp('3%'),
         marginLeft: wp('30%'),
-        position : 'absolute'
+        //position : 'absolute'
     },
     currentPointsText: {
         color: '#000000',
@@ -110,9 +116,9 @@ const styles = StyleSheet.create({
         fontSize: hp('3%'),
         fontWeight: 'bold',
         opacity: 0.5,
-        marginTop: hp('20%'),
-        marginLeft: wp('19%'),
-        position : 'absolute'
+        marginTop: hp('2%'),
+        marginLeft: wp('5%'),
+       // position : 'absolute'
     },
     totalPoints: {
         color: 'rgba(147, 235, 24, 0.51)',
@@ -120,16 +126,16 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-Regular',
         fontSize: hp('5%'),
         fontWeight: '400',
-        marginTop: hp('25%'),
-        marginBottom: hp('25%'),
-        marginLeft: wp('33%'),
-        position : 'absolute'
+        marginTop: hp('1%'),
+        marginLeft: wp('5%'),
+       // position : 'absolute'
     },
     tabContainer: {
         flexDirection: 'row',
-        marginTop: hp('36%'),
+        marginTop: hp('3%'),
         marginLeft: wp('10%'),
-        position: 'absolute',
+        marginBottom : hp('3%')
+       // position: 'absolute',
     },
     pointDonationButton: {
         backgroundColor: 'rgba(147, 235, 24, 0.51)',
@@ -156,20 +162,21 @@ const styles = StyleSheet.create({
         fontSize: hp('1.8%'),
         fontWeight: '400',
     },
+
     listItem: {
         borderBottomWidth: 1,
         borderBottomColor: '#bcbcbc',
         width: wp('88%'),
-        height: hp('8%'),
-        position: 'absolute',
+        //height: hp('20%'),
+        height : 'auto',
+        minHeight: 100,
+        //position: 'absolute',
         left: wp('6%'),
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: wp('4%'),
-        marginTop: hp('-5%'),
-        marginLeft: wp('-3%'),
         marginBottom: hp('1%'),
-
+        marginLeft: wp('-3%'),
     },
     itemImage: {
         width: wp('14%'),

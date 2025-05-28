@@ -10,10 +10,17 @@ import AiDisposalNavigator from './AiDisposalNavigator';
 import RecycleCalendarNavigator from './RecycleCalendarNavigator';
 import LocationNavigator from './LocationNavigator';
 import WasteNavigator from './WasteNavigator';
+import MainNavigator from './MainNavigator';
+
+
+
 import { AiDisposalParamList } from './AiDisposalNavigator';
 import { RecycleCalendarStackParamList } from './RecycleCalendarNavigator';
 import { LocationStackParamList } from './LocationNavigator';
 import { WasteStackParamList } from './WasteNavigator';
+import { MainStackParamList } from './MainNavigator';
+
+
 
 
 // 전체 스택 타입 정의
@@ -22,16 +29,14 @@ export type AppStackParamList = {
   LoginStack: NavigatorScreenParams<LoginStackParamList>;
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
   CommunityStack: NavigatorScreenParams<CommunityStackParamList>;
-
+  MainStack : NavigatorScreenParams<MainStackParamList>;
   AiDisposalStack: NavigatorScreenParams<AiDisposalParamList>;
   RecycleCalendarStack: NavigatorScreenParams<RecycleCalendarStackParamList>;
   LocationStack: NavigatorScreenParams<LocationStackParamList>;
   WasteStack: NavigatorScreenParams<WasteStackParamList>;
-
   VolunteerClass: undefined;
   PointRecord: undefined;
   DayWeekMission: undefined;
-
 }
 
 // 스택 생성
@@ -41,7 +46,7 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="MyPageStack"
+      initialRouteName="MainStack"
       screenOptions={{
         headerTitleAlign: 'center',
       }}
@@ -69,6 +74,15 @@ const AppNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="MainStack"
+        component={MainNavigator}
+        options ={{headerShown : false}}
+        />
+      <Stack.Screen
+        name="CommunityStack"
+        component={CommunityNavigator}
+      />    
+      <Stack.Screen
         name="CommunityStack"
         component={CommunityNavigator}
       />
@@ -95,8 +109,7 @@ const AppNavigator = () => {
         name='WasteStack'
         component={WasteNavigator}
         options={{ headerShown: false }}
-      />
-
+      /> 
     </Stack.Navigator>
   );
 };

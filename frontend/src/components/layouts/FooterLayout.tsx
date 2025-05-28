@@ -24,8 +24,6 @@ const getDeepestRouteName = (navState: any): string | undefined => {
   return current?.name;
 };
 
-
-
 export default function FooterLayout() {
   const state = useNavigationState((state) => state);
   const currentRoute = getDeepestRouteName(state);
@@ -43,7 +41,9 @@ export default function FooterLayout() {
     'WriteSharingPost',
     'VolunteerDetail',
     'ChatingDetail',
+    'RewardDetail',
     'ReportScreen'
+
   ];
 
   const showFooter = !hideFooterRoutes.includes(currentRoute ?? '');

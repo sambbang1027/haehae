@@ -9,8 +9,9 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
+//import Footer from '../../components/Footer';
 
-const MainScreen = () => {
+const Main = () => {
   const navigation = useNavigation();
   const [day, setDay] = useState('');
   const [plasticType, setPlasticType] = useState('');
@@ -28,11 +29,11 @@ const MainScreen = () => {
   }, []);
 
   const handleRecycleCalendarPress = () => {
-    navigation.navigate('RecycleCalendar');
+    // navigation.navigate('RecycleCalendar');
   }
 
   const handleMissionCardPress = () => {
-    navigation.navigate('MissionScreen');
+    navigation.navigate('Mission');
   };
 
   const handleAlarmPress = () => {
@@ -40,18 +41,19 @@ const MainScreen = () => {
   };
 7
     const handleRewardPress = () => {
-    navigation.navigate('RewardList');
+    navigation.navigate('Reward', { screen: 'RewardList' });
   };
 
   return (
+  <View style={{ flex: 1 }}>
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <View style={styles.locationContainer}>
-          <Image style={styles.locationIcon} source={require('../assets/location-icon.png')} />
+          <Image style={styles.locationIcon} source={require('../../assets/icons/location-icon.png')} />
           <Text style={styles.locationText}>서울특별시 강남구 xx로</Text>
         </View>
         <TouchableOpacity onPress={handleAlarmPress}>
-          <Image style={styles.alarmIcon} source={require('../assets/alarm-icon.png')} />
+          <Image style={styles.alarmIcon} source={require('../../assets/icons/alarm-icon.png')} />
         </TouchableOpacity>
       </View>
 
@@ -59,11 +61,11 @@ const MainScreen = () => {
       <TouchableOpacity onPress={handleRecycleCalendarPress}>  
         <Image
           style={styles.mainImage}
-          source={require('../assets/main-Image.png')}
+          source={require('../../assets/images/main-Image.png')}
         />
         <Text style={styles.dayText}>{day}요일</Text>
         <Text style={styles.dayRecycleText}>{plasticType || '“플라스틱”' + ' 입니다.'}</Text>
- 7         </TouchableOpacity>
+        </TouchableOpacity>
 
       <TouchableOpacity style={styles.pointCard}>
         <Text style={styles.pointTitle}>도훈님의 포인트</Text>
@@ -73,7 +75,7 @@ const MainScreen = () => {
         </View>
           <Image
             style={styles.pointCoinIcon}
-            source={require('../assets/coin.png')} // 예시 이미지
+            source={require('../../assets/images/coin.png')} // 예시 이미지
           />
       </TouchableOpacity>
 
@@ -84,7 +86,7 @@ const MainScreen = () => {
             <Text style={styles.missionDescription}>일일/주간</Text>
             <Text style={styles.missionDescription}>미션하러 가기</Text>
           </View>
-          <Image style={styles.missionImage} source={require('../assets/mission-icon.png')} />
+          <Image style={styles.missionImage} source={require('../../assets/icons/mission-icon.png')} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.communityBoard}>
           <Text style={styles.communityTitle}>우리 동네</Text>
@@ -92,7 +94,7 @@ const MainScreen = () => {
           <Text style={styles.communityText}>우리동네</Text>
           <Text style={styles.communityText}>커뮤니티</Text>
           </View>
-          <Image style={styles.communityImage} source={require('../assets/village.png')} // 예시 이미지
+          <Image style={styles.communityImage} source={require('../../assets/images/village.png')} // 예시 이미지
           />
         </TouchableOpacity>
       </View>
@@ -104,7 +106,7 @@ const MainScreen = () => {
             <Text style={styles.guideSubtitle}>사진 촬영</Text>
             <Text style={styles.guideSubtitle}>분리 배출</Text>
           </View>
-          <Image style={styles.guideCameraIcon} source={require('../assets/camera.png')} // 예시 이미지
+          <Image style={styles.guideCameraIcon} source={require('../../assets/images/camera.png')} // 예시 이미지
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.collectionCard} onPress={handleRewardPress}>
@@ -113,7 +115,7 @@ const MainScreen = () => {
           <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>
           <Text style={styles.collectionSubtitle}>및 건전지 등 위치</Text>
           </View>
-          <Image style={styles.collectionLocationIcon} source={require('../assets/placeholder.png')} // 예시 이미지
+          <Image style={styles.collectionLocationIcon} source={require('../../assets/images/placeholder.png')} // 예시 이미지
           />
         </TouchableOpacity>
       </View>
@@ -140,6 +142,8 @@ const MainScreen = () => {
         </View>
       </View> */}
     </ScrollView>
+    {/* <Footer/> */}
+    </View>
   );
 };
 
@@ -154,14 +158,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: hp('5%'),
+    paddingTop: hp('1%'),
     paddingHorizontal: wp('2.5%'),
   },
    locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: 'auto', // 내용물에 맞춰 너비 자동 조정
-    borderWidth: 2, // 테두리 두께 조정
+    borderWidth: 2, // 테 두리 두께 조정
     borderColor: '#c0c0c0', // 테두리 색상
     borderRadius: 25, // 둥근 테두리 정도 (원하는 값으로 조절)
     paddingVertical: hp('0.1%'), // 위아래 패딩 (원하는 값으로 조절)
@@ -213,7 +217,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
- pointCard: {
+  pointCard: {
     borderColor: 'rgba(147, 235, 24, 0.5)',
     borderWidth: 1.2,
     borderRadius: 15,
@@ -414,4 +418,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default MainScreen;
+export default Main;
