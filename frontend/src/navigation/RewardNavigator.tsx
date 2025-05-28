@@ -27,7 +27,7 @@ const RewardNavigator = () => {
             <Stack.Screen
             name="RewardList"
             component={RewardList}
-            options= {{headerShown: false}}
+            options= {{ headerTitle : '리워드 상점'}}
             />
             <Stack.Screen
             name="RewardDetail"
