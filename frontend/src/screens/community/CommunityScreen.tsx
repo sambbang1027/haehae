@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,64 +9,25 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Footer from '../../components/layouts/Footer';
 import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
+import axios from 'axios';
 
+//최신 게시글 타입 비교
 type PostSummary = {
-  id: number;
+  latestPostId: number;
   type: 'volunteer' | 'sharing' | 'local';
   title: string;
   created_at: string;
 };
 
 export default function CommunityScreen() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
+  // const [latestPost, setLatestPost] = useState([]); //최신 게시글 리스트
 
-  const moveToDetail = (post: PostSummary) => {
-    switch (post.type) {
-      case 'volunteer':
-        navigation.navigate('VolunteerDetail', { id: post.id });
-        break;
-      case 'sharing':
-        navigation.navigate('SharingDetail', { id: post.id });
-        break;
-      case 'local':
-        navigation.navigate('LocalBoardDetail', { id: post.id });
-        break;
-    }
-  };
-
-  const latestPosts: PostSummary[] = [
-    {
-      id: 1,
-      title: '서샘이의 광주 VS 강재현의 광주 누가 더 시골인인가요?',
-      type: 'local',
-      created_at: '2025-04-24',
-    },
-    {
-      id: 2,
-      title: '노트북 나눔해요.',
-      type: 'sharing',
-      created_at: '2025-05-07',
-    },
-    {
-      id: 3,
-      title: '서울시 담배꽁초 줍기 봉사활동',
-      type: 'volunteer',
-      created_at: '2025-05-07',
-    },
-    {
-      id: 4,
-      title: '중고 아나바다 캠페인',
-      type: 'volunteer',
-      created_at: '2025-05-07',
-    },
-  ];
-
+  // 최신 게시글 type 비교에 따른 배지
   const getBadgeProps = (type: PostSummary['type']) => {
     switch (type) {
       case 'local':
@@ -80,16 +41,89 @@ export default function CommunityScreen() {
     }
   };
 
+  //최신 게시글 type 비교로 페이지 이동
+  const moveToDetail = (post: PostSummary) => {
+    switch (post.type) {
+      case 'volunteer':
+        navigation.navigate('VolunteerStack', { screen: 'VolunteerDetail', params: {  id: post.latestPostId } })
+        break;
+      case 'sharing':
+        navigation.navigate('SharingStack', { screen: 'SharingDetail', params: {  id: post.latestPostId } })
+        break;
+      case 'local':
+        navigation.navigate('LocalBoardStack', { screen: 'LocalBoardDetail', params: {  id: post.latestPostId } })
+        break;
+    }
+  };
+
+  //최신 게시글 dummyData
+  const latestPosts: PostSummary[] = [
+    {
+      latestPostId: 1,
+      title: '서샘이의 광주 VS 강재현의 광주 누가 더 시골인인가요?',
+      type: 'local',
+      created_at: '2025-04-24',
+    },
+    {
+      latestPostId: 2,
+      title: '노트북 나눔해요.',
+      type: 'sharing',
+      created_at: '2025-05-07',
+    },
+    {
+      latestPostId: 3,
+      title: '서울시 담배꽁초 줍기 봉사활동',
+      type: 'volunteer',
+      created_at: '2025-05-07',
+    },
+    {
+      latestPostId: 4,
+      title: '중고 아나바다 캠페인',
+      type: 'volunteer',
+      created_at: '2025-05-07',
+    },
+  ];
+
+  //최신 게시글 받아오기
+  // useEffect(() =>{
+  //   axios.get("")
+  //   .then((response)=>{
+  //     console.log(response.data)
+  //     setLatestPost(response.data);
+  //   })
+  //   .catch((error)=>{
+  //     console.log(error)
+  //   })
+  // },[])
+
+  //네비이게이션 목록들
+  const goToLocalBoardMain = () => {
+    navigation.navigate('LocalBoardStack', {screen: 'LocalBoardMain',})
+  }
+
+  const goToVolunteerMain = () => {
+    navigation.navigate('VolunteerStack', {screen: 'VolunteerMain'})
+  }
+
+  const goToSharingMain = () => {
+    navigation.navigate('SharingStack', {screen:'SharingMain'})
+  }
+
+  // const goToChatingList = () => {
+  //   navigation.navigate('ChatingStack', {screen: 'ChatingList'})
+  // }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <MainHeader />
-        <Text style={styles.div4}>게시판</Text>
+        <Text style={styles.communityTitle}>Community</Text>
 
         {/* 네비게이션 박스 */}
         <View style={styles.grid}>
+          
           <TouchableOpacity
-            onPress={() =>navigation.navigate('LocalBoardStack', {screen: 'LocalBoardMain',})}
+            onPress={goToLocalBoardMain}
             style={styles.rectangleBox}>
             <Image
               source={require('../../assets/icons/localBoardEntry.png')}
@@ -97,8 +131,9 @@ export default function CommunityScreen() {
             />
             <Text style={styles.title}>우리동네</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            onPress={() => navigation.navigate('VolunteerStack', {screen: 'VolunteerMain',})}
+            onPress={goToVolunteerMain}
             style={styles.rectangleBox}
           >
             <Image
@@ -108,7 +143,7 @@ export default function CommunityScreen() {
             <Text style={styles.title}>봉사</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('SharingStack', {screen: 'SharingMain'})}
+            onPress={goToSharingMain}
             style={styles.rectangleBox}
           >
             <Image
@@ -133,7 +168,7 @@ export default function CommunityScreen() {
           return (
             <TouchableOpacity
               onPress={() => moveToDetail(post)}
-              key={`${post.type}-${post.id}`}
+              key={`${post.type}-${post.latestPostId}`}
             >
               <View style={styles.postRow}>
                 <View
@@ -158,10 +193,6 @@ export default function CommunityScreen() {
           );
         })}
       </ScrollView>
-
-      {/* <View style={styles.footerWrapper}>
-        <Footer />
-      </View> */}
     </SafeAreaView>
   );
 }
@@ -176,7 +207,7 @@ const styles = StyleSheet.create({
     padding: wp('5%'),
     paddingBottom: hp('15%'),
   },
-  div4: {
+  communityTitle: {
     fontSize: wp('5%'),
     fontWeight: '700',
     opacity: 0.5,
@@ -239,10 +270,5 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexGrow: 1,
     flexBasis: 'auto',
-  },
-  footerWrapper: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
   },
 });
