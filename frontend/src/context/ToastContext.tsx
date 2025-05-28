@@ -54,7 +54,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         easing: Easing.in(Easing.ease),
         useNativeDriver: true,
       }).start(() => {
-        setToast({ visible: false, message: '', gif: undefined });
+        setToast({ visible: false, message: '', video: undefined });
       });
     }, 2000);
   };

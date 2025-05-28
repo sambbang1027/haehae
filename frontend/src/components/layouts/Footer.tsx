@@ -22,9 +22,17 @@ export default function Footer() {
           <Image source={require('../../assets/icons/communityEntry.png')} style={styles.icon} />
           <Text style={styles.label}>커뮤니티</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.centerItem}>
-          <Image source={require('../../assets/icons/footerLogo.png')} style={styles.centerLogo} />
+
+        <TouchableOpacity
+          style={styles.centerItem}
+          onPress={() => navigation.navigate('MainStack', { screen: 'Main' })}
+        >
+          <Image
+            source={require('../../assets/icons/footerLogo.png')}
+            style={styles.centerLogo}
+          />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.item}>
           <Image source={require('../../assets/icons/recycleEntryLogo.png')} style={styles.icon} />
           <Text style={styles.label}>분리수거</Text>

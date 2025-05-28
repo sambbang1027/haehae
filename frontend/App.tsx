@@ -36,6 +36,5 @@ export default function App() {
         </SafeAreaProvider>
       </TextSizeProvider>
     </GestureHandlerRootView>
-    // <TestApiScreen/>
   );
 }

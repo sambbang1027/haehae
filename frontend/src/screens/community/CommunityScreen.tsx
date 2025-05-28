@@ -13,7 +13,6 @@ import Footer from '../../components/layouts/Footer';
 import MainHeader from '../../components/layouts/MainHeader';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CommuntiyStackParamList } from '../../navigation/CommunityNavigator';
 import axios from 'axios';
 import { CommunityStackParamList } from '../../navigation/CommunityNavigator';
 
@@ -26,7 +25,7 @@ type PostSummary = {
 };
 
 export default function CommunityScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<CommuntiyStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<CommunityStackParamList>>();
   // const [latestPost, setLatestPost] = useState([]); //최신 게시글 리스트
 
   // 최신 게시글 type 비교에 따른 배지
