@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator<LocalBoardReplyStackParamList>();
 
 export default function LocalBoardReplyNavigator() {
     return(
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="LocalBoardReply">
             <Stack.Screen name="LocalBoardReply" component={LocalBoardReply}/>
         </Stack.Navigator>
     );

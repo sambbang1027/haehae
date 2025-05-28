@@ -21,15 +21,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
 export default function LocalBoardDetail() {
-  const route = useRoute<LocalBoardDetailRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<LocalBoardStackParamList>>();
+  const route = useRoute<LocalBoardDetailRouteProps>();
   const { id } = route.params;
-  const modalRef = useRef<BottomSheetModal>(null);
   const optionModalRef = useRef<BottomSheetModal>(null);
 
   const currentUserId = 1001; // 로그인한 사용자 ID
   
-  //옵션 모달 활성화
+    //옵션 모달 활성화
     const activeOptionModal = () =>{
       optionModalRef.current?.present()
     };
@@ -37,7 +36,7 @@ export default function LocalBoardDetail() {
     useLayoutEffect(() => {
       navigation.setOptions({
         headerRight: () => (
-        <TouchableOpacity onPress={()=>{activeOptionModal()}} style={{marginRight:20}}>
+        <TouchableOpacity onPress={()=>{ activeOptionModal()}} style={{marginRight:20}}>
           <Text style={{ fontSize: 25, fontWeight:'bold' }}>⁝</Text>
         </TouchableOpacity>
         ),
