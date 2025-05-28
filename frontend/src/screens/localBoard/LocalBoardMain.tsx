@@ -16,12 +16,14 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomSearchBar from '../../components/common/CustomSearchBar';
 import { LocalBoardStackParamList } from '../../navigation/LocalBoardNavigator';
+import axios from 'axios';
 
 
 export default function LocalBoardMain() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<LocalBoardStackParamList>>();
+  // const [posts, setPosts] = useState([]); 게시물 데이터
 
   const handleSearch = () => {
     console.log('검색 실행:', searchQuery);
@@ -56,6 +58,7 @@ export default function LocalBoardMain() {
     },
   ];
 
+  //키보드 안 보이게 설정
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setIsKeyboardVisible(true);
@@ -69,6 +72,17 @@ export default function LocalBoardMain() {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  // useEffect(() => {
+  //   axios.get("")
+  //   .then((response)=>{
+  //     console.log(response.data)
+  //     setPosts(response.data);  
+  //   })
+  //   .catch((error)=>
+  //     console.log(error)
+  //   )
+  // }, [])
 
   return (
     <SafeAreaView style={styles.container}>

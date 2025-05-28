@@ -9,7 +9,7 @@ export type VolunteerStackParamList = {
 
 const Stack = createNativeStackNavigator<VolunteerStackParamList>();
 
-export default function volunteerNavigator() {
+export default function VolunteerNavigator() {
     return(
         <Stack.Navigator initialRouteName="VolunteerMain">
             <Stack.Screen name = "VolunteerMain" component={VolunteerMain} options={{ title: '봉사' , headerShadowVisible: false}}></Stack.Screen>
