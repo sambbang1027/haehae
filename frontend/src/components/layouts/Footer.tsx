@@ -18,7 +18,7 @@ export default function Footer() {
           <Image source={require('../../assets/icons/menuEntry.png')} style={styles.icon} />
           <Text style={styles.label}>카테고리</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity style={styles.item} onPress={()=> navigation.navigate('CommunityStack', {screen:'Community'})}>
           <Image source={require('../../assets/icons/communityEntry.png')} style={styles.icon} />
           <Text style={styles.label}>커뮤니티</Text>
         </TouchableOpacity>

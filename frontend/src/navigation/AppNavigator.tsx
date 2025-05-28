@@ -1,13 +1,11 @@
 import React from 'react';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { TouchableOpacity, Text } from 'react-native';
-
-import LoginNavigator from './LoginNavigator';
+import LoginNavigator, { LoginStackParamList } from './LoginNavigator';
+import MyPageNavigator, { MyPageStackParamList } from './MyPageNavigator';
+import CommunityNavigator, { CommunityStackParamList } from './CommunityNavigator';
 import Category from '../components/layouts/Category';
-import MyPageNavigator from './MyPageNavigator';
-import CommunityNavigator from './CommunityNavigator';
 import AiDisposalNavigator from './AiDisposalNavigator';
 import RecycleCalendarNavigator from './RecycleCalendarNavigator';
 import LocationNavigator from './LocationNavigator';
@@ -16,9 +14,6 @@ import MainNavigator from './MainNavigator';
 
 
 
-import { LoginStackParamList } from './LoginNavigator';
-import { MyPageStackParamList } from './MyPageNavigator';
-import { CommunityStackParamList } from './CommunityNavigator';
 import { AiDisposalParamList } from './AiDisposalNavigator';
 import { RecycleCalendarStackParamList } from './RecycleCalendarNavigator';
 import { LocationStackParamList } from './LocationNavigator';
@@ -28,9 +23,9 @@ import { MainStackParamList } from './MainNavigator';
 
 
 
+// 전체 스택 타입 정의
 export type AppStackParamList = {
   category: undefined;
-
   LoginStack: NavigatorScreenParams<LoginStackParamList>;
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>;
   CommunityStack: NavigatorScreenParams<CommunityStackParamList>;
@@ -44,8 +39,10 @@ export type AppStackParamList = {
   DayWeekMission: undefined;
 }
 
+// 스택 생성
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
+// 내보낼 네비게이터
 const AppNavigator = () => {
   return (
     <Stack.Navigator
@@ -54,7 +51,7 @@ const AppNavigator = () => {
         headerTitleAlign: 'center',
       }}
     >
-    <Stack.Screen 
+    <Stack.Screen
       name="category"
       component={Category}
       options={({ navigation }) => ({
@@ -66,12 +63,12 @@ const AppNavigator = () => {
         ),
       })}
     />
-      <Stack.Screen 
+      <Stack.Screen
         name="LoginStack"
         component={LoginNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="MyPageStack"
         component={MyPageNavigator}
         options={{ headerShown: false }}

@@ -14,7 +14,6 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Footer from "../../components/layouts/Footer";
 import CustomSearchBar from "../../components/common/CustomSearchBar";
 import { SharingStackParamList } from "../../navigation/SharingNavigator";
 
@@ -97,7 +96,7 @@ export default function ShairingMain() {
         )}
 
         {/* 푸터 */}
-        {!isKeyboardVisible && <Footer />}
+        {/* {!isKeyboardVisible && <Footer />} */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

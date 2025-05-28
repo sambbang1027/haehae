@@ -10,7 +10,7 @@ import ModalHost from './src/components/modal/HostModal';
 import { ToastProvider } from './src/context/ToastContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import FooterLayout from './src/components/layouts/FooterLayout.tsx';
+import FooterLayout from './src/components/layouts/FooterLayout';
 
 
 export default function App() {
