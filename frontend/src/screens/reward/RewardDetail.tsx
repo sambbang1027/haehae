@@ -11,6 +11,10 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RewardParamList } from '../../navigation/RewardNavigator';
+
+type RewardScreenNavigationProp = NativeStackNavigationProp<RewardParamList,'RewardDetail'>;
 
 const handlerPayPress = () => {
     // Handle the payment logic here
@@ -20,7 +24,7 @@ const handlerPayPress = () => {
 const RewardDetail = () => {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
     const [usePoints, setUsePoints] = useState('');
-    const navigation = useNavigation(); 
+    const navigation = useNavigation<RewardScreenNavigationProp>(); 
     
     const handlePayButtonPress = () => {
         setIsBottomSheetVisible(true);
