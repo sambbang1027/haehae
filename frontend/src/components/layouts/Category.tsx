@@ -64,9 +64,9 @@ const Category: React.FC = () => {
             <Image source={require('../../assets/icons/community.png')} style={styles.icon} />
             <Text style={styles.sectionTitle}>커뮤니티</Text>
           </View>
-          {/* <CategoryItem label="봉사/클래스 모집" route="VolunteerClass" />
-          <CategoryItem label="중고 나눔 마켓" route="Marketplace" />
-          <CategoryItem label="우리 동네 게시판" route="LocalBoard" /> */}
+          <CategoryItem label="봉사/클래스 모집" to={{ stack: 'CommunityStack', screen: 'VolunteerStack' }} />        
+          <CategoryItem label="중고 나눔 마켓" to={{ stack: 'CommunityStack', screen: 'SharingStack' }} />
+          <CategoryItem label="우리 동네 게시판" to={{ stack: 'CommunityStack', screen: 'LocalBoardStack' }} />
         </View>
 
         <View style={styles.divider} />
@@ -77,20 +77,20 @@ const Category: React.FC = () => {
             <Image source={require('../../assets/icons/point.png')} style={styles.icon} />
             <Text style={styles.sectionTitle}>포인트</Text>
           </View>
-          <CategoryItem label="포인트 사용 내역" route="PointRecord" />
-          <CategoryItem label="포인트 상점" route="PointShop" />
+          <CategoryItem label="포인트 사용 내역" to={{ stack: 'MyPageStack', screen: 'PointRecord' }} />
+          <CategoryItem label="포인트 상점" to={{ stack: 'MainStack', screen: 'Reward' }} />
         </View>
 
         <View style={styles.divider} />
 
-        {/* 챌린지 */}
+        {/* 미션 */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Image source={require('../../assets/icons/challenge.png')} style={styles.icon} />
-            <Text style={styles.sectionTitle}>챌린지</Text>
+            <Text style={styles.sectionTitle}>미션</Text>
           </View>
-          {/* <CategoryItem label="일일/주간 미션" route="DayWeekMission" />
-          <CategoryItem label="챌린지 기록" route="Marketplace" /> */}
+          <CategoryItem label="일일/주간 미션" to={{ stack: 'MainStack', screen: 'Mission' }} />
+          <CategoryItem label="미션 활동 기록" to={{ stack: 'MyPageStack', screen: 'MyMission' }} />
         </View>
       </ScrollView>
     </View>

@@ -9,10 +9,13 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
-//import Footer from '../../components/Footer';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../navigation/MainNavigator';
+
+type MainScreenNavigationProp = NativeStackNavigationProp<MainStackParamList,'Main'>;
 
 const Main = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<MainScreenNavigationProp>();
   const [day, setDay] = useState('');
   const [plasticType, setPlasticType] = useState('');
 
@@ -28,8 +31,12 @@ const Main = () => {
     }
   }, []);
 
+  const handlePointPress = () => {
+    navigation.navigate('Point');
+  }
+
   const handleRecycleCalendarPress = () => {
-    // navigation.navigate('RecycleCalendar');
+    navigation.navigate('Recycle');
   }
 
   const handleMissionCardPress = () => {
@@ -40,10 +47,19 @@ const Main = () => {
     navigation.navigate('Alarm');
   };
 
-    const handleRewardPress = () => {
-    navigation.navigate('Reward', { screen: 'RewardList' });
+
+  const handleCollectionPress = () => {
+    navigation.navigate('Location', { screen: 'CollectionBoxLocationScreen' });
   };
 
+  const handleWastePress = () => {
+    navigation.navigate('Waste',{screen:'WasteRestrictionGuideScreen'});
+  }
+  
+  const handleCommunityPress = () => {
+    navigation.navigate('Community', { screen: 'Community' });
+  }
+  
   return (
   <View style={{ flex: 1 }}>
     <ScrollView contentContainerStyle={styles.container}>
@@ -67,7 +83,7 @@ const Main = () => {
         <Text style={styles.dayRecycleText}>{plasticType || '플라스틱' + ' 입니다.'}</Text>
         </TouchableOpacity>
 
-      <TouchableOpacity style={styles.pointCard}>
+      <TouchableOpacity style={styles.pointCard} onPress={handlePointPress}>
         <Text style={styles.pointTitle}>도훈님의 포인트</Text>
         <Text style={styles.pointValue}>1,080 P</Text>
         <View style={styles.pointDetailContainer}>
@@ -88,7 +104,7 @@ const Main = () => {
           </View>
           <Image style={styles.missionImage} source={require('../../assets/icons/mission-icon.png')} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.communityBoard}>
+        <TouchableOpacity style={styles.communityBoard} onPress={handleCommunityPress}>
           <Text style={styles.communityTitle}>우리 동네</Text>
           <View>
             <Text style={styles.communityText}>우리동네</Text>
@@ -100,7 +116,7 @@ const Main = () => {
       </View>
 
       <View style={styles.row}>
-        <TouchableOpacity style={styles.guideCard}>
+        <TouchableOpacity style={styles.guideCard} onPress={handleWastePress}>
           <Text style={styles.guideTitle}>분리수거 가이드</Text>
           <View>
             <Text style={styles.guideSubtitle}>사진 촬영</Text>
@@ -109,7 +125,7 @@ const Main = () => {
           <Image style={styles.guideCameraIcon} source={require('../../assets/images/camera.png')} // 예시 이미지
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.collectionCard} onPress={handleRewardPress}>
+        <TouchableOpacity style={styles.collectionCard} onPress={handleCollectionPress}>
           <Text style={styles.collectionTitle}>수거함 위치</Text>
           <View>
             <Text style={styles.collectionSubtitle}>우리 동네 의류 </Text>

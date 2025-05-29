@@ -13,6 +13,8 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import FooterLayout from './src/components/layouts/FooterLayout';
 
 
+import TestApiScreen from './src/screens/TestApiScreen';
+
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

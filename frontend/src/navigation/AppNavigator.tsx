@@ -77,7 +77,7 @@ const AppNavigator = () => {
         name="MainStack"
         component={MainNavigator}
         options ={{headerShown : false}}
-        />
+      />
       <Stack.Screen
         name="CommunityStack"
         component={CommunityNavigator}
