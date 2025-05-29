@@ -3,12 +3,13 @@ package com.example.backend.entity.reward;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-@Getter
-@ToString
 @Table(name = "reward_items")
 public class RewardItems {
     @Id
@@ -26,6 +27,14 @@ public class RewardItems {
     @Enumerated(EnumType.STRING)
     @Column(name = "reward_type", nullable = false)
     private RewardType rewardType;
+
+    @Column(name = "created_at", updatable = false)
+    private Timestamp createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
 
     public enum RewardType {
         DONATION,

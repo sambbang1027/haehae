@@ -7,8 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-@Getter
-@ToString
 @Table(name = "reward_item_images")
 public class RewardItemImages {
     @Id
@@ -16,9 +14,11 @@ public class RewardItemImages {
     @Column(name = "reward_item_image_id")
     private Long rewardItemImageId;
 
-    @Column(name = "reward_item_id")
-    private Long rewardItemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reward_item_id", nullable = false)
+    private RewardItems rewardItem;
 
     @Column(name = "reward_item_img_url", length = 1024)
     private String rewardItemsImgUrl;
+
 }
