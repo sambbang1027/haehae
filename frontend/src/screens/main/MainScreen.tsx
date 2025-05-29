@@ -40,7 +40,7 @@ const Main = () => {
     navigation.navigate('Alarm');
   };
 7
-    const handleRewardPress = () => {
+  const handleRewardPress = () => {
     navigation.navigate('Reward', { screen: 'RewardList' });
   };
 
@@ -64,7 +64,9 @@ const Main = () => {
           source={require('../../assets/images/main-Image.png')}
         />
         <Text style={styles.dayText}>{day}요일</Text>
-        <Text style={styles.dayRecycleText}>{plasticType || '플라스틱' + ' 입니다.'}</Text>
+        <Text style={styles.dayRecycleText}>
+          {(plasticType || '플라스틱') + ' 입니다.'}
+        </Text>
         </TouchableOpacity>
 
       <TouchableOpacity style={styles.pointCard}>
