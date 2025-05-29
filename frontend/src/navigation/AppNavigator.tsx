@@ -82,7 +82,6 @@ const AppNavigator = () => {
         name="CommunityStack"
         component={CommunityNavigator}
       />    
-
       <Stack.Screen
         name='AiDisposalStack'
         component={AiDisposalNavigator}

@@ -43,7 +43,6 @@ export default function FooterLayout() {
     'ChatingDetail',
     'RewardDetail',
     'ReportScreen'
-
   ];
 
   const showFooter = !hideFooterRoutes.includes(currentRoute ?? '');
