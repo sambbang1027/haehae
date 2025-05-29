@@ -12,11 +12,6 @@ import { useNavigation } from '@react-navigation/native';
 // import Footer from '../../components/Footer';
 
 const RewardPay = () => {
-  const navigation = useNavigation(); 
-
-  const handleRewardPayList = () => {
-    navigation.navigate('RewardPayList');
-  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -29,9 +24,6 @@ const RewardPay = () => {
         <Text style={styles.donationTitle}>불우이웃 재헌이 돕기</Text>
         <Text style={styles.paymentDate}>결제일시 : 2025.04.28 17시 59분</Text>
         <Text style={styles.usedPoints}>사용한 포인트 : 1,000P</Text>
-        <TouchableOpacity onPress={handleRewardPayList}>
-          <Text>확인용-결제목록 페이지 이동</Text>
-        </TouchableOpacity>
       </ScrollView>
       {/* <Footer /> */}
     </View>
