@@ -1,21 +1,20 @@
 package com.example.backend.repository.reward;
 
+import com.example.backend.dto.reward.FindRewardDetailDTO;
 import com.example.backend.dto.reward.FindRewardListDTO;
+import com.example.backend.dto.reward.QFindRewardDetailDTO;
 import com.example.backend.dto.reward.QFindRewardListDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
 import com.example.backend.entity.reward.RewardItems;
-import com.querydsl.core.types.Expression;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.ProjectedPayload;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class RewardRepositoryImpl implements RewardRepositoryCustom {
@@ -54,5 +53,24 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                         ri.stock.gt(0)
                 )
                 .fetch();
+    }
+
+    @Override
+    public FindRewardDetailDTO findRewardDetailById(long id) {
+        return jpaQueryFactory
+                .from(ri)
+                .leftJoin(qri).on(qri.rewardItem.eq(ri.id))// 연관 매핑이 없으니 FK로 직접 조인
+                .where(ri.id.eq(id))
+                .transform(GroupBy.groupBy(ri.id).as(
+                        new QFindRewardDetailDTO(
+                                ri.id,
+                                ri.name,
+                                ri.description,
+                                ri.pointCost,
+                                ri.createdAt,
+                                GroupBy.list(qri.rewardItemsImgUrl) // 이미지 여러 개 리스트로
+                        )
+                ))
+                .get(id); // ri.id 기준으로 단건 꺼냄
     }
 }

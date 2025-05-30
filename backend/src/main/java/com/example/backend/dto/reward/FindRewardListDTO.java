@@ -15,7 +15,7 @@ public class FindRewardListDTO {
     private Long pointCost;
     private List<String> rewardItemsImgUrl;
 
-    @QueryProjection // <--- 생성자에 붙입니다.
+    @QueryProjection
     public FindRewardListDTO(Long id, String name, Long pointCost, String rewardItemsImgUrl) {
         this.id = id;
         this.name = name;
