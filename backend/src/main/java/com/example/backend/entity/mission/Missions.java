@@ -16,7 +16,7 @@ public class Missions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mission_id")
-    private Long missionId;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "mission_type", nullable = false)

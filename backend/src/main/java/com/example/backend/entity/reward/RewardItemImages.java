@@ -12,11 +12,10 @@ public class RewardItemImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reward_item_image_id")
-    private Long rewardItemImageId;
+    private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reward_item_id", nullable = false)
-    private RewardItems rewardItem;
+    @Column(name = "reward_item_id")
+    private long rewardItem;
 
     @Column(name = "reward_item_img_url", length = 1024)
     private String rewardItemsImgUrl;

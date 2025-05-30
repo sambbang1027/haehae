@@ -10,19 +10,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Getter
 @Table(name = "reward_items")
 public class RewardItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reward_item_id")
-    private Long rewardItemId;
+    private long id;
 
     private String name;
     private String description;
 
     @Column(name = "point_cost")
-    private Long pointCost;
-    private Long stock;
+    private long pointCost;
+
+    private long stock;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reward_type", nullable = false)
