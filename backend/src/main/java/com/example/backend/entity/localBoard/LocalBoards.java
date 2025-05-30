@@ -1,5 +1,6 @@
 package com.example.backend.entity.localBoard;
 
+import com.example.backend.entity.user.Users;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 @Entity
@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocalBoard {
+public class LocalBoards {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "local_board_id")
@@ -39,8 +39,6 @@ public class LocalBoard {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "localBoard", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comments> comments = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
