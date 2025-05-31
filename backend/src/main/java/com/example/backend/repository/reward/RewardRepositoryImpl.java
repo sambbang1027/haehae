@@ -1,11 +1,9 @@
 package com.example.backend.repository.reward;
 
-import com.example.backend.dto.reward.FindRewardDetailDTO;
-import com.example.backend.dto.reward.FindRewardListDTO;
-import com.example.backend.dto.reward.QFindRewardDetailDTO;
-import com.example.backend.dto.reward.QFindRewardListDTO;
+import com.example.backend.dto.reward.*;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
+import com.example.backend.entity.reward.QUserRewards;
 import com.example.backend.entity.reward.RewardItems;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ExpressionUtils;
@@ -28,6 +26,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     QRewardItems ri = QRewardItems.rewardItems;
     QRewardItemImages qri = QRewardItemImages.rewardItemImages;
     QRewardItemImages subQri = new QRewardItemImages("subQri");
+
 
     @Override
     public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType) {
@@ -73,4 +72,5 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                 ))
                 .get(id); // ri.id 기준으로 단건 꺼냄
     }
+
 }

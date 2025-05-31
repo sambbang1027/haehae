@@ -3,6 +3,7 @@ package com.example.backend.repository.reward;
 
 import com.example.backend.dto.reward.FindRewardDetailDTO;
 import com.example.backend.dto.reward.FindRewardListDTO;
+import com.example.backend.dto.reward.UserRewardRecodeDTO;
 import com.example.backend.entity.reward.RewardItems;
 import org.springframework.data.repository.query.Param;
 
