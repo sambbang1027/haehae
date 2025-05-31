@@ -26,6 +26,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     QRewardItems ri = QRewardItems.rewardItems;
     QRewardItemImages qri = QRewardItemImages.rewardItemImages;
     QRewardItemImages subQri = new QRewardItemImages("subQri");
+    QUserRewards ur = QUserRewards.userRewards;
 
 
     @Override
@@ -36,17 +37,16 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                         ri.name,
                         ri.pointCost,
                         ExpressionUtils.as(
-                                JPAExpressions.select(subQri.rewardItemsImgUrl)
+                                JPAExpressions
+                                        .select(subQri.rewardItemsImgUrl.min()) // 또는 max()
                                         .from(subQri)
-                                        .where(subQri.id.eq(ri.id))
-                                        .orderBy(subQri.id.asc()) // 어떤 이미지를 가져올지 기준: ID가 가장 작은 이미지
-                                        .limit(1), // 한 건만 가져옴
-                                "rewardItemsImgUrl" // DTO 필드명과 일치시켜 매핑
+                                        .where(subQri.rewardItemId.eq(ri.id)),
+                                "rewardItemsImgUrl"
                             )
                         ))
                 .from(ri)
-                .leftJoin(qri)
-                .on(qri.id.eq(ri.id))
+//                .leftJoin(qri)
+//                .on(qri.rewardItemId.eq(ri.id))
                 .where(
                         rewardType !=null ? ri.rewardType.eq(rewardType) : null,
                         ri.stock.gt(0)
@@ -58,7 +58,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     public FindRewardDetailDTO findRewardDetailById(long id) {
         return jpaQueryFactory
                 .from(ri)
-                .leftJoin(qri).on(qri.rewardItem.eq(ri.id))// 연관 매핑이 없으니 FK로 직접 조인
+                .leftJoin(qri).on(qri.rewardItemId.eq(ri.id))// 연관 매핑이 없으니 FK로 직접 조인
                 .where(ri.id.eq(id))
                 .transform(GroupBy.groupBy(ri.id).as(
                         new QFindRewardDetailDTO(
@@ -72,5 +72,4 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                 ))
                 .get(id); // ri.id 기준으로 단건 꺼냄
     }
-
 }

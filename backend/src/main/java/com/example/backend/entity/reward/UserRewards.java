@@ -1,18 +1,15 @@
 package com.example.backend.entity.reward;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Entity
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@Getter
 @Table(name = "user_rewards")
 public class UserRewards {
     @Id
@@ -41,6 +38,5 @@ public class UserRewards {
         AVAILABLE,
         USED,
         EXPIRED
-
     }
 }

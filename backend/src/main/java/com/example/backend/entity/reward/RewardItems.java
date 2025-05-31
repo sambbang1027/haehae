@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
+@Builder
 @Getter
 @Table(name = "reward_items")
 public class RewardItems {
@@ -33,10 +32,13 @@ public class RewardItems {
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
+    private String organization;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
+
 
     public enum RewardType {
         DONATION,

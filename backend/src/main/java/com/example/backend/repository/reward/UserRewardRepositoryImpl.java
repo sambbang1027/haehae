@@ -34,7 +34,7 @@ public class UserRewardRepositoryImpl implements UserRewardRepositoryCustom {
                 .join(ri)
                 .on(ur.rewardItemId.eq(ri.id))
                 .join(qri)
-                .on(ri.id.eq(qri.rewardItem))
+                .on(ri.id.eq(qri.rewardItemId))
                 .where(ur.id.eq(id))
                 .fetchFirst();
     }

@@ -6,7 +6,7 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
+@Builder
 @Table(name = "reward_item_images")
 public class RewardItemImages {
     @Id
@@ -15,9 +15,9 @@ public class RewardItemImages {
     private long id;
 
     @Column(name = "reward_item_id")
-    private long rewardItem;
+    private long rewardItemId;
 
-    @Column(name = "reward_item_img_url", length = 1024)
+    @Column(name = "reward_items_img_url", length = 1024)
     private String rewardItemsImgUrl;
 
 }
