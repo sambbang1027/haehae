@@ -35,3 +35,13 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# application.properties 파일
+**/application.properties
+
+# test 디렉토리
+**/test/**
+
+# queryDSL 관련 파일
+/src/main/generated/
+/build/generated/
