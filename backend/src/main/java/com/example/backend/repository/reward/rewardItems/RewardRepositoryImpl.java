@@ -1,9 +1,12 @@
-package com.example.backend.repository.reward;
+package com.example.backend.repository.reward.rewardItems;
 
-import com.example.backend.dto.reward.*;
+
+import com.example.backend.dto.reward.rewardItems.response.FindRewardDetailDTO;
+import com.example.backend.dto.reward.rewardItems.response.FindRewardListDTO;
+import com.example.backend.dto.reward.rewardItems.response.QFindRewardDetailDTO;
+import com.example.backend.dto.reward.rewardItems.response.QFindRewardListDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
-import com.example.backend.entity.reward.QUserRewards;
 import com.example.backend.entity.reward.RewardItems;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ExpressionUtils;
@@ -12,7 +15,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class RewardRepositoryImpl implements RewardRepositoryCustom {
@@ -26,13 +28,11 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     QRewardItems ri = QRewardItems.rewardItems;
     QRewardItemImages qri = QRewardItemImages.rewardItemImages;
     QRewardItemImages subQri = new QRewardItemImages("subQri");
-    QUserRewards ur = QUserRewards.userRewards;
-
 
     @Override
     public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType) {
         return jpaQueryFactory
-                .select(new QFindRewardListDTO (
+                .select(new QFindRewardListDTO(
                         ri.id,
                         ri.name,
                         ri.pointCost,
@@ -67,6 +67,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                                 ri.description,
                                 ri.pointCost,
                                 ri.createdAt,
+                                ri.updatedAt,
                                 GroupBy.list(qri.rewardItemsImgUrl) // 이미지 여러 개 리스트로
                         )
                 ))

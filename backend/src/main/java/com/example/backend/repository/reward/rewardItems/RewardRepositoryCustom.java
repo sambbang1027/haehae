@@ -1,9 +1,8 @@
-package com.example.backend.repository.reward;
+package com.example.backend.repository.reward.rewardItems;
 
 
-import com.example.backend.dto.reward.FindRewardDetailDTO;
-import com.example.backend.dto.reward.FindRewardListDTO;
-import com.example.backend.dto.reward.UserRewardRecodeDTO;
+import com.example.backend.dto.reward.rewardItems.response.FindRewardDetailDTO;
+import com.example.backend.dto.reward.rewardItems.response.FindRewardListDTO;
 import com.example.backend.entity.reward.RewardItems;
 import org.springframework.data.repository.query.Param;
 

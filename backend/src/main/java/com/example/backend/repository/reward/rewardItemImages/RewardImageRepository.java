@@ -1,4 +1,4 @@
-package com.example.backend.repository.reward;
+package com.example.backend.repository.reward.rewardItemImages;
 
 import com.example.backend.entity.reward.RewardItemImages;
 import org.springframework.data.jpa.repository.JpaRepository;

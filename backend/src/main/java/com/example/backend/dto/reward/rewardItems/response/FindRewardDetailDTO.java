@@ -1,4 +1,4 @@
-package com.example.backend.dto.reward;
+package com.example.backend.dto.reward.rewardItems.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
@@ -17,21 +17,25 @@ public class FindRewardDetailDTO {
     private String description;
     private long pointCost;
     private Timestamp createdAt;
+    private Timestamp updatedAt;
     private List<String>  rewardItemsImgUrl;
 
+
     @QueryProjection
-    public FindRewardDetailDTO(     long id,
-                                    String name,
-                                    String description,
-                                    long pointCost,
-                                    Timestamp createdAt,
-                                    List<String> rewardItemsImgUrl
+    public FindRewardDetailDTO(long id,
+                               String name,
+                               String description,
+                               long pointCost,
+                               Timestamp createdAt,
+                               Timestamp updateAt,
+                               List<String> rewardItemsImgUrl
                             ){
         this.id = id;
         this.name = name;
         this.description = description;
         this.pointCost = pointCost;
         this.createdAt = createdAt;
+        this.updatedAt = updateAt;
         this.rewardItemsImgUrl = rewardItemsImgUrl;
     }
 }

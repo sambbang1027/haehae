@@ -1,7 +1,9 @@
-package com.example.backend.dto.reward;
+package com.example.backend.dto.reward.rewardItems.response;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;

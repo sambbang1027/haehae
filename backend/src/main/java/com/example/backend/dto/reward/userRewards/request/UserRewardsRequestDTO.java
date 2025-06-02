@@ -1,10 +1,8 @@
-package com.example.backend.dto.reward;
+package com.example.backend.dto.reward.userRewards.request;
 
 import com.example.backend.entity.reward.UserRewards;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.sql.Timestamp;
 
 @Getter
 @Setter

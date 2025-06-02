@@ -1,12 +1,16 @@
-package com.example.backend.service.reward;
+package com.example.backend.service.reward.rewardItmes;
 
-import com.example.backend.dto.reward.FindRewardDetailDTO;
-import com.example.backend.dto.reward.FindRewardListDTO;
-import com.example.backend.dto.reward.RewardRequestDTO;
+
+import com.example.backend.dto.reward.rewardItems.request.RewardItemsRequestUpdateDTO;
+
+import com.example.backend.dto.reward.rewardItems.request.RewardRequestDTO;
+import com.example.backend.dto.reward.rewardItems.response.FindRewardDetailDTO;
+import com.example.backend.dto.reward.rewardItems.response.FindRewardListDTO;
 import com.example.backend.entity.reward.RewardItemImages;
 import com.example.backend.entity.reward.RewardItems;
-import com.example.backend.repository.reward.RewardImageRepository;
-import com.example.backend.repository.reward.RewardRepository;
+import com.example.backend.repository.reward.rewardItemImages.RewardImageRepository;
+import com.example.backend.repository.reward.rewardItems.RewardRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +62,17 @@ public class RewardItemsServiceImpl implements RewardItemsService {
             throw new IllegalArgumentException("조회한 게시물의 정보가 없습니다.");
         }
         return dto;
+    }
+
+    @Transactional
+    @Override
+    public void RewardItemUpdate(RewardItemsRequestUpdateDTO dto) {
+        if(dto.getStock() < 0){
+            throw new IllegalArgumentException("리워드 상품의 재고는 음수 일 수 없습니다.");
+        }
+        RewardItems rewardItems= rewardRepository.findById(dto.getId())
+                        .orElseThrow(() -> new EntityNotFoundException("해당 게시물의 정보가 없습니다. "));
+
+        rewardRepository.save(dto.toEntity());
     }
 }

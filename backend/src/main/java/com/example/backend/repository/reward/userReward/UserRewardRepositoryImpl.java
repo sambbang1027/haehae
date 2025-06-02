@@ -1,7 +1,7 @@
-package com.example.backend.repository.reward;
+package com.example.backend.repository.reward.userReward;
 
-import com.example.backend.dto.reward.QUserRewardRecodeDTO;
-import com.example.backend.dto.reward.UserRewardRecodeDTO;
+import com.example.backend.dto.reward.userRewards.response.QUserRewardRecodeDTO;
+import com.example.backend.dto.reward.userRewards.response.UserRewardRecodeDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
 import com.example.backend.entity.reward.QUserRewards;

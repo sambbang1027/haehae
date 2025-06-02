@@ -1,4 +1,4 @@
-package com.example.backend.dto.reward;
+package com.example.backend.dto.reward.userRewards.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class UserRewardRecodeDTO {
 
     @QueryProjection
     public UserRewardRecodeDTO(long id, long userId, long rewardItemId,
-                                String name, long pointCost,
+                               String name, long pointCost,
                                Timestamp issuedAt, String rewardItemImgUrl){
         this.id =id;
         this.userId = userId;
