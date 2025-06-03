@@ -1,10 +1,12 @@
 package com.example.backend.entity;
 
+import com.example.backend.user.vo.Email;
+import com.example.backend.user.vo.Nickname;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,16 +17,20 @@ import java.sql.Timestamp;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
     @Column(name = "user_level_id")
     private Long userLevelId;
-    private String email;
+    @Embedded
+    private Email email;
+
     private String name;
     @Column(name = "password_hash")
     private String passwordHash;
-    private String nickname;
+
+    @Embedded
+    private Nickname nickname;
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     @Column(name = "social_provider")
@@ -57,4 +63,10 @@ public class User {
     private Long currentPoint;
     @Column(name = "total_point")
     private Long totalPoint;
+    @Column(name = "provider_id")
+    private String providerId;
+    private String bcode;
+    @Column(name = "phone_number")
+    private String phoneNumber;
+    private LocalDate birth;
 }

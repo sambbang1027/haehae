@@ -5,25 +5,23 @@ import lombok.*;
 
 import java.sql.Timestamp;
 
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "user_tokens")
 @Builder
+@Getter
+@Table(name = "user_points")
 @Entity
-public class UserToken {
-
+public class UserPoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_token_id")
+    @Column(name = "user_point_id")
     private Long id;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "access_token")
-    private String accessToken;
-    @Column(name = "refresh_token")
-    private String refreshToken;
-    @Column(name = "expires_at")
-    private Timestamp expiresAt;
-
+    @Column(name = "point_type")
+    private String pointType;
+    private Long amount;
+    private String source;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 }
