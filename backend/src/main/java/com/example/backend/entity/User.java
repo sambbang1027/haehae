@@ -22,15 +22,11 @@ public class User {
     private Long id;
     @Column(name = "user_level_id")
     private Long userLevelId;
-    @Embedded
-    private Email email;
-
+    private String email;
     private String name;
     @Column(name = "password_hash")
     private String passwordHash;
-
-    @Embedded
-    private Nickname nickname;
+    private String  nickname;
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     @Column(name = "social_provider")

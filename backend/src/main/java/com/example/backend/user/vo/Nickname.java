@@ -1,4 +1,7 @@
 package com.example.backend.user.vo;
+import com.example.backend.exception.ErrorCode;
+import com.example.backend.exception.HaehaeException;
+
 import java.util.Objects;
 
 
@@ -8,7 +11,7 @@ public class Nickname {
     public Nickname(String value){
 
         if(!value.matches("^[a-zA-Z가-힣0-9]{2,10}$")){
-            throw new IllegalArgumentException("닉네임은 한글, 영문, 숫자 포함 2~10자여야 합니다.");
+            throw new HaehaeException(ErrorCode.INVALID_NICKNAME_PATTERN);
         }
         this.value = value;
     }

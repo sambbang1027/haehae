@@ -1,6 +1,9 @@
 package com.example.backend.user.vo;
 
 
+import com.example.backend.exception.ErrorCode;
+import com.example.backend.exception.HaehaeException;
+
 import java.util.Objects;
 
 public class Email {
@@ -8,7 +11,7 @@ public class Email {
 
     public Email(String value) {
         if (!value.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$")) {
-            throw new IllegalArgumentException("잘못된 이메일 형식입니다.");
+            throw new HaehaeException(ErrorCode.INVALID_EMAIL_FORMAT);
         }
         this.value = value;
     }

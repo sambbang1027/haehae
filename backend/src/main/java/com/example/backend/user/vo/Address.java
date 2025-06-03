@@ -1,5 +1,8 @@
 package com.example.backend.user.vo;
 
+import com.example.backend.exception.ErrorCode;
+import com.example.backend.exception.HaehaeException;
+
 public class Address {
 
     private final String roadAddress;
@@ -7,10 +10,10 @@ public class Address {
 
     public Address(String roadAddress, String bcode){
         if(roadAddress == null || roadAddress.isBlank()){
-            throw new IllegalArgumentException("도로명 주소는 필수입니다.");
+            throw new HaehaeException(ErrorCode.INVALID_ADDRESS);
         }
         if(bcode == null || bcode.isBlank()){
-            throw new IllegalArgumentException("행정동 코드는 필수입니다.");
+            throw new HaehaeException(ErrorCode.INVALID_BCODE);
         }
         this.roadAddress = roadAddress;
         this.bcode = bcode;

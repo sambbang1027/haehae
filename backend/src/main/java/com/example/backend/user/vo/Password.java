@@ -1,5 +1,8 @@
 package com.example.backend.user.vo;
 
+import com.example.backend.exception.ErrorCode;
+import com.example.backend.exception.HaehaeException;
+
 public class Password {
 
     private final String value;
@@ -7,7 +10,7 @@ public class Password {
     public Password(String value){
 
         if(!value.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=]).{8,12}$")){
-            throw new IllegalArgumentException("비밀번호는 영문자, 숫자, 특수문자를 포함한 8~12여야 합니다.");
+            throw new HaehaeException(ErrorCode.INVALID_PASSWORD_PATTERN);
         }
         this.value =value;
     }

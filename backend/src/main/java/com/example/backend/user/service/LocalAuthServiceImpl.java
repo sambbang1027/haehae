@@ -19,6 +19,7 @@ public class LocalAuthServiceImpl implements AuthService{
     //로컬 회원가입
     @Override
     public void localRegister(LocalRegisterDTO localRegisterDTO){
+        // VO 검증
         Email email = new Email(localRegisterDTO.getEmail());
         Nickname nickname = new Nickname(localRegisterDTO.getNickname());
         Password password = new Password(localRegisterDTO.getPassword());
