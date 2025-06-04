@@ -47,7 +47,6 @@ const Main = () => {
     navigation.navigate('Alarm');
   };
 
-
   const handleCollectionPress = () => {
     navigation.navigate('Location', { screen: 'CollectionBoxLocationScreen' });
   };
@@ -80,7 +79,9 @@ const Main = () => {
           source={require('../../assets/images/main-Image.png')}
         />
         <Text style={styles.dayText}>{day}요일</Text>
-        <Text style={styles.dayRecycleText}>{plasticType || '플라스틱' + ' 입니다.'}</Text>
+        <Text style={styles.dayRecycleText}>
+          {(plasticType || '플라스틱') + ' 입니다.'}
+        </Text>
         </TouchableOpacity>
 
       <TouchableOpacity style={styles.pointCard} onPress={handlePointPress}>
@@ -96,22 +97,21 @@ const Main = () => {
       </TouchableOpacity>
 
       <View style={styles.row}>
-       <TouchableOpacity style={styles.missionCard} onPress={handleMissionCardPress}> {/* TouchableOpacity로 감싸고 onPress 이벤트 추가 */}
-          <Text style={styles.missionTitle}>환경 미션</Text>
-          <View>
-            <Text style={styles.missionDescription}>일일/주간</Text>
-            <Text style={styles.missionDescription}>미션하러 가기</Text>
-          </View>
-          <Image style={styles.missionImage} source={require('../../assets/icons/mission-icon.png')} />
-        </TouchableOpacity>
+        <TouchableOpacity style={styles.missionCard} onPress={handleMissionCardPress}>
+          <Text style={styles.missionTitle}>환경 미션</Text>
+          <View>
+            <Text style={styles.missionDescription}>일일/주간</Text>
+            <Text style={styles.missionDescription}>미션하러 가기</Text>
+          </View>
+          <Image style={styles.missionImage} source={require('../../assets/icons/mission-icon.png')} />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.communityBoard} onPress={handleCommunityPress}>
           <Text style={styles.communityTitle}>우리 동네</Text>
           <View>
             <Text style={styles.communityText}>우리동네</Text>
             <Text style={styles.communityText}>커뮤니티</Text>
           </View>
-          <Image style={styles.communityImage} source={require('../../assets/images/village.png')} // 예시 이미지
-          />
+          <Image style={styles.communityImage} source={require('../../assets/images/village.png')} />
         </TouchableOpacity>
       </View>
 

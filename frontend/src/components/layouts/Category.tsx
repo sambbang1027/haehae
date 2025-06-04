@@ -52,8 +52,8 @@ const Category: React.FC = () => {
             <Image source={require('../../assets/icons/map.png')} style={styles.icon} />
             <Text style={styles.sectionTitle}>지도</Text>
           </View>
-          {/* <CategoryItem label="수거함 위치 탐색" to={{ stack: 'LocationStack', screen: 'CollectionBoxLocationScreen' }} />
-          <CategoryItem label="플로깅 장소" to={{ stack: 'LocationStack', screen: 'PloggingPlaceScreen' }} /> */}
+          <CategoryItem label="수거함 위치 탐색" to={{ stack: 'LocationStack', screen: 'CollectionBoxLocationScreen' }} />
+          <CategoryItem label="플로깅 장소" to={{ stack: 'LocationStack', screen: 'PloggingPlaceScreen' }} />
         </View>
 
         <View style={styles.divider} />

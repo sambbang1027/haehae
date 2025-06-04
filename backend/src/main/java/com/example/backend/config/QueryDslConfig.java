@@ -1,3 +1,4 @@
+
 package com.example.backend.config;
 
 import com.querydsl.jpa.JPQLTemplates;
@@ -18,3 +19,4 @@ public class QueryDslConfig {
         return new JPAQueryFactory(JPQLTemplates.DEFAULT ,entityManager);
     }
 }
+
