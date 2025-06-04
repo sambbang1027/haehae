@@ -4,9 +4,9 @@ import com.example.backend.dto.localBoard.board.response.BoardListResponseDTO;
 import com.example.backend.dto.localBoard.board.response.ContentResponseDTO;
 import com.example.backend.dto.localBoard.board.response.QBoardListResponseDTO;
 import com.example.backend.dto.localBoard.board.response.QContentResponseDTO;
+import com.example.backend.entity.QUser;
 import com.example.backend.entity.localBoard.QComments;
 import com.example.backend.entity.localBoard.QLocalBoards;
-import com.example.backend.entity.user.QUsers;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -24,12 +24,12 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
     //지역코드 가져오기 -> user 테이블
     @Override
     public String getRegionCodeById(long userId) {
-        QUsers u = QUsers.users;
+        QUser u = QUser.user;
 
         return queryFactory
                 .select(u.address)
                 .from(u)
-                .where(u.userId.eq(userId))
+                .where(u.id.eq(userId))
                 .fetchOne();
     }
 
@@ -38,7 +38,7 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
     public List<BoardListResponseDTO> getLocalBoardListByRegion(String regionCode) {
         QLocalBoards lb = QLocalBoards.localBoards;
         QComments cm = QComments.comments;
-        QUsers u = QUsers.users;
+        QUser u = QUser.user;
 
         return queryFactory
                 .select(new QBoardListResponseDTO(
@@ -50,7 +50,7 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
                         cm.count()
                 ))
                 .from(lb)
-                .join(u).on(lb.userId.eq(u.userId))
+                .join(u).on(lb.userId.eq(u.id))
                 .leftJoin(cm).on(lb.localBoardId.eq(cm.localBoardId))
                 .where(lb.regionCode.eq(regionCode))
                 .groupBy(lb.localBoardId, lb.title, lb.content, u.nickname, lb.createdAt)
@@ -64,7 +64,7 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
     public List<BoardListResponseDTO> searchLocalBoardListByNicknameOrTitle(String regionCode, String searchContent){
         QLocalBoards lb = QLocalBoards.localBoards;
         QComments cm = QComments.comments;
-        QUsers u = QUsers.users;
+        QUser u = QUser.user;
 
         return queryFactory
                 .select(new QBoardListResponseDTO(
@@ -76,7 +76,7 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
                         cm.count()
                 ))
                 .from(lb)
-                .join(u).on(lb.userId.eq(u.userId))
+                .join(u).on(lb.userId.eq(u.id))
                 .leftJoin(cm).on(lb.localBoardId.eq(cm.localBoardId))
                 .where(lb.regionCode.eq(regionCode)
                         .and((lb.title.contains(searchContent))
@@ -92,11 +92,11 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
     @Override
     public ContentResponseDTO getLocalBoardDetailById(long localBoardId){
         QLocalBoards lb = QLocalBoards.localBoards;
-        QUsers u = QUsers.users;
+        QUser u = QUser.user;
 
         return queryFactory
                 .select(new QContentResponseDTO(
-                        u.userId,
+                        u.id,
                         u.nickname,
                         lb.localBoardId,
                         lb.title,
@@ -104,7 +104,7 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
                         lb.createdAt
                 ))
                 .from(lb)
-                .join(u).on(lb.userId.eq(u.userId))
+                .join(u).on(lb.userId.eq(u.id))
                 .where(lb.localBoardId.eq(localBoardId))
                 .fetchOne();
     };

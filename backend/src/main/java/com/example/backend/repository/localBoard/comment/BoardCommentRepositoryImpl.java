@@ -2,8 +2,8 @@ package com.example.backend.repository.localBoard.comment;
 
 import com.example.backend.dto.localBoard.comment.response.CommentResponseDTO;
 import com.example.backend.dto.localBoard.comment.response.QCommentResponseDTO;
+import com.example.backend.entity.QUser;
 import com.example.backend.entity.localBoard.QComments;
-import com.example.backend.entity.user.QUsers;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -22,11 +22,11 @@ public class BoardCommentRepositoryImpl implements BoardCommentRepositoryCustom 
     @Override
     public List<CommentResponseDTO> getLocalBoardDetailCommentById(long localBoardId){
         QComments cm = QComments.comments;
-        QUsers u = QUsers.users;
+        QUser u = QUser.user;
 
         List<CommentResponseDTO> flatComments = queryFactory
                 .select(new QCommentResponseDTO(
-                        u.userId,
+                        u.id,
                         u.nickname,
                         u.profileImageUrl,
                         cm.id,
@@ -35,7 +35,7 @@ public class BoardCommentRepositoryImpl implements BoardCommentRepositoryCustom 
                         cm.createdAt
                 ))
                 .from(cm)
-                .join(u).on(cm.userId.eq(u.userId))
+                .join(u).on(cm.userId.eq(u.id))
                 .where(cm.localBoardId.eq(localBoardId))
                 .fetch();
         return flatComments;
