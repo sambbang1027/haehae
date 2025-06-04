@@ -21,17 +21,17 @@ public class Comments {
     @Column(name = "comment_id")
     private long id;
 
-
     @Column(name = "local_board_id")
     private long localBoardId;
 
     @Column(name = "parent_comment_id")
-    private long parentCommentId;
+    private Long parentCommentId;
 
     @Column(name = "user_id")
     private long userId;
 
-    private String comment;
+    private String content;
+
 
     @Column(name = "created_at")
     private Timestamp createdAt;
