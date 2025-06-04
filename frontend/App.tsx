@@ -1,5 +1,6 @@
 import 'react-native-reanimated';
 import React from 'react';
+
 import { NavigationContainer, useNavigationState } from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -12,8 +13,6 @@ import AppNavigator from './src/navigation/AppNavigator';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import FooterLayout from './src/components/layouts/FooterLayout';
 
-
-import TestApiScreen from './src/screens/TestApiScreen';
 
 export default function App() {
   return (
