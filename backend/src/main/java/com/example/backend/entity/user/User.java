@@ -1,7 +1,5 @@
-package com.example.backend.entity;
+package com.example.backend.entity.user;
 
-import com.example.backend.user.vo.Email;
-import com.example.backend.user.vo.Nickname;
 import jakarta.persistence.*;
 import lombok.*;
 
