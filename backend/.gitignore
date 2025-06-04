@@ -33,10 +33,16 @@ out/
 /nbdist/
 /.nb-gradle/
 
-**/application.properties
-
 ### VS Code ###
 .vscode/
 
-### Git ###
+# application.properties 파일
 **/application.properties
+
+# test 디렉토리
+**/test/**
+
+# queryDSL 관련 파일
+/src/main/generated/
+/build/generated/
+
