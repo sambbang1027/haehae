@@ -68,6 +68,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                                 ri.pointCost,
                                 ri.createdAt,
                                 ri.updatedAt,
+                                GroupBy.list(qri.id),
                                 GroupBy.list(qri.rewardItemsImgUrl) // 이미지 여러 개 리스트로
                         )
                 ))

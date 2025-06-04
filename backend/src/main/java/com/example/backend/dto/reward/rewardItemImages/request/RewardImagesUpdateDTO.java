@@ -1,7 +1,6 @@
 package com.example.backend.dto.reward.rewardItemImages.request;
 
 import com.example.backend.entity.reward.RewardItemImages;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,12 +8,12 @@ import lombok.Setter;
 @Getter
 public class RewardImagesUpdateDTO {
     private long rewardItemId;
-    private String rewardTimesImgUrl;
+    private String RewardItemsImgUrl;
 
     public RewardItemImages toEntity(){
         return RewardItemImages.builder()
                 .rewardItemId(rewardItemId)
-                .rewardItemsImgUrl(rewardTimesImgUrl)
+                .rewardItemsImgUrl(RewardItemsImgUrl)
                 .build();
     }
 

@@ -2,7 +2,6 @@ package com.example.backend.service.reward.rewardItmes;
 
 
 import com.example.backend.dto.reward.rewardItems.request.RewardItemsRequestUpdateDTO;
-
 import com.example.backend.dto.reward.rewardItems.request.RewardRequestDTO;
 import com.example.backend.dto.reward.rewardItems.response.FindRewardDetailDTO;
 import com.example.backend.dto.reward.rewardItems.response.FindRewardListDTO;
@@ -28,9 +27,13 @@ public class RewardItemsServiceImpl implements RewardItemsService {
 
 
     @Transactional
-    public void RewardItemInsert(RewardRequestDTO dto) {
-        if (dto == null) {
-            throw new IllegalArgumentException("리워드 상점 게시물을 작성해주세요.");
+    public void rewardItemInsert(RewardRequestDTO dto) {
+        if(dto.getRewardType() != RewardItems.RewardType.DONATION){
+            if(dto.getStock()<=0){
+                throw new IllegalArgumentException("상품의 갯수를 입력해주세요.");
+            } else if (dto.getPointCost()<=0) {
+                throw new IllegalArgumentException("포인트 가격을 입력해주세요.");
+            }
         }
         RewardItems item = rewardRepository.save(dto.toRewardItemsEntity());
 
@@ -64,9 +67,8 @@ public class RewardItemsServiceImpl implements RewardItemsService {
         return dto;
     }
 
-    @Transactional
     @Override
-    public void RewardItemUpdate(RewardItemsRequestUpdateDTO dto) {
+    public void rewardItemUpdate(RewardItemsRequestUpdateDTO dto) {
         if(dto.getStock() < 0){
             throw new IllegalArgumentException("리워드 상품의 재고는 음수 일 수 없습니다.");
         }
@@ -74,5 +76,14 @@ public class RewardItemsServiceImpl implements RewardItemsService {
                         .orElseThrow(() -> new EntityNotFoundException("해당 게시물의 정보가 없습니다. "));
 
         rewardRepository.save(dto.toEntity());
+    }
+    @Transactional
+    @Override
+    public void rewardDeleteById(long id) {
+        if(!rewardRepository.existsById(id)){
+            throw new IllegalArgumentException("해당 게시물의 정보가 없습니다.");
+        }
+        rewardImageRepository.deleteByAll(id);
+        rewardRepository.deleteById(id);
     }
 }

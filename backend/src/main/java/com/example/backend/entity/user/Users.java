@@ -44,7 +44,7 @@ public class Users {
     private Timestamp createdAt;
 
     @Enumerated(EnumType.STRING)
-    private Roll roll;
+    private Roll role;
 
     @Enumerated(EnumType.STRING)
     private Status status;

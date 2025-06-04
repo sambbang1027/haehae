@@ -10,10 +10,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-
 public interface RewardItemsService  {
-     void RewardItemInsert(RewardRequestDTO dto);
+     void rewardItemInsert(RewardRequestDTO dto);
      List<FindRewardListDTO> findRewardItemList(@Param("rewardType")RewardItems.RewardType rewardType);
      FindRewardDetailDTO findRewardDetail(@Param("id")long id);
-     void RewardItemUpdate(RewardItemsRequestUpdateDTO dto);
+     void rewardItemUpdate(RewardItemsRequestUpdateDTO dto);
+     void rewardDeleteById(@Param("id") long id);
 }

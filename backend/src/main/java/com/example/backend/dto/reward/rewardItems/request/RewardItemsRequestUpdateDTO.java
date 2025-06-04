@@ -1,6 +1,8 @@
 package com.example.backend.dto.reward.rewardItems.request;
 
 import com.example.backend.entity.reward.RewardItems;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +10,11 @@ import lombok.Setter;
 @Setter
 public class RewardItemsRequestUpdateDTO {
     private long id;
+
+    @NotBlank
     private String name;
+
+    @NotNull
     private String description;
     private long PointCost;
     private long stock;
