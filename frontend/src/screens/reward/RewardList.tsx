@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
-// import Header from '../../components/MainHeader';
-// import Footer from '../../components/Footer';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RewardParamList } from '../../navigation/RewardNavigator';
+
+type RewardScreenNavigationProp = NativeStackNavigationProp<RewardParamList,'RewardList'>;
 
 const RewardList = () => {
-    const navigation = useNavigation(); 
+    const navigation = useNavigation<RewardScreenNavigationProp>(); 
 
     // const handleItemClick = (itemId: number) => {
     //     navigation.navigate('RewardDetail');

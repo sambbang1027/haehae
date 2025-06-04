@@ -7,7 +7,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import RewardList from "../screens/reward/RewardList";
 import RewardDetail from "../screens/reward/RewardDetail";
 import RewardPay from "../screens/reward/RewardPay";
-import RewardPayList from "../screens/reward/RewardPayList";
 
 
 export type RewardParamList = {
@@ -45,11 +44,6 @@ const RewardNavigator = () => {
                     </TouchableOpacity>
                 ),
                 })}
-            />
-            <Stack.Screen
-            name="RewardPayList"
-            component={RewardPayList}
-            options={{ headerTitle: "리워드 결제 목록" }}
             />
         </Stack.Navigator>
     )
