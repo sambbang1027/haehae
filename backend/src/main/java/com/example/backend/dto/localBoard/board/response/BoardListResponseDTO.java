@@ -1,4 +1,4 @@
-package com.example.backend.dto.localBoard;
+package com.example.backend.dto.localBoard.board.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
@@ -8,7 +8,8 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-public class LocalBoardListDTO {
+public class BoardListResponseDTO {
+    private long localBoardId;
     private String title;
     private String content;
     private String nickname;
@@ -16,7 +17,8 @@ public class LocalBoardListDTO {
     private Long commentCount;
 
     @QueryProjection
-    public LocalBoardListDTO(String title, String content, String nickname, Timestamp createdAt, Long commentCount) {
+    public BoardListResponseDTO(long localBoardId, String title, String content, String nickname, Timestamp createdAt, Long commentCount) {
+        this.localBoardId = localBoardId;
         this.title = title;
         this.content = content;
         this.nickname = nickname;
