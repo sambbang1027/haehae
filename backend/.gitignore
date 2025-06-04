@@ -40,5 +40,6 @@ out/
 
 ### Git ###
 **/application.properties
-**/test/
 
+
+**/test/

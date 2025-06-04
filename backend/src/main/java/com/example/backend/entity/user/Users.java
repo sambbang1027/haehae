@@ -1,81 +1,92 @@
 package com.example.backend.entity.user;
 
+import com.example.backend.entity.localBoard.Comments;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
-@Getter
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Users {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private long id;
+    private Long userId;
 
-    @Column(name = "user_level_id")
-    private long userLevelId;
+    @Column(name = "user_level_id", nullable = false)
+    private Long userLevelId;
 
-    @Column(length = 100)
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(length = 20)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(name = "password_hash")
+    @Column(name = "password_hash", nullable = false, length = 225)
     private String passwordHash;
 
-    @Column(length = 20)
-    private String nickName;
+    @Column(name = "nickname", nullable = false, unique = true, length = 20)
+    private String nickname;
 
-    @Column(name = "profile_image_url" , length = 2048)
+    @Column(name = "profile_image_url", length = 2048)
     private String profileImageUrl;
 
-    @Column(name="social_provider", length = 20)
+    @Column(name = "social_provider", length = 20)
     private String socialProvider;
 
+    @Column(name = "address", nullable = false, length = 225)
     private String address;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
 
     @Enumerated(EnumType.STRING)
-    private Roll role;
+    @Column(name = "role", nullable = false, columnDefinition = "ENUM('ADMIN','USER') DEFAULT 'USER'")
+    private Role role = Role.USER;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('ACTIVE','BLOCKED','INACTIVE') DEFAULT 'ACTIVE'")
+    private Status status = Status.ACTIVE;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "residenece_type")
-    private ResideneceType resideneceType;
+    @Column(name = "residence_type", nullable = false, columnDefinition = "ENUM('APT','OFFICETEL','HOUSE_VILLA')")
+    private ResidenceType residenceType;
 
-    @Column(name = "current_point")
-    private long currentPoint;
+    @Column(name = "current_point", nullable = false)
+    private Integer currentPoint = 0;
 
-    @Column(name = "total_point")
-    private long totalPoint;
+    @Column(name = "total_point", nullable = false)
+    private Integer totalPoint = 0;
 
-
-    public enum Roll{
-        ADMIN,
-        USER
+    public enum Role {
+        ADMIN, USER
     }
 
-    public enum Status{
-        ACTIVE,
-        BLOCKED,
-        INACTIVE
+    public enum Status {
+        ACTIVE, BLOCKED, INACTIVE
     }
 
-    public enum ResideneceType {
-        APT_OFFICETEL,
-        HOUSE_VILLA
+    public enum ResidenceType {
+        APT, OFFICETEL, HOUSE_VILLA
+    }
+
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 }
