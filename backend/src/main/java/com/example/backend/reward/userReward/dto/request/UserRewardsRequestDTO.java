@@ -18,4 +18,5 @@ public class UserRewardsRequestDTO {
                 .status(UserRewards.Status.AVAILABLE)
                 .build();
     }
+
 }
