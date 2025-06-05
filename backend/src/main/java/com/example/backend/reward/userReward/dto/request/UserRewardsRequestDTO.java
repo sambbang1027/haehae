@@ -7,13 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRewardsRequestDTO {
-    private long userId;
+    private long userPointId;
     private long rewardItemId;
     private UserRewards.Status status;
 
     public UserRewards toEntity(){
         return UserRewards.builder()
-                .userId(userId)
+                .userPointId(userPointId)
                 .rewardItemId(rewardItemId)
                 .status(UserRewards.Status.AVAILABLE)
                 .build();

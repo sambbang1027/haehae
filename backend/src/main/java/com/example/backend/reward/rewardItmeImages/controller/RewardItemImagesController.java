@@ -36,6 +36,4 @@ public class RewardItemImagesController {
         return new ResponseEntity<>("이미지 전체 삭제 완료",HttpStatus.OK);
     }
 
-
-
 }
