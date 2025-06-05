@@ -25,5 +25,5 @@ public class CommentQueryController {
         List<CommentResponseDTO> comments = commentQueryService.getBoardComment(localBoardId);
 
         return ResponseEntity.ok(comments);
-    };
+    }
 }
