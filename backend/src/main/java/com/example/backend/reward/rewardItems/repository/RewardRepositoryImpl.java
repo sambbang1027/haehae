@@ -6,6 +6,8 @@ import com.example.backend.reward.rewardItems.dto.response.FindRewardListDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
 import com.example.backend.entity.reward.RewardItems;
+import com.example.backend.reward.rewardItems.dto.response.QFindRewardDetailDTO;
+import com.example.backend.reward.rewardItems.dto.response.QFindRewardListDTO;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
