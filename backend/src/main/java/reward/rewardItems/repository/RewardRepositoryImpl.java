@@ -3,8 +3,6 @@ package reward.rewardItems.repository;
 
 import reward.rewardItems.dto.response.FindRewardDetailDTO;
 import reward.rewardItems.dto.response.FindRewardListDTO;
-import com.example.backend.dto.reward.rewardItems.response.QFindRewardDetailDTO;
-import com.example.backend.dto.reward.rewardItems.response.QFindRewardListDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
 import com.example.backend.entity.reward.RewardItems;
@@ -13,6 +11,8 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import reward.rewardItems.dto.response.QFindRewardDetailDTO;
+import reward.rewardItems.dto.response.QFindRewardListDTO;
 
 import java.util.List;
 

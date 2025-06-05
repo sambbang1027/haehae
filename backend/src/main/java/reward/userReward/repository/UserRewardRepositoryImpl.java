@@ -1,6 +1,6 @@
 package reward.userReward.repository;
 
-import com.example.backend.dto.reward.userRewards.response.QUserRewardRecodeDTO;
+import reward.userReward.dto.response.QUserRewardRecodeDTO;
 import reward.userReward.dto.response.UserRewardRecodeDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
 import com.example.backend.entity.reward.QRewardItems;
