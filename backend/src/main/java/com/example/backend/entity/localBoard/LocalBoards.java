@@ -1,6 +1,5 @@
 package com.example.backend.entity.localBoard;
 
-import com.example.backend.entity.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
 
