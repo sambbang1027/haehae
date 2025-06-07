@@ -18,11 +18,11 @@ public class CommentQueryController {
     private CommentQueryService commentQueryService;
 
     @GetMapping("/comment")
-    public ResponseEntity<List<CommentResponseDTO>> responseBoardComment(){
+    public ResponseEntity<List<CommentResponseDTO>> BoardCommentResponse(){
 
         long localBoardId = 6L;
 
-        List<CommentResponseDTO> comments = commentQueryService.getBoardComment(localBoardId);
+        List<CommentResponseDTO> comments = commentQueryService.queryBoardComment(localBoardId);
 
         return ResponseEntity.ok(comments);
     }

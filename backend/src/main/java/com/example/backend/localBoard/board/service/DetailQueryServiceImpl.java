@@ -18,44 +18,14 @@ public class DetailQueryServiceImpl implements DetailQueryService {
     private LocalBoardRepository localBoardRepository;
 
     @Autowired
-    private BoardCommentRepository boardCommentRepository;
-
-    @Autowired
     private BoardImageRepository boardImageRepository;
 
     @Override
-    public DetailResponseDTO getBoardDetail(long localBoardId){
+    public DetailResponseDTO queryBoardDetail(long localBoardId){
 
         ContentResponseDTO content = localBoardRepository.getLocalBoardDetailById(localBoardId);
         List<ImageResponseDTO> images = boardImageRepository.getDetailImageListById(localBoardId);
-//        List<CommentResponseDTO> flatComments = boardCommentRepository.getLocalBoardDetailCommentById(localBoardId);
-
-//        List<CommentResponseDTO> comments = commentTree(flatComments);
 
         return new DetailResponseDTO(content, images);
     };
-
-//    @Override
-//    public List<CommentResponseDTO> commentTree(List<CommentResponseDTO> flatComments){
-//
-//        List<CommentResponseDTO> returnComments = new ArrayList<>();
-//        Map<Long, CommentResponseDTO> commentMap = new HashMap<>();
-//
-//        for( CommentResponseDTO comment : flatComments ){
-//            commentMap.put(comment.getCommentId(), comment);
-//        }
-//
-//        for( CommentResponseDTO comment : flatComments ){
-//            if(comment.getParentCommentId() == null){
-//                returnComments.add(comment);
-//            } else {
-//                CommentResponseDTO parentComment = commentMap.get(comment.getParentCommentId());
-//                if(parentComment != null){
-//                    parentComment.getReplies().add(comment);
-//                }
-//            }
-//        }
-//
-//        return returnComments;
-//    };
 }

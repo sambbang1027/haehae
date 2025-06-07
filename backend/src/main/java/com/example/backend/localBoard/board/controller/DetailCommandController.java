@@ -15,34 +15,34 @@ public class DetailCommandController {
     @Autowired
     DetailCommandService detailCommandService;
 
-    @PostMapping("write")
-    public ResponseEntity requestBoardDetail(@RequestBody CreateContentRequestDTO createContentRequestDTO) {
+    @PostMapping("detail/create")
+    public ResponseEntity createDetailRequest(@RequestBody CreateContentRequestDTO createContentRequestDTO) {
 
-        detailCommandService.createBoardDetail(createContentRequestDTO);
-
-        return ResponseEntity.ok().build();
-    };
-
-    @PutMapping("update/{boardId}")
-    public ResponseEntity updateBoardDetail(@PathVariable long boardId, @RequestBody UpdateContentRequestDTO updateContentRequestDTO) {
-
-        detailCommandService.updateBoardDetail(boardId, updateContentRequestDTO);
+        detailCommandService.createDetail(createContentRequestDTO);
 
         return ResponseEntity.ok().build();
     };
 
-    @PostMapping("add/image")
-    public ResponseEntity requestBoardImage(@RequestBody ImageRequestDTO imageRequestDTO) {
+    @PutMapping("detail/update/{boardId}")
+    public ResponseEntity updateDetailRequest(@PathVariable long boardId, @RequestBody UpdateContentRequestDTO updateContentRequestDTO) {
 
-        detailCommandService.addBoardImage(imageRequestDTO);
+        detailCommandService.updateDetail(boardId, updateContentRequestDTO);
 
         return ResponseEntity.ok().build();
     };
 
-    @DeleteMapping("delete/image")
-    public ResponseEntity deleteBoardDetail(@RequestBody ImageRequestDTO imageRequestDTO) {
+    @PostMapping("image/add")
+    public ResponseEntity detailImageRequest(@RequestBody ImageRequestDTO imageRequestDTO) {
 
-        detailCommandService.deleteBoardImage(imageRequestDTO);
+        detailCommandService.addDetailImage(imageRequestDTO);
+
+        return ResponseEntity.ok().build();
+    };
+
+    @DeleteMapping("image/delete")
+    public ResponseEntity deleteDetailRequest(@RequestBody ImageRequestDTO imageRequestDTO) {
+
+        detailCommandService.deleteDetailImage(imageRequestDTO);
 
         return ResponseEntity.ok().build();
     };
