@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.apache.logging.log4j.util.Strings.left;
+
 @Repository
 public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
 
@@ -28,6 +30,18 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
     //지역코드 가져오기 -> user 테이블
     @Override
     public String getRegionCodeById(long userId) {
+        QUser u = QUser.user;
+
+        return queryFactory
+                .select(u.address)
+                .from(u)
+                .where(u.id.eq(userId))
+                .fetchOne();
+    }
+
+    //지역(구) 가져오기 -> user 테이블
+    @Override
+    public String getRegionById(long userId) {
         QUser u = QUser.user;
 
         return queryFactory
@@ -56,7 +70,8 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
                 .from(lb)
                 .join(u).on(lb.userId.eq(u.id))
                 .leftJoin(cm).on(lb.localBoardId.eq(cm.localBoardId))
-                .where(lb.regionCode.eq(regionCode))
+//                .where(lb.regionCode.eq(regionCode))
+                .where(lb.regionCode.startsWith(regionCode))
                 .groupBy(lb.localBoardId, lb.title, lb.content, u.nickname, lb.createdAt)
                 .orderBy(lb.createdAt.desc())
                 .fetch();

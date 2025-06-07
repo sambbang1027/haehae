@@ -6,5 +6,6 @@ import java.util.List;
 
 
 public interface ListQueryService {
-    public List<BoardListResponseDTO> getPostList(Long userId);
+    public List<BoardListResponseDTO> queryPostList(Long userId);
+    public String queryRegion(Long userId);
 }
