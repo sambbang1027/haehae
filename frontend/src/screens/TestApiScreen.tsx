@@ -6,7 +6,7 @@ const TestApiScreen = () => {
   const [response, setResponse] = useState('');
 
   useEffect(() => {
-    axios.get('http://172.30.1.66:8082/api/test')
+    axios.get('http://192.168.33.15:8082/api/test')
       .then(res => {
         setResponse(res.data);
       })

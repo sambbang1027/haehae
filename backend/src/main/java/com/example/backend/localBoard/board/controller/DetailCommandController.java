@@ -9,15 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("local-board")
+@RequestMapping("/local-board")
 public class DetailCommandController {
 
     @Autowired
     DetailCommandService detailCommandService;
 
-    @PostMapping("write")
+    @PostMapping("/write")
     public ResponseEntity requestBoardDetail(@RequestBody CreateContentRequestDTO createContentRequestDTO) {
-
+        System.out.println("잘 저장되었는지 확인");
+        System.out.println(createContentRequestDTO);
         detailCommandService.createBoardDetail(createContentRequestDTO);
 
         return ResponseEntity.ok().build();

@@ -20,10 +20,11 @@ public class CreateContentRequestDTO {
     List<String> localBoardImageUrl;
 
     @QueryProjection
-    public CreateContentRequestDTO(long userId, String regionCode, String title, String content) {
+    public CreateContentRequestDTO(long userId, String regionCode, String title, String content, List<String> localBoardImageUrl) {
         this.userId = userId;
         this.regionCode = regionCode;
         this.title = title;
         this.content = content;
+        this.localBoardImageUrl = localBoardImageUrl;
     }
 }

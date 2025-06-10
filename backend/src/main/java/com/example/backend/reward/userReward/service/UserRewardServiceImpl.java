@@ -1,6 +1,7 @@
 package com.example.backend.reward.userReward.service;
 
 import com.example.backend.entity.UserPoint;
+import com.example.backend.exception.InsufficientPointException;
 import com.example.backend.reward.userReward.dto.request.UserRewardPointRequestInsertDTO;
 import com.example.backend.reward.userReward.repository.UserRewardRepository;
 import com.example.backend.user.repository.UserRepository;
@@ -27,15 +28,17 @@ public class UserRewardServiceImpl implements UserRewardService {
          UserPoint point = userPointRepository.save(dto.toEntityUserPoint());
          long userPointId = point.getId();
          long amount = dto.getAmount();
+         long id = dto.getUserId();
 
          userRewardRepository.save(dto.toEntityUserReward(userPointId));
-         long currentPoint = userRepository.findCurrentPointByUserId(dto.getUserId());
-
-         if(currentPoint <amount){
-             System.out.println("보유 포인트 적음");
-             // throw new
+         long currentPoint = userRepository.findCurrentPointByUserId(id);
+         if(currentPoint == 0){
+             throw new IllegalStateException("보유하신 포인트가 없습니다.");
+         }else if(currentPoint < amount){
+           throw new InsufficientPointException("보유하신 포인트가 적습니다. 보유 : "+currentPoint+"p , 차감 : "+amount+"p");
           }
          long resultPoint = currentPoint - amount;
-         System.out.println(resultPoint);
+         userRepository.updateCurrentPoint(resultPoint,id);
+
     }
 }

@@ -48,7 +48,7 @@ public class DetailCommandServiceImpl implements DetailCommandService {
 
             boardImageRepository.save(localBoardImages);
         }
-    };
+    }
 
     @Override
     public void updateBoardDetail(long localBoardId, UpdateContentRequestDTO updateContentRequestDTO){
