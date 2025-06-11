@@ -38,6 +38,7 @@ out/
 
 # application.properties 파일
 **/application.properties
+**/firebase_adminsdk.json
 
 # test 디렉토리
 **/test/**

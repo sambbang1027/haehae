@@ -27,6 +27,7 @@ public class RewardItemsServiceImpl implements RewardItemsService {
 
 
     @Transactional
+    @Override
     public void rewardItemInsert(RewardRequestDTO dto) {
         if(dto.getRewardType() != RewardItems.RewardType.DONATION){
             if(dto.getStock()<=0){

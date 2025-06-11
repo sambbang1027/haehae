@@ -19,8 +19,6 @@ public class UserToken {
     private Long id;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "access_token")
-    private String accessToken;
     @Column(name = "refresh_token")
     private String refreshToken;
     @Column(name = "expires_at")

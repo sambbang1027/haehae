@@ -17,8 +17,6 @@ public class UserRewards {
     @Column(name = "user_reward_id")
     private long id;
 
-    @Column(name = "user_id")
-    private long userId;
 
     @Column(name = "reward_item_id")
     private long rewardItemId;
@@ -28,6 +26,9 @@ public class UserRewards {
 
     @Column(name = "issued_at")
     private Timestamp issuedAt;
+
+    @Column(name = "user_point_id")
+    private long userPointId;
 
     @PrePersist
     protected void onCreate(){
