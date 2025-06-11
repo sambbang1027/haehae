@@ -16,11 +16,14 @@ public enum ErrorCode {
     INVALID_ADDRESS(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST	,"도로명 주소 입력은 필수입니다."),
     INVALID_BCODE(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST,"행정동 코드 입력은 필수입니다."),
 
+    //SHARING
+    POST_TITLE_REQUIRED(ErrorCategory.SHARING, HttpStatus.BAD_REQUEST, "제목 입력은 필수 입니다."),
+
+
     //SYSTEM
     INTERNAL_SERVER_ERROR(ErrorCategory.SYSTEM,HttpStatus.INTERNAL_SERVER_ERROR	,"서버 오류가 발생했습니다."),
     DATABASE_ERROR(ErrorCategory.SYSTEM, HttpStatus.INTERNAL_SERVER_ERROR,"데이터베이스 처리 중 오류가 발생했습니다."),
     EXTERNAL_API_ERROR(ErrorCategory.SYSTEM, HttpStatus.BAD_GATEWAY,"외부 서비스와의 통신에 실패했습니다.");
-
 
 
     private final ErrorCategory category;

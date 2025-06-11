@@ -13,6 +13,8 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import com.example.backend.reward.rewardItems.dto.response.QFindRewardDetailDTO;
+import com.example.backend.reward.rewardItems.dto.response.QFindRewardListDTO;
 
 import java.util.List;
 

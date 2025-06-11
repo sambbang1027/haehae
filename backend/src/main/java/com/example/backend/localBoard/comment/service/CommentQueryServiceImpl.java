@@ -17,7 +17,7 @@ public class CommentQueryServiceImpl implements CommentQueryService {
     BoardCommentRepository boardCommentRepository;
 
     @Override
-    public List<CommentResponseDTO> getBoardComment(long localBoardId) {
+    public List<CommentResponseDTO> queryBoardComment(long localBoardId) {
         List<CommentResponseDTO> flatComments = boardCommentRepository.getLocalBoardDetailCommentById(localBoardId);
         List<CommentResponseDTO> comments = commentTree(flatComments);
         return comments;
