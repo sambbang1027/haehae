@@ -7,7 +7,7 @@ export const uploadImageToFirebase = async (
     image: Asset,
     folderName: string
     ): Promise<string> => {
-    const ext = image.fileName?.split(',').pop() || 'jpg';
+    const ext = image.fileName?.split('.').pop() || 'jpg';
     const filename = `${uuid.v4()}.${ext}`;
     const reference = storage().ref(`/${folderName}/${filename}`);
     await reference.putFile(image.uri!);
