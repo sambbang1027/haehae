@@ -1,11 +1,13 @@
 package com.example.backend.localBoard.comment.repository;
 
+import com.example.backend.localBoard.comment.dto.request.UpdateCommentRequestDTO;
 import com.example.backend.localBoard.comment.dto.response.CommentResponseDTO;
 import com.example.backend.localBoard.comment.dto.response.QCommentResponseDTO;
 import com.example.backend.entity.QUser;
 import com.example.backend.entity.localBoard.QComments;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,5 +41,28 @@ public class BoardCommentRepositoryImpl implements BoardCommentRepositoryCustom 
                 .where(cm.localBoardId.eq(localBoardId))
                 .fetch();
         return flatComments;
+    }
+
+    @Transactional
+    @Override
+    public void modifyComment(UpdateCommentRequestDTO updateCommentRequestDTO){
+        QComments cm = QComments.comments;
+
+        queryFactory
+                .update(cm)
+                .set(cm.content, updateCommentRequestDTO.getContent())
+                .where(cm.id.eq(updateCommentRequestDTO.getCommentId()))
+                .execute();
+    };
+
+    @Transactional
+    @Override
+    public void deleteComment(Long commentId){
+        QComments cm = QComments.comments;
+
+        queryFactory
+                .delete(cm)
+                .where(cm.id.eq(commentId))
+                .execute();
     }
 }

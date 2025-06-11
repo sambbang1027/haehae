@@ -18,4 +18,6 @@ public interface LocalBoardRepositoryCustom {
 
    void updateDetailContent (long localBoardId, UpdateContentRequestDTO updateContentRequestDTO);
 
+   String getRegionById(long userId);
+
 }

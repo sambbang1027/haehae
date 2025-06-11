@@ -19,11 +19,20 @@ public class ListQueryController {
         this.listQueryService = listQueryService;
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<BoardListResponseDTO>> responseBoardList() {
+    @GetMapping("/list/query")
+    public ResponseEntity<List<BoardListResponseDTO>> boardListResponse() {
 
         Long userId = 5L;
-        List<BoardListResponseDTO> posts = listQueryService.getPostList(userId);
+        List<BoardListResponseDTO> posts = listQueryService.queryPostList(userId);
         return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/list/region")
+    public ResponseEntity<String> queryRegionResponse() {
+        Long userId = 5L;
+
+        String region = listQueryService.queryRegion(userId);
+
+        return ResponseEntity.ok(region);
     }
 }
