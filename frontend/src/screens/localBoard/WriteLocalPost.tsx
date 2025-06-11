@@ -17,13 +17,13 @@ export default function WriteLocalBoardPost() {
   const handleSubmit =  async () =>{
         console.log('제목:', title);
         console.log('내용:', content);
-  try {
-    let uploadedImageUrls: string[] = []; 
-    if(images != null && images.length > 0){
-      uploadedImageUrls = await Promise.all(
-        images.map(img => uploadImageToFirebase(img, 'localboard_image'))
-      );
-  }
+    try {
+      let uploadedImageUrls: string[] = []; 
+      if(images != null && images.length > 0){
+        uploadedImageUrls = await Promise.all(
+          images.map(img => uploadImageToFirebase(img, 'localboard_image'))
+        );
+    }
 
     console.log("이미지 반환 체크 : "+uploadedImageUrls);
     
