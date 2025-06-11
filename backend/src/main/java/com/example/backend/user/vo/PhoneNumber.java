@@ -8,7 +8,7 @@ public class PhoneNumber {
 
     public PhoneNumber(String value){
 
-        if(value==null || !value.matches("^01[016-9][0-9]{7,8}$]")){
+        if(value==null || !value.matches("^01[016-9][0-9]{7,8}$")){
             throw new HaehaeException(ErrorCode.INVALID_PHONE_NUMBER);
         }
 

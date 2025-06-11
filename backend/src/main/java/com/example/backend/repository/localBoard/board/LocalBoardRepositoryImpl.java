@@ -4,7 +4,7 @@ import com.example.backend.dto.localBoard.board.response.BoardListResponseDTO;
 import com.example.backend.dto.localBoard.board.response.ContentResponseDTO;
 import com.example.backend.dto.localBoard.board.response.QBoardListResponseDTO;
 import com.example.backend.dto.localBoard.board.response.QContentResponseDTO;
-import com.example.backend.entity.QUser;
+import com.example.backend.entity.user.QUser;
 import com.example.backend.entity.localBoard.QComments;
 import com.example.backend.entity.localBoard.QLocalBoards;
 import com.querydsl.jpa.impl.JPAQueryFactory;
