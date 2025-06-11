@@ -15,35 +15,35 @@ public class DetailCommandController {
     @Autowired
     DetailCommandService detailCommandService;
 
-    @PostMapping("/write")
+    @PostMapping("/detail/create")
     public ResponseEntity requestBoardDetail(@RequestBody CreateContentRequestDTO createContentRequestDTO) {
         System.out.println("잘 저장되었는지 확인");
         System.out.println(createContentRequestDTO);
-        detailCommandService.createBoardDetail(createContentRequestDTO);
+        detailCommandService.createDetail(createContentRequestDTO);
 
         return ResponseEntity.ok().build();
     };
 
-    @PutMapping("update/{boardId}")
-    public ResponseEntity updateBoardDetail(@PathVariable long boardId, @RequestBody UpdateContentRequestDTO updateContentRequestDTO) {
+    @PutMapping("detail/update/{boardId}")
+    public ResponseEntity updateDetailRequest(@PathVariable long boardId, @RequestBody UpdateContentRequestDTO updateContentRequestDTO) {
 
-        detailCommandService.updateBoardDetail(boardId, updateContentRequestDTO);
-
-        return ResponseEntity.ok().build();
-    };
-
-    @PostMapping("add/image")
-    public ResponseEntity requestBoardImage(@RequestBody ImageRequestDTO imageRequestDTO) {
-
-        detailCommandService.addBoardImage(imageRequestDTO);
+        detailCommandService.updateDetail(boardId, updateContentRequestDTO);
 
         return ResponseEntity.ok().build();
     };
 
-    @DeleteMapping("delete/image")
-    public ResponseEntity deleteBoardDetail(@RequestBody ImageRequestDTO imageRequestDTO) {
+    @PostMapping("image/add")
+    public ResponseEntity detailImageRequest(@RequestBody ImageRequestDTO imageRequestDTO) {
 
-        detailCommandService.deleteBoardImage(imageRequestDTO);
+        detailCommandService.addDetailImage(imageRequestDTO);
+
+        return ResponseEntity.ok().build();
+    };
+
+    @DeleteMapping("image/delete")
+    public ResponseEntity deleteDetailRequest(@RequestBody ImageRequestDTO imageRequestDTO) {
+
+        detailCommandService.deleteDetailImage(imageRequestDTO);
 
         return ResponseEntity.ok().build();
     };

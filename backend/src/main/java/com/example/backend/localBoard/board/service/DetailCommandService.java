@@ -5,11 +5,11 @@ import com.example.backend.localBoard.board.dto.request.ImageRequestDTO;
 import com.example.backend.localBoard.board.dto.request.UpdateContentRequestDTO;
 
 public interface DetailCommandService {
-    public void createBoardDetail(CreateContentRequestDTO createContentRequestDTO);
+    public void createDetail(CreateContentRequestDTO createContentRequestDTO);
 
-    public void updateBoardDetail(long boardId, UpdateContentRequestDTO updateContentRequestDTO);
+    public void updateDetail(long boardId, UpdateContentRequestDTO updateContentRequestDTO);
 
-    public void addBoardImage(ImageRequestDTO imageRequestDTO);
+    public void addDetailImage(ImageRequestDTO imageRequestDTO);
 
-    public void deleteBoardImage(ImageRequestDTO imageRequestDTO);
+    public void deleteDetailImage(ImageRequestDTO imageRequestDTO);
 }

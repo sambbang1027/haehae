@@ -26,7 +26,7 @@ public class DetailCommandServiceImpl implements DetailCommandService {
 
     @Override
     @Transactional
-    public void createBoardDetail(CreateContentRequestDTO createContentRequestDTO){
+    public void createDetail(CreateContentRequestDTO createContentRequestDTO){
 
         LocalBoards localBoards
                 = LocalBoards.builder()
@@ -51,13 +51,13 @@ public class DetailCommandServiceImpl implements DetailCommandService {
     }
 
     @Override
-    public void updateBoardDetail(long localBoardId, UpdateContentRequestDTO updateContentRequestDTO){
+    public void updateDetail(long localBoardId, UpdateContentRequestDTO updateContentRequestDTO){
         updateContentRequestDTO.setUpdateAt(Timestamp.valueOf(LocalDateTime.now()));
         localBoardRepository.updateDetailContent(localBoardId, updateContentRequestDTO);
     }
 
     @Override
-    public void addBoardImage(ImageRequestDTO imageRequestDTO){
+    public void addDetailImage(ImageRequestDTO imageRequestDTO){
 
         for(String imageUrl : imageRequestDTO.getLocalBoardImageUrl()){
             LocalBoardImages localBoardImages
@@ -71,7 +71,7 @@ public class DetailCommandServiceImpl implements DetailCommandService {
     };
 
     @Override
-    public void deleteBoardImage(ImageRequestDTO imageRequestDTO){
+    public void deleteDetailImage(ImageRequestDTO imageRequestDTO){
 //        for(String imageUrl : imageRequestDTO.getLocalBoardImageUrl()){
 //
 //            boardImageRepository.deleteDetailImage(imageRequestDTO.getLocalBoardId(),imageUrl);

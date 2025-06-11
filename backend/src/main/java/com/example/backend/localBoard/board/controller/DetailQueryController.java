@@ -15,11 +15,12 @@ public class DetailQueryController {
     @Autowired
     DetailQueryService detailQueryService;
 
-    @GetMapping("/detail")
-    public ResponseEntity<DetailResponseDTO> responseBoardDetail() {
+    @GetMapping("/detail/query")
+    public ResponseEntity<DetailResponseDTO> boardDetailResponse() {
 
         long localBoardId = 6L;
 
-        return ResponseEntity.ok(detailQueryService.getBoardDetail(localBoardId));
+        return ResponseEntity.ok(detailQueryService.queryBoardDetail(localBoardId));
     }
+
 }

@@ -2,9 +2,11 @@ package com.example.backend.localBoard.board.service;
 
 import com.example.backend.localBoard.board.dto.response.BoardListResponseDTO;
 import com.example.backend.localBoard.board.repository.LocalBoardRepository;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
 
 @Service
 public class ListQueryServiceImpl implements ListQueryService {
@@ -16,12 +18,26 @@ public class ListQueryServiceImpl implements ListQueryService {
     }
 
     @Override
-    public List<BoardListResponseDTO> getPostList(Long userId){
-//        String userAddress = localBoardRepository.getRegionCodeById(userId);
-//
-//        List<BoardListResponseDTO> list = localBoardRepository.getLocalBoardListByRegion(userAddress);
+    public List<BoardListResponseDTO> queryPostList(Long userId){
           String userRegionCode = "1168010300";
-          List<BoardListResponseDTO> list = localBoardRepository.getLocalBoardListByRegion(userRegionCode);
+          String preFixRegionCode = userRegionCode.substring(0, 5);
+          List<BoardListResponseDTO> list = localBoardRepository.getLocalBoardListByRegion(preFixRegionCode);
         return  list;
     }
+
+    @Override
+    public String queryRegion(Long userId){
+        String fullAddress = localBoardRepository.getRegionById(userId);
+
+        if (fullAddress == null || fullAddress.isBlank()) return null;
+
+        Pattern pattern = Pattern.compile("\\s(\\S+구)\\s?");
+        Matcher matcher = pattern.matcher(fullAddress);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return null;
+        }
+    };
 }
