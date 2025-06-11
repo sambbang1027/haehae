@@ -1,11 +1,15 @@
 package com.example.backend.sharing.controller;
 
 
+import com.example.backend.sharing.dto.response.SharingDetailResponseDTO;
+import com.example.backend.sharing.dto.response.SharingImageResponseDTO;
 import com.example.backend.sharing.dto.response.SharingListReponseDTO;
 import com.example.backend.sharing.service.SharingListQueryService;
+import com.example.backend.sharing.service.SharingQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +22,9 @@ public class SharingQueryController {
     @Autowired
     SharingListQueryService sharingListQueryService;
 
+    @Autowired
+    SharingQueryService sharingQueryService;
+
     @GetMapping("/list/query")
     public ResponseEntity<List<SharingListReponseDTO>> getSharingListResponse() {
         Long UserId = 6L;
@@ -28,4 +35,22 @@ public class SharingQueryController {
 
         return ResponseEntity.ok(sharingList);
     };
+
+    @GetMapping("/detail/query/{sharingPostId}")
+    public ResponseEntity<SharingDetailResponseDTO> getSharingDetailResponse(@PathVariable Long sharingPostId) {
+
+        SharingDetailResponseDTO sharingDetail = sharingQueryService.getSharingDetail(sharingPostId);
+
+        return ResponseEntity.ok(sharingDetail);
+    }
+
+    @GetMapping("/image/query/{sharingPostId}")
+    public ResponseEntity<List<SharingImageResponseDTO>> getSharingImageResponse(@PathVariable Long sharingPostId) {
+
+        List<SharingImageResponseDTO> sharingImages = sharingQueryService.getSharingImages(sharingPostId);
+
+        return ResponseEntity.ok(sharingImages);
+
+    }
+
 }

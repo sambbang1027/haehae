@@ -4,8 +4,7 @@ import com.example.backend.entity.QUser;
 import com.example.backend.entity.sharing.QSharingPosts;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
 import com.example.backend.sharing.dto.request.UpdateSharingRequestDTO;
-import com.example.backend.sharing.dto.response.QSharingListReponseDTO;
-import com.example.backend.sharing.dto.response.SharingListReponseDTO;
+import com.example.backend.sharing.dto.response.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import org.springframework.stereotype.Repository;
@@ -75,5 +74,26 @@ public class SharingRepositoryImpl implements SharingRepositoryCustom {
                 .where(sp.userId.eq(sharingStatusRequestDTO.getUserId())
                         .and(sp.sharingPostId.eq(sharingStatusRequestDTO.getSharingPostId())))
                 .execute();
+    }
+
+    //나눔 게시물 상세정보불러오기
+    @Override
+    public SharingDetailResponseDTO getSharingDetail(Long sharingPostId){
+        QSharingPosts sp = QSharingPosts.sharingPosts;
+        QUser u = QUser.user;
+
+        return queryFactory
+                .select(new QSharingDetailResponseDTO(
+                        u.id,
+                        sp.sharingPostId,
+                        u.nickname,
+                        sp.title,
+                        sp.description
+                ))
+                .from(sp)
+                .join(u)
+                .on(sp.userId.eq(u.id))
+                .where(sp.sharingPostId.eq(sharingPostId))
+                .fetchOne();
     }
 }
