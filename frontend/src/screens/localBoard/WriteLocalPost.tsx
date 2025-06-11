@@ -37,7 +37,7 @@ export default function WriteLocalBoardPost() {
       console.log("반환된 이미지 확인 : "+formData.localBoardImageUrl);
       console.log("저장된 이미지 확인 : "+formData);
 
-      await axios.post('http://10.0.2.2:8082/detail/create', formData, {
+      await axios.post('http://10.0.2.2:8082/local-board/detail/create', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
