@@ -7,20 +7,16 @@ import {
   Image,
   StyleSheet
 } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
 import CustomCheckbox from '../../components/common/CustomCheckBox.tsx';
+import { navigate } from '../../navigation/NavigationService.ts';
 
-type RootStackParamList = {
-  Signup: undefined;
-  FindId: undefined;
-  FindPw: undefined;
-};
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+const handleLocalLogin = () => {
+  navigate('MainStack', {screen : 'Main'});
+  console.log('로그인 성공');
+}
 
-const LoginPage: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+const LoginPage = () => {
 
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
   const [saveId, setSaveId] = useState<boolean>(false);
@@ -34,13 +30,13 @@ const LoginPage: React.FC = () => {
     console.log('kakao 로그인');
   }
   const goToSignup = () => {
-    navigation.navigate('Signup');
+     navigate('LoginStack' ,{screen : 'Signup'});
   }
   const goToFindId = () => {
-    navigation.navigate('FindId');
+      navigate('LoginStack' ,{screen : 'FindId'});
   }
   const goToFindPw = () => {
-    navigation.navigate('FindPw');
+      navigate('LoginStack' ,{screen : 'FindPw'});
   }
   return (
     <View style={styles.container}>
@@ -74,7 +70,7 @@ const LoginPage: React.FC = () => {
           <Text style={styles.checkboxLabel}>아이디 저장</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLocalLogin}>
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
       <View style={styles.linkRow}>

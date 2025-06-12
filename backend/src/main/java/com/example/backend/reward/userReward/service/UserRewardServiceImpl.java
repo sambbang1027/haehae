@@ -1,6 +1,6 @@
 package com.example.backend.reward.userReward.service;
 
-import com.example.backend.entity.UserPoint;
+import com.example.backend.entity.user.UserPoint;
 import com.example.backend.exception.InsufficientPointException;
 import com.example.backend.reward.userReward.dto.request.UserRewardPointRequestInsertDTO;
 import com.example.backend.reward.userReward.repository.UserRewardRepository;

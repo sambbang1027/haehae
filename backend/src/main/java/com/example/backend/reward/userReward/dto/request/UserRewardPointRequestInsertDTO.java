@@ -1,6 +1,6 @@
 package com.example.backend.reward.userReward.dto.request;
 
-import com.example.backend.entity.UserPoint;
+import com.example.backend.entity.user.UserPoint;
 import com.example.backend.entity.reward.UserRewards;
 import lombok.Getter;
 import lombok.Setter;

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,6 +21,7 @@ public class LocalUserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     //로컬 회원가입
+    @Transactional
     @Override
     public void localRegister(LocalRegisterDTO localRegisterDTO){
         // VO 검증
@@ -60,6 +62,10 @@ public class LocalUserServiceImpl implements UserService {
 
     // 이메일, 닉네임 중복검사
     private void validateDuplicateUser(Email email, Nickname nickname){
+        System.out.println("Checking email: " + email.getValue());
+        boolean emailExists = userRepository.existsByEmail(email.getValue());
+        System.out.println("Email exists? " + emailExists);
+
         if (userRepository.existsByEmail(email.getValue())) {
             throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
         }
