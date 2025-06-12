@@ -30,4 +30,6 @@ public class HaehaeExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
+
+
 }

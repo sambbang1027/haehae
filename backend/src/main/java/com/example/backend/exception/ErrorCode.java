@@ -24,6 +24,10 @@ public enum ErrorCode {
     INVALID_BCODE(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST,"행정동 코드 입력은 필수입니다."),
     INVALID_PHONE_NUMBER(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST, "유효하지않은 전화번호 형식입니다."),
 
+    //SHARING
+    POST_TITLE_REQUIRED(ErrorCategory.SHARING, HttpStatus.BAD_REQUEST, "제목 입력은 필수 입니다."),
+
+
     //SYSTEM
     INTERNAL_SERVER_ERROR(ErrorCategory.SYSTEM,HttpStatus.INTERNAL_SERVER_ERROR	,"서버 오류가 발생했습니다."),
     DATABASE_ERROR(ErrorCategory.SYSTEM, HttpStatus.INTERNAL_SERVER_ERROR,"데이터베이스 처리 중 오류가 발생했습니다."),

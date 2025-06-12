@@ -24,4 +24,9 @@ public class UserPoint {
     private String source;
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @PrePersist
+    protected void onCreate(){
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
 }
