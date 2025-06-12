@@ -35,8 +35,8 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/logout")
-    public ResponseEntity<Void> logout (@AuthenticationPrincipal ){
-
-    }
+//    @DeleteMapping("/logout")
+//    public ResponseEntity<Void> logout (@AuthenticationPrincipal ){
+//
+//    }
 }
