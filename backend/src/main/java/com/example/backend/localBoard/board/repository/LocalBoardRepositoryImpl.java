@@ -1,6 +1,6 @@
 package com.example.backend.localBoard.board.repository;
 
-import com.example.backend.entity.QUser;
+import com.example.backend.entity.user.QUser;
 import com.example.backend.localBoard.board.dto.request.UpdateContentRequestDTO;
 import com.example.backend.localBoard.board.dto.response.BoardListResponseDTO;
 import com.example.backend.localBoard.board.dto.response.ContentResponseDTO;
