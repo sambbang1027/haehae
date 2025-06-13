@@ -30,10 +30,6 @@ export default function LocalBoardDetail() {
   const { id } = route.params;
   const optionModalRef = useRef<BottomSheetModal>(null);
 
-
-  // 임시 토큰으로 테스트 
-  const DUMMY_AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiaWF0IjoxNzQ5NzMxMjI3LCJleHAiOjE3NTA5NDA4Mjd9.a2f2QFVE6YdZIu-dj89mqs8zGxewYTg-6R-2vcJauYs'; 
-
   const currentUserId = 1001; // 로그인한 사용자 ID
   
     //옵션 모달 활성화
@@ -84,12 +80,11 @@ export default function LocalBoardDetail() {
 
   const fetchPostDetail = async (id: number) => {
     try {
-      const accessToken = await EncryptedStorage.getItem(DUMMY_AUTH_TOKEN);
-      console.log(accessToken);
+
       const response = await api.get(`http://10.0.2.2:8082/local-board/detail/query/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
+      // headers: {
+      //   'Authorization': `Bearer ${accessToken}`
+      // }
     });
       console.log(response.data.images);
       const [imageUrls] = useState([]);
