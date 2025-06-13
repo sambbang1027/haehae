@@ -1,4 +1,4 @@
-package com.example.backend.config;
+package com.example.backend.webSocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;

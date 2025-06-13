@@ -1,10 +1,10 @@
-package com.example.backend.config;
+package com.example.backend.webSocket;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtTokenProvider {
+public class StompJwtTokenProvider {
 
     private final String secret = "secret-key";
 

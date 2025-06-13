@@ -1,4 +1,4 @@
-package com.example.backend.config;
+package com.example.backend.webSocket;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -11,9 +11,9 @@ public class OAuthTokenVerifier {
 
     private final WebClient kakaoClient;
     private final WebClient googleClient;
-    private final JwtTokenProvider jwtProvider;
+    private final StompJwtTokenProvider jwtProvider;
 
-    public OAuthTokenVerifier(WebClient.Builder builder, JwtTokenProvider jwtProvider) {
+    public OAuthTokenVerifier(WebClient.Builder builder, StompJwtTokenProvider jwtProvider) {
         this.kakaoClient = builder.baseUrl("https://kapi.kakao.com").build();
         this.googleClient = builder.baseUrl("https://www.googleapis.com").build();
         this.jwtProvider = jwtProvider;

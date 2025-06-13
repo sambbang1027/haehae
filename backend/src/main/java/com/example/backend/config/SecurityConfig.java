@@ -1,6 +1,7 @@
 package com.example.backend.config;
 
 import com.example.backend.security.*;
+import com.example.backend.webSocket.StompJwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
