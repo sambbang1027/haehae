@@ -17,6 +17,8 @@ import { LocalBoardStackParamList } from "../../navigation/LocalBoardNavigator";
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import OptionModal from "../../components/OptionModal";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import axios from "axios";
+import { fetchImageUrl } from '../../utils/FirebaseRead';
 
 type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
@@ -43,21 +45,64 @@ export default function LocalBoardDetail() {
         title:'',
         headerShadowVisible:false,
       });
+
+      fetchPostDetail(id);
     },[navigation])
 
-  const postingInfo = [
-    {
-      id: 1,
-      authorId: 1001,
-      author: '서샘이',
-      date: '2025년 4월 24일',
-      title: '광주 vs 광주',
-      content: '경기도 광주 vs 광주광역시 누가 더 시골이라고 생각하시나요?',
-      image: 'https://via.placeholder.com/350x200',
-    },
-  ];
+  // const postingInfo = [
+  //   {
+  //     id: id,
+  //     authorId: 1001,
+  //     author: '서샘이',
+  //     date: '2025년 4월 24일',
+  //     title: '광주 vs 광주',
+  //     content: '경기도 광주 vs 광주광역시 누가 더 시골이라고 생각하시나요?',
+  //     image: 'https://via.placeholder.com/350x200',
+  //   },
+  // ];
+  
 
-  const post = postingInfo.find((p) => p.id === id);
+      const [postingInfo, setPost] = useState<{
+        id: number;
+        authorId: number;
+        author: string;
+        date: string;
+        title: string;
+        content: string;
+        image: string[];
+    } | null>(null);
+
+
+  const post = postingInfo;
+
+
+  const fetchPostDetail = async (id: number) => {
+    try {
+      const response = await axios.get(`http://10.0.2.2:8082/local-board/detail/query/${id}`);
+      console.log(response.data.images);
+      const [imageUrls] = useState([]);
+
+      for (let i = 0; i < response.data.images.length; i++) {
+        const imageNames = response.data.images[i].localBoardImgUrl;
+        imageNames.push(imageUrls);
+      }
+      console.log("post 체크 : "+post);
+      
+      setPost({
+        id: id,
+        authorId: response.data.content.userId,
+        author: response.data.content.nickname,
+        date: response.data.content.createdAt,
+        title: response.data.content.title,
+        content: response.data.content.content,
+        image: imageUrls
+      });
+
+    } catch (error) {
+        console.error('게시글을 불러오는 중 오류 발생:', error);
+    }
+  }
+
 
   const postingComment = [
     {
@@ -181,9 +226,19 @@ export default function LocalBoardDetail() {
           <Text style={styles.date}>{post.date}</Text>
           <Text style={styles.content}>{post.content}</Text>
 
-          {post.image && (
+          {/* {post.image && (
             <Image source={{ uri: post.image }} style={styles.postImage} />
-          )}
+          )} */}
+
+        {post?.image && post.image.length > 0 && (
+          post.image.map((imgUrls, index) => (
+            <Image
+              key={index}
+              source={{ uri: imgUrls }}
+              style={styles.postImage}
+            />
+          ))
+        )}
 
           <View style={styles.separator} />
           <Text style={styles.commentHeader}>댓글</Text>
