@@ -15,6 +15,9 @@ import dayjs from 'dayjs';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import EmailVerification from '../../components/login/EmailVerification';
+import api from '../../api/AxiosInstance';
+import { navigate } from '../../navigation/NavigationService';
+import { useToast } from '../../context/ToastContext';
 
 // 소셜 or 로컬 
 type SignupParams = {
@@ -65,14 +68,31 @@ function reducer(state: State, action: Action): State {
 const SignupPage= () => {
   const route = useRoute<RouteProp<SignupParams>>();
   const isSocial = route.params?.loginType === 'social';
-
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const {showToast} = useToast();
 
-  const handleSignup = () => {
-    console.log('회원가입 완료', state);
+
+  const handleSignup = async() => {
+    try{
+      const payload = {
+        ...state,
+        birth: state.birth.toISOString().split('T')[0]
+      };
+      const url = isSocial ? '/user/register/social' : 'user/register/local';
+      const response = await api.post(url, payload);
+      if(response.status === 200){
+        console.log('회원가입 성공 ', response.data);
+        showToast({
+          message: '회원가입 완료'
+        });
+        navigate('LoginStack', {screen: 'Login'});
+      }
+    }catch(error){
+      console.error(error);
+    }
   };
 
   // 인증번호 타이머 설정 
