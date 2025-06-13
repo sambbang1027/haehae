@@ -1,11 +1,17 @@
 import axios from "axios";
 import EncryptedStorage from "react-native-encrypted-storage";
 
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    _retry?: boolean;
+  }
+}
+
 const reissueAccessToken = async() =>{
     const refreshToken = await EncryptedStorage.getItem('refreshToken');
     if(!refreshToken) throw new Error('RefreshToken이 존재하지 않습니다.');
 
-    const res = await axios.post('http://localhost:8082/api/auth/refresh', 
+    const res = await axios.post('http://10.0.2.2:8082/api/auth/refresh', 
         {}, //body -> null
         {
             headers: {
@@ -20,7 +26,7 @@ const reissueAccessToken = async() =>{
 
 
 const api = axios.create({
-    baseURL : 'http://localhost:8082/api',
+    baseURL : 'http://10.0.2.2:8082/api',
     timeout: 5000,
     headers : {
         'Content-Type': 'application/json',
@@ -39,6 +45,7 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+
 //응답 인터셉터 : 에러 처리 
 api.interceptors.response.use(
     (response) => response,
@@ -55,9 +62,8 @@ api.interceptors.response.use(
                 return Promise.reject(err);
             }
         }else if(error.code === 'ECONNABORTED' && error.message.includes('timeout'))
-            // show Toast 
-            // 요청 시간이 초과되었습니다. 잠시후 다시 시도해주세요.
-        return Promise.reject(error);
+
+           return Promise.reject(new Error('요청 시간이 초과되었습니다.'));
     }
 );
 

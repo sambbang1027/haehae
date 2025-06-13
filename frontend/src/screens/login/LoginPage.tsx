@@ -7,21 +7,48 @@ import {
   Image,
   StyleSheet
 } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import CustomCheckbox from '../../components/common/CustomCheckBox.tsx';
 import { navigate } from '../../navigation/NavigationService.ts';
-
-
-const handleLocalLogin = () => {
-  navigate('MainStack', {screen : 'Main'});
-  console.log('로그인 성공');
-}
+import api from '../../api/AxiosInstance.ts';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { useUser } from '../../context/UserContext.tsx';
 
 const LoginPage = () => {
-
+  
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
   const [saveId, setSaveId] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const { setUser} = useUser();
+
+
+
+  const handleLocalLogin = async() => {
+    try{
+    const res = await api.post('/auth/login', {
+      email,
+      password 
+    });
+      if (res.status === 200) {
+        await EncryptedStorage.setItem('accessToken', res.data.accessToken);
+        await EncryptedStorage.setItem('refreshToken', res.data.refreshToken);
+
+        const userInfo = await api.get('/auth/me');
+        console.log("유저정보 가져오기");
+        if (userInfo.status === 200) {
+          setUser(userInfo.data);
+          
+        }
+      navigate('MainStack', { screen: 'Main' });
+    } else {
+      console.log('로그인 실패: 상태 코드', res.status);
+    }
+  }catch(error){
+    console.error(error);
+  }
+  }
+
   
   const handleGoogleLogin = () => {
     console.log('Google 로그인');
@@ -108,114 +135,109 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
     alignItems: 'center',
-    paddingTop: 80,
+    paddingTop: hp('10%'),
   },
   logoImage: {
-    width: 299,
-    height: 84,
-    marginTop: 30,
-    marginBottom: 50,
+    width: wp('80%'),
+    height: hp('10%'),
+    resizeMode: 'contain',
+    marginTop: hp('2%'),
+    marginBottom: hp('5%'),
   },
   input: {
-    width: 358,
-    height: 55,
+    width: wp('90%'),
+    height: hp('6.5%'),
     borderColor: '#959595',
     borderWidth: 1,
     borderRadius: 3,
-    paddingHorizontal: 15,
-    marginVertical: 10,
+    paddingHorizontal: wp('4%'),
+    marginVertical: hp('1.2%'),
   },
   checkboxContainer: {
     flexDirection: 'row',
-    width: 358,
+    width: wp('90%'),
     justifyContent: 'space-between',
-    marginVertical: 10,
+    marginVertical: hp('1.5%'),
   },
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   checkboxLabel: {
-    fontSize: 15,
+    fontSize: wp('3.8%'),
     color: '#000',
-    marginLeft: 5,
+    marginLeft: wp('1.5%'),
   },
   loginButton: {
-    width: 358,
-    height: 55,
+    width: wp('90%'),
+    height: hp('6.5%'),
     backgroundColor: '#000',
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: hp('2%'),
   },
   loginButtonText: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 15,
+    fontSize: wp('4%'),
   },
   linkRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 358,
-    marginBottom: 30,
+    width: wp('90%'),
+    marginBottom: hp('4%'),
   },
-  idPwBox:{
+  idPwBox: {
     flexDirection: 'row',
-    gap: 10,
+    gap: wp('2%'),
   },
   link: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     color: '#898989',
+  },
+    kakaoLogin: {
+    width: wp('90%'),
+    height: hp('7%'),
+    marginBottom: hp('3%'),
   },
   kakaoButton: {
     backgroundColor: '#fff',
-    borderColor: '#747775',
-    height: 50,
+    height: hp('6%'),
     justifyContent: 'center',
-    width: 358,
-  },
-  kakaoLogin: {
-    width: 358,
-    height: 54,
-    marginBottom: 10,
+    width: wp('90%'),
   },
   kakaoIcon: {
-    width: 358,
-    height: 50,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   googleButton: {
     backgroundColor: '#fff',
     borderColor: '#747775',
     borderWidth: 1,
     borderRadius: 4,
-    height: 50,
+    height: hp('6%'),
     justifyContent: 'center',
-    width: 358,
+    width: wp('90%'),
     alignSelf: 'center',
-    position: 'relative', 
+    position: 'relative',
   },
-  
   googleWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
   googleIcon: {
-    width: 25,
-    height: 25,
-    position: 'absolute', 
-    left: 12,
+    width: wp('6%'),
+    height: wp('6%'),
+    position: 'absolute',
+    left: wp('3%'),
   },
-  
   googleText: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     fontWeight: '500',
     color: '#1f1f1f',
-    alignSelf: 'center',
   },
-  
-   
 });
 
 export default LoginPage;
