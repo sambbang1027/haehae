@@ -1,6 +1,6 @@
 package com.example.backend.sharing.repository;
 
-import com.example.backend.entity.QUser;
+import com.example.backend.entity.user.QUser;
 import com.example.backend.entity.sharing.QSharingPosts;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
 import com.example.backend.sharing.dto.request.UpdateSharingRequestDTO;

@@ -1,11 +1,12 @@
 package com.example.backend.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.persistence.EntityNotFoundException;
+
 
 @RestControllerAdvice
 public class HaehaeExceptionHandler {
@@ -17,29 +18,16 @@ public class HaehaeExceptionHandler {
 
         logger.error("[{}] {}",exception.getErrorCode().name(), exception.getMessage(),exception);
 
-        ErrorResponse response = new ErrorResponse(exception.getErrorCode());
+        ErrorResponse response = ErrorResponse.of(exception.getErrorCode());
         return ResponseEntity.status(exception.getErrorCode().getStatus()).body(response);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
-        return ResponseEntity
-                .badRequest()
-                .body("잘못된 요청입니다: " + ex.getMessage());
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex){
-        return ResponseEntity
-                .badRequest()
-                .body("잘못된 요청입니다 : "+ ex.getMessage());
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException ex){
-        return ResponseEntity
-                .badRequest()
-                .body("실행오류 : "+ ex.getMessage());
+    // 예측 불가 에러용
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex) {
+        logger.error("Unexpected error", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
 

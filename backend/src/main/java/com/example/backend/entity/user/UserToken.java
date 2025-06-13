@@ -1,4 +1,4 @@
-package com.example.backend.entity;
+package com.example.backend.entity.user;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,4 +24,9 @@ public class UserToken {
     @Column(name = "expires_at")
     private Timestamp expiresAt;
 
+
+    public void updateToken(String token, Timestamp expiresAt){
+        this.refreshToken = token;
+        this.expiresAt = expiresAt;
+    }
 }
