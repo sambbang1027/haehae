@@ -1,6 +1,7 @@
 package com.example.backend.sharing.controller;
 
 import com.example.backend.sharing.dto.request.CreateSharingRequestDTO;
+import com.example.backend.sharing.dto.request.SharingImageRequestDTO;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
 import com.example.backend.sharing.dto.request.UpdateSharingRequestDTO;
 import com.example.backend.sharing.service.SharingCommandService;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("sharing")
@@ -57,6 +59,23 @@ public class SharingCommandController {
         updateSharingRequestDTO.setUserId(userId);
 
         sharingCommandService.updateSharingDetail(updateSharingRequestDTO);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    //나눔 이미지 추가
+    @PostMapping("/add/image")
+    public ResponseEntity<Void> addSharingImage(@RequestBody SharingImageRequestDTO sharingImageRequestDTO) {
+
+        sharingCommandService.addSharingImages(sharingImageRequestDTO);
+
+        return ResponseEntity.noContent().build();
+    };
+
+    //나눔 이미지 삭제
+    @DeleteMapping
+    public ResponseEntity<Void> deleteSharingImage(@RequestBody SharingImageRequestDTO sharingImageRequestDTO) {
+        sharingCommandService.deleteSharingImages(sharingImageRequestDTO);
 
         return ResponseEntity.noContent().build();
     }

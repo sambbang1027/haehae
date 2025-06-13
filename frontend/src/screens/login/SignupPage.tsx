@@ -13,7 +13,10 @@ import DatePicker from 'react-native-date-picker';
 import CustomCheckbox from '../../components/common/CustomCheckBox';
 import dayjs from 'dayjs';
 import { useRoute, RouteProp } from '@react-navigation/native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import EmailVerification from '../../components/login/EmailVerification';
 
+// 소셜 or 로컬 
 type SignupParams = {
   params?: {
     loginType?: string;
@@ -27,8 +30,8 @@ type State = {
   confirmPassword: string;
   nickname: string;
   name: string;
-  phone: string;
-  birthDate: Date;
+  phoneNumber: string;
+  birth: Date;
   address: string;
   residenceType: string;
 };
@@ -42,8 +45,8 @@ const initialState: State = {
   confirmPassword: '',
   nickname: '',
   name: '',
-  phone: '',
-  birthDate: new Date(),
+  phoneNumber: '',
+  birth: new Date(),
   address: '',
   residenceType: '',
 };
@@ -59,7 +62,7 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-const SignupPage: React.FC = () => {
+const SignupPage= () => {
   const route = useRoute<RouteProp<SignupParams>>();
   const isSocial = route.params?.loginType === 'social';
 
@@ -72,6 +75,7 @@ const SignupPage: React.FC = () => {
     console.log('회원가입 완료', state);
   };
 
+  // 인증번호 타이머 설정 
   const handleTimer = () => {
     if(intervalId){
       clearInterval(intervalId);
@@ -89,7 +93,8 @@ const SignupPage: React.FC = () => {
     setIntervalId(id);
   };
 
-  const validatePassword = (password) => ({
+  // 비밀번호 패턴 검증
+  const validatePassword = (password:string) => ({
     length: password.length >= 8 && password.length <= 12,
     hasLetter: /[a-zA-Z]/.test(password),
     hasNumber: /[0-9]/.test(password),
@@ -108,34 +113,15 @@ const SignupPage: React.FC = () => {
 
       {!isSocial && (
         <>
-          <View style={styles.inputBox}>
-            <Text style={styles.label}>이메일 입력</Text>
-            <TextInput
-              style={styles.input}
-              value={state.email}
-              onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'email', value: text })}
-              placeholder="example@email.com"
-            />
-            <TouchableOpacity style={styles.codeButton} onPress={handleTimer}>
-              <Text style={styles.codeText}>인증번호 전송</Text>
-            </TouchableOpacity>      
-          </View>
-
-          <View style={styles.inputBox}>
-            <Text style={styles.label}>인증번호 입력</Text>
-            <TextInput
-              style={styles.input}
-              value={state.authCode}
-              onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'authCode', value: text })}
-            />
-            <TouchableOpacity style={styles.codeButton}><Text style={styles.codeText}>확인</Text></TouchableOpacity>
-            {timer > 0 && (
-              <Text style={styles.timer}>
-                {String(Math.floor(timer / 60)).padStart(2, '0')}:
-                {String(timer % 60).padStart(2, '0')}
-              </Text>
-            )}
-          </View>
+         <EmailVerification
+            email={state.email}
+            authCode={state.authCode}
+            timer={timer}
+            onEmailChange={(text) => dispatch({ type: 'SET_FIELD', field: 'email', value: text })}
+            onCodeChange={(text) => dispatch({ type: 'SET_FIELD', field: 'authCode', value: text })}
+            onSendCode={handleTimer}
+            onVerifyCode={() => console.log('인증 확인')} 
+          />
 
           <TextInput
             style={styles.input}
@@ -178,23 +164,22 @@ const SignupPage: React.FC = () => {
       <TextInput
         style={styles.input}
         placeholder="휴대전화번호 - 없이 입력"
-        value={state.phone}
-        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'phone', value: text })}
+        value={state.phoneNumber}
+        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'phoneNumber', value: text })}
       />
 
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
-        <Text style={{ color: '#000' }}>{dayjs(state.birthDate).format('YYYY년 MM월 DD일')}</Text>
+        <Text style={{ color: '#000' }}>{dayjs(state.birth).format('YYYY년 MM월 DD일')}</Text>
       </TouchableOpacity>
 
       <Modal visible={showDatePicker} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.calendarWrapper}>
             <DatePicker
-              date={state.birthDate}
+              date={state.birth}
               mode="date"
               maximumDate={new Date()}
-              androidVariant="nativeAndroid"
-              onDateChange={(date) => dispatch({ type: 'SET_FIELD', field: 'birthDate', value: date })}
+              onDateChange={(date) => dispatch({ type: 'SET_FIELD', field: 'birth', value: date })}
             />
             <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.calendarCloseBtn}>
               <Text style={{ fontWeight: 'bold' }}>닫기</Text>
@@ -214,15 +199,15 @@ const SignupPage: React.FC = () => {
       <View style={styles.checkboxContainer}>
         <View style={styles.checkbox}>
           <CustomCheckbox
-            checked={state.residenceType === 'villa'}
-            onToggle={() => dispatch({ type: 'SET_FIELD', field: 'residenceType', value: state.residenceType === 'villa' ? '' : 'villa' })}
+            checked={state.residenceType === 'HOUSE_VILLA'}
+            onToggle={() => dispatch({ type: 'SET_FIELD', field: 'residenceType', value: state.residenceType === 'HOUSE_VILLA' ? '' : 'HOUSE_VILLA' })}
           />
           <Text style={styles.residenceText}>빌라/주택</Text>
         </View>
         <View style={styles.checkbox}>
           <CustomCheckbox
-            checked={state.residenceType === 'apt'}
-            onToggle={() => dispatch({ type: 'SET_FIELD', field: 'residenceType', value: state.residenceType === 'apt' ? '' : 'apt' })}
+            checked={state.residenceType === 'APT_OFFICETEL'}
+            onToggle={() => dispatch({ type: 'SET_FIELD', field: 'residenceType', value: state.residenceType === 'APT_OFFICETEL' ? '' : 'APT_OFFICETEL' })}
           />
           <Text style={styles.residenceText}>아파트/오피스텔</Text>
         </View>
@@ -237,63 +222,44 @@ const SignupPage: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: wp('5%'),
     backgroundColor: '#fff',
   },
   logoBox:{
-    width: 180,
-    height: 80,
-    marginBottom: 10,
+    width: wp('50%'),
+    height: hp('10%'),
+    marginBottom: hp('2%'),
   },
   logoImage: {
-    width: 180,
-    height: 50,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   label: {
-    marginBottom: 4,
+    marginBottom: hp('1%'),
     color: '#898989',
+    fontSize: wp('4%'),
   },
   input: {
     borderWidth: 1,
     borderColor: '#959595',
     borderRadius: 4,
-    height: 48,
-    paddingHorizontal: 10,
-    marginBottom: 15,
+    height: hp('7.5%'),
+    paddingHorizontal: wp('3%'),
+    marginBottom: hp('2%'),
     justifyContent: 'center',
-  },
-  codeButton: {
-    position: 'absolute',
-    right: 3,
-    top: 26,
-    backgroundColor: '#fff',
-    borderColor: '#5da000',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  codeText: {
-    color: '#5da000',
-    fontWeight: 'bold',
-  },
-  timer: {
-     marginLeft: 5 ,
-     marginBottom: 10, 
-     color: 'green', 
-     fontWeight: 500,
-     fontSize: 15,
+    fontSize: wp('4%'),
   },
   signupButton: {
     backgroundColor: '#C8F589',
-    height: 50,
+    height: hp('6%'),
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: hp('2.5%'),
   },
   signupText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: 'bold',
   },
   modalContainer: {
@@ -305,11 +271,11 @@ const styles = StyleSheet.create({
   calendarWrapper: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 20,
+    padding: wp('5%'),
     width: '90%',
   },
   calendarCloseBtn: {
-    marginTop: 10,
+    marginTop: hp('1%'),
     alignSelf: 'flex-end',
   },
   checkboxContainer: {
@@ -319,21 +285,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#959595',
     borderRadius: 4,
-    height: 48,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-
+    height: hp('6%'),
+    paddingHorizontal: wp('3%'),
+    marginBottom: hp('2%'),
   },
   checkbox: {
     flexDirection: 'row'
   },
   residenceText: {
-    alignSelf: 'center'
+    alignSelf: 'center',
+    fontSize: wp('3.5%'),
   },
   pwRuleBox : {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 10,
+    marginBottom: hp('1.5%'),
   },
 });
 

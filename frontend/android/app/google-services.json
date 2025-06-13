@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510777464102",
+    "project_id": "haehae-2cd4d",
+    "storage_bucket": "haehae-2cd4d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510777464102:android:e722ff5839ad43613ddde7",
+        "android_client_info": {
+          "package_name": "com.haehae"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNjwZNaWoIZTQ41dcNa2ahyuYKISxVc68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

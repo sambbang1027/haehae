@@ -1,13 +1,14 @@
-package com.example.backend.entity;
+package com.example.backend.entity.user;
 
-import com.example.backend.user.vo.Email;
-import com.example.backend.user.vo.Nickname;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -20,8 +21,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
+    @Builder.Default
     @Column(name = "user_level_id")
-    private Long userLevelId;
+    private Long userLevelId = 1L;
     private String email;
     private String name;
     @Column(name = "password_hash")
@@ -32,21 +35,27 @@ public class User {
     @Column(name = "social_provider")
     private String socialProvider;
     private String address;
-    @Column(name = "created_at")
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(nullable = false)
+    private Role role = Role.USER;
     public enum Role {
         USER,
         ADMIN
     }
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.ACTIVE;
     public enum Status{
         ACTIVE,
         BLOCKED,
         INACTIVE
     }
+
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
     @Enumerated(EnumType.STRING)

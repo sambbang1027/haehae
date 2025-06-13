@@ -1,8 +1,11 @@
 package com.example.backend.user.dto;
 
+import com.example.backend.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -14,9 +17,9 @@ public class LocalRegisterDTO {
     private String password;
     private String nickname;
     private String phoneNumber;
-    private String birth;
+    private LocalDate birth;
     private String address;
     private String bcode;
-    private String residenceType;
+    private User.ResidenceType residenceType;
 
 }

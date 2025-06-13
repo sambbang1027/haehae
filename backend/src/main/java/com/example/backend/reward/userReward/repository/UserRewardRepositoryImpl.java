@@ -23,7 +23,7 @@ public class UserRewardRepositoryImpl implements UserRewardRepositoryCustom {
         return jpaQueryFactory
                 .select(new QUserRewardRecodeDTO(
                         ur.id,
-                        ur.userId,
+                        ur.userPointId,
                         ur.rewardItemId,
                         ri.name,
                         ri.pointCost,

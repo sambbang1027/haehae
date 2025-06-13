@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import type { Asset } from 'react-native-image-picker';
+import axios from 'axios';
+import { uploadImageToFirebase } from '../../utils/FirebaseUploader';
 
 export default function WriteLocalBoardPost() {
   const [title, setTitle] = useState('');
@@ -12,10 +14,44 @@ export default function WriteLocalBoardPost() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [images, setImages] = useState<Asset[]>([]);
 
-  const handleSubmit = () => {
-    console.log('제목:', title);
-    console.log('내용:', content);
+  const handleSubmit =  async () =>{
+        console.log('제목:', title);
+        console.log('내용:', content);
+  try {
+    let uploadedImageUrls: string[] = []; 
+    if(images != null && images.length > 0){
+      uploadedImageUrls = await Promise.all(
+        images.map(img => uploadImageToFirebase(img, 'localboard_image'))
+      );
+  }
+
+    console.log("이미지 반환 체크 : "+uploadedImageUrls);
+    
+      const formData = {
+        userId : 4,
+        regionCode : "1168010300",
+        title: title,
+        content: content,
+        localBoardImageUrl: uploadedImageUrls
+      };
+      console.log("반환된 이미지 확인 : "+formData.localBoardImageUrl);
+      console.log("저장된 이미지 확인 : "+formData);
+
+      await axios.post('http://10.0.2.2:8082/local-board/detail/create', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+      );
+
+      console.log('게시글 등록 성공!');
+    } catch (error) {
+      console.error('게시글 등록 실패:', error);
+    }
   };
+
+
+
 
   //갤러리 열기
   const openGallery = () => {
@@ -92,9 +128,9 @@ export default function WriteLocalBoardPost() {
             <Text style={styles.postButtonText}>POST</Text>
           </TouchableOpacity>
         </View>
-        {/* <TouchableOpacity style={styles.postButton} onPress={handleSubmit}>
+        <TouchableOpacity onPress={handleSubmit}>
             <Text style={styles.postButtonText}>게시하기</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity> 
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

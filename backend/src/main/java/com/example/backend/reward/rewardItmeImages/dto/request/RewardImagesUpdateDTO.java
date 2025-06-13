@@ -1,6 +1,8 @@
 package com.example.backend.reward.rewardItmeImages.dto.request;
 
 import com.example.backend.entity.reward.RewardItemImages;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,12 +10,13 @@ import lombok.Setter;
 @Getter
 public class RewardImagesUpdateDTO {
     private long rewardItemId;
-    private String RewardItemsImgUrl;
+    @NotNull
+    private String rewardItemsImgUrl;
 
     public RewardItemImages toEntity(){
         return RewardItemImages.builder()
                 .rewardItemId(rewardItemId)
-                .rewardItemsImgUrl(RewardItemsImgUrl)
+                .rewardItemsImgUrl(rewardItemsImgUrl)
                 .build();
     }
 

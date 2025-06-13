@@ -5,6 +5,7 @@ import com.example.backend.entity.sharing.SharingPosts;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
 import com.example.backend.sharing.dto.request.CreateSharingRequestDTO;
+import com.example.backend.sharing.dto.request.SharingImageRequestDTO;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
 import com.example.backend.sharing.dto.request.UpdateSharingRequestDTO;
 import com.example.backend.sharing.repository.SharingRepository;
@@ -46,7 +47,7 @@ public class SharingCommandServiceImpl implements SharingCommandService {
 
         SharingPosts sharingPosts1 = sharingRepository.save(sharingPosts);
 
-        for(String image : createSharingRequestDTO.getImgUrl()){
+        for (String image : createSharingRequestDTO.getImgUrl()) {
             SharingImages sharingImages =
                     SharingImages.builder()
                             .sharingPostId(sharingPosts1.getSharingPostId())
@@ -65,5 +66,25 @@ public class SharingCommandServiceImpl implements SharingCommandService {
     @Override
     public void updateSharingDetail(UpdateSharingRequestDTO updateSharingRequestDTO) {
         sharingRepository.updateSharingDetail(updateSharingRequestDTO);
+    }
+
+    @Override
+    public void addSharingImages(SharingImageRequestDTO sharingImageRequestDTO) {
+        for (String imgUrl : sharingImageRequestDTO.getImgUrl()) {
+            SharingImages sharingImages = SharingImages.builder()
+                    .sharingPostId(sharingImageRequestDTO.getSharingPostId())
+                    .imgUrl(imgUrl)
+                    .build();
+
+            sharingImageRepository.save(sharingImages);
+        }
+    }
+
+    @Override
+    public void deleteSharingImages(SharingImageRequestDTO sharingImageRequestDTO) {
+//        for(String imgUrl : sharingImageRequestDTO.getImgUrl()){}
+        for (Long sharingImageId: sharingImageRequestDTO.getSharingImageId()) {
+            sharingImageRepository.deleteById(sharingImageId);
+        }
     }
 }

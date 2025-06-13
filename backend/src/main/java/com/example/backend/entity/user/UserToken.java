@@ -1,4 +1,4 @@
-package com.example.backend.entity;
+package com.example.backend.entity.user;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,11 +19,14 @@ public class UserToken {
     private Long id;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "access_token")
-    private String accessToken;
     @Column(name = "refresh_token")
     private String refreshToken;
     @Column(name = "expires_at")
     private Timestamp expiresAt;
 
+
+    public void updateToken(String token, Timestamp expiresAt){
+        this.refreshToken = token;
+        this.expiresAt = expiresAt;
+    }
 }
