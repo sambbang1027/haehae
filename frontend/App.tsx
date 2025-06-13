@@ -12,8 +12,8 @@ import { ToastProvider } from './src/context/ToastContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import FooterLayout from './src/components/layouts/FooterLayout';
-import TestApiScreen from './src/screens/TestApiScreen';
 import { navigationRef } from './src/navigation/NavigationService';
+import { UserProvider } from './src/context/UserContext';
 
 
 export default function App() {
@@ -24,13 +24,15 @@ export default function App() {
           <PaperProvider>
             <ToastProvider>
               <ModalProvider>
-                <NavigationContainer ref={navigationRef}>
-                    <BottomSheetModalProvider>
-                      <AppNavigator />
-                      <ModalHost />
-                      <FooterLayout />
-                    </BottomSheetModalProvider>
-                </NavigationContainer>
+                <UserProvider>
+                  <NavigationContainer ref={navigationRef}>
+                      <BottomSheetModalProvider>
+                        <AppNavigator />
+                        <ModalHost />
+                        <FooterLayout />
+                      </BottomSheetModalProvider>
+                  </NavigationContainer>
+                </UserProvider>
               </ModalProvider>
             </ToastProvider>
           </PaperProvider>

@@ -1,4 +1,3 @@
-// navigationUtils.ts
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { AppStackParamList } from './AppNavigator';
 
