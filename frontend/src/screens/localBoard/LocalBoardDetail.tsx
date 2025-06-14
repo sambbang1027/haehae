@@ -18,10 +18,10 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import OptionModal from "../../components/OptionModal";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from "axios";
-import { fetchImageUrl } from '../../utils/FirebaseRead';
 import api from '../../api/AxiosInstance';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
+import ImagePicker from "../../components/ImageFicker.tsx/ImagePicker";
 
 type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
