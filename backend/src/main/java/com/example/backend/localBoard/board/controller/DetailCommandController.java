@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/local-board")
+@RequestMapping("api/local-board")
 public class DetailCommandController {
 
     @Autowired

@@ -3,15 +3,19 @@ import { TouchableOpacity } from 'react-native';
 import { View, Text, TextInput, Button, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import axios from 'axios';
+import api from '../../api/AxiosInstance';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { useUser } from '../../context/UserContext';
 //firebase 이미지
 import { uploadImageToFirebase } from '../../utils/FirebaseUploader';
 import { deleteImageFromFirebase } from '../../utils/FirebaseDelete';
 //image hooks 관리
 import { useImagePicker } from '../../hooks/useImagePicker';
+//imagePriview UI
 import ImagePreviewList from '../../components/image/ImagePreviewList';
 
 export default function WriteLocalBoardPost() {
+  const {user, setUser} = useUser();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const { images, pickImages, deleteImage } = useImagePicker();
@@ -28,19 +32,14 @@ export default function WriteLocalBoardPost() {
     }
 
       const formData = {
-        userId : 4,
+        userId : user?.userId,
         regionCode : "1168010300",
         title: title,
         content: content,
         localBoardImageUrl: uploadedImageUrls
       };
 
-      await axios.post('http://10.0.2.2:8082/local-board/detail/create', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-      );
+      await api.post('local-board/detail/create', formData);
 
       console.log('게시글 등록 성공!');
     } catch (error) {
