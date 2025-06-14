@@ -4,13 +4,12 @@ import { View, Text, TextInput, Button, StyleSheet, KeyboardAvoidingView, Platfo
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import api from '../../api/AxiosInstance';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import { useUser } from '../../context/UserContext';
 //firebase 이미지
 import { uploadImageToFirebase } from '../../utils/FirebaseUploader';
 import { deleteImageFromFirebase } from '../../utils/FirebaseDelete';
 //image hooks 관리
-import { useImagePicker } from '../../hooks/useImagePicker';
+import { useImagePicker } from '../../hooks/UseImagePicker';
 //imagePriview UI
 import ImagePreviewList from '../../components/image/ImagePreviewList';
 
