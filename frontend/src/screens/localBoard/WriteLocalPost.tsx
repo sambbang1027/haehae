@@ -36,7 +36,7 @@ export default function WriteLocalBoardPost() {
           localBoardImageUrl: uploadedImageUrls
         };
 
-      await api.post('local-board/detail/create', formData);
+  await api.post('local-board/detail/create', formData);
 
     } catch (error) {
       console.error('게시글 등록 실패:', error);

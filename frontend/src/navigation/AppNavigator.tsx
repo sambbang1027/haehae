@@ -11,6 +11,7 @@ import RecycleCalendarNavigator from './RecycleCalendarNavigator';
 import LocationNavigator from './LocationNavigator';
 import WasteNavigator from './WasteNavigator';
 import MainNavigator from './MainNavigator';
+import RewardNavigator, { RewardParamList } from './RewardNavigator';
 
 
 
@@ -37,6 +38,7 @@ export type AppStackParamList = {
   VolunteerClass: undefined;
   PointRecord: undefined;
   DayWeekMission: undefined;
+  RewardStack : NavigatorScreenParams<RewardParamList>;
 }
 
 // 스택 생성
@@ -105,6 +107,11 @@ const AppNavigator = () => {
         component={WasteNavigator}
         options={{ headerShown: false }}
       /> 
+       <Stack.Screen
+            name="RewardStack"
+            component={RewardNavigator}
+            options = {{headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

@@ -11,7 +11,7 @@ import RewardPay from "../screens/reward/RewardPay";
 
 export type RewardParamList = {
     RewardList : undefined;
-    RewardDetail : undefined;
+    RewardDetail : { rewardId: number };
     RewardPay : undefined;
     Main : undefined;
     RewardPayList : undefined;

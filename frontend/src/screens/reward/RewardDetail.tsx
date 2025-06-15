@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -10,22 +10,69 @@ import {
     TextInput,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RewardParamList } from '../../navigation/RewardNavigator';
+import api from '../../api/AxiosInstance';
+import { Timestamp } from 'react-native-reanimated/lib/typescript/commonTypes';
+import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
 
-type RewardScreenNavigationProp = NativeStackNavigationProp<RewardParamList,'RewardDetail'>;
+type RewardScreenNavigationProp = RouteProp<RewardParamList,'RewardDetail'>;
 
-const handlerPayPress = () => {
-    // Handle the payment logic here
-    console.log('결제하기 버튼이 눌렸습니다.');
-};
 
 const RewardDetail = () => {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
     const [usePoints, setUsePoints] = useState('');
-    const navigation = useNavigation<RewardScreenNavigationProp>(); 
-    
+    const route = useRoute<RewardScreenNavigationProp>(); 
+    const { rewardId } = route.params;
+    console.log(rewardId);
+
+
+    useEffect(() => {
+        rewardDetailInfo(rewardId);
+    }, [rewardId]);
+
+    const [rewardDetailItem, setrewardDetailItem]= useState<{
+        id : number;
+        name : string;
+        description : string;
+        pointCost : number;
+        organization : string;
+        createdAt : string;
+        updatedAt : string | null;
+        rewardImageId : number[];
+        rewardItemsImgUrl : string[];
+    } | null>(null)
+
+
+
+    const rewardDetailInfo = async(rewardId : number)=>{
+        try{
+            const response = await api.get(`reward/detail/${rewardId}`);
+            console.log(response.data);
+            const convertDate = formatTOKSTDateTime(response.data.createdAt);
+            const convertUpdateDate = formatTOKSTDateTime(response.data.updatedAt);
+            setrewardDetailItem({
+                id : response.data.id,
+                name : response.data.name,
+                description : response.data.description,
+                pointCost : response.data.pointCost,
+                organization : response.data.ororganization,
+                createdAt : convertDate,
+                updatedAt : convertUpdateDate,
+                rewardImageId : response.data.rewardImageId,
+                rewardItemsImgUrl : response.data.rewardItemsImgUrl
+            });
+
+        }catch(error) {
+            console.log(error);
+        }
+    }
+
+    const handlerPayPress = () => {
+        console.log('결제하기 버튼이 눌렸습니다.');
+    };
+
     const handlePayButtonPress = () => {
         setIsBottomSheetVisible(true);
     };
@@ -36,11 +83,9 @@ const RewardDetail = () => {
     };
 
     const handlePaymentConfirmation = () => {
-        // Perform payment processing logic here using the 'usePoints' value
         console.log('결제 확인:', usePoints);
         closeBottomSheet();
-        // You would typically navigate to a confirmation screen or show a success message
-        navigation.navigate('RewardPay');
+        // navigation.navigate('RewardPay');
     };
 
     const availablePoints = 1080;
@@ -52,20 +97,33 @@ const RewardDetail = () => {
         <View style={{ flex: 1 }}>
             <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
                 <View style={styles.mainContent}>
-                    <Text style={styles.donationTitle}>불우이웃 재헌이 돕기</Text>
+                    <Text style={styles.donationTitle}>{rewardDetailItem?.name}</Text>
                     <View style={styles.donationInfo}>
-                        <Text style={styles.date}>2024년 4월 23일</Text>
-                        <Text style={styles.organization}>동서남북 기부단체</Text>
+                        <Text style={styles.date}>
+                            {rewardDetailItem?.updatedAt
+                                ? rewardDetailItem.updatedAt
+                                : rewardDetailItem?.createdAt}
+                            </Text>
+                        <Text style={styles.organization}>{rewardDetailItem?.organization}</Text>
                     </View>
-                    <Image style={styles.donationImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover" />
+                    {/* <Image style={styles.donationImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover" /> */}
+                        {rewardDetailItem?.rewardImageId && rewardDetailItem.rewardImageId.length > 0 && (
+                            rewardDetailItem.rewardImageId.map((id, index) => (
+                                <Image
+                                    key={id}
+                                    source={{ uri: rewardDetailItem.rewardItemsImgUrl[index] }}
+                                    style={styles.donationImage}
+                                />
+                            ))
+                        )}
                     <Text style={styles.donationDescription}>
-                        세상을 구하는게 영웅이 아닙니다. 배고픈 재헌이에게 작은 도움의 손길을 내미는 것. 작지만 따뜻한 손길이 재헌이한테 영웅이 될 수 있습니다. 밥 한 끼 사주세요.
+                            {rewardDetailItem?.description}
                     </Text>
                     <View style={styles.paymentSummary}>
                         <View style={styles.paymentItem}>
                             <View style={styles.paymentHeader}>
                                 <Image style={styles.paymentImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover"/>
-                                <View style={{ flexDirection: 'column', justifyContent: 'center' }}> {/* 텍스트들을 세로로 배치 */}
+                                <View style={{ flexDirection: 'column', justifyContent: 'center' }}> 
                                     <Text style={styles.paymentOrganization}>동서남북 기부단체</Text>
                                     <Text style={styles.paymentTitle}>불우이웃 재헌이 돕기</Text>
                                 </View>
@@ -78,8 +136,6 @@ const RewardDetail = () => {
                         </View>
                     </View>
 
-
-                    {/* Available Points */}
                     <View style={styles.availablePointsCard}>
                         <Text style={styles.availablePointsLabel}>현재 사용가능한 포인트</Text>
                         <Text style={styles.availablePoints}>{availablePoints}p</Text>
@@ -87,14 +143,12 @@ const RewardDetail = () => {
                 </View>
             </ScrollView>
 
-            {/* Bottom Button */}
             <TouchableOpacity onPress={handlePayButtonPress}>
                 <View style={styles.bottomBackground}>
                     <Text style={styles.payText}>결 제 하 기</Text>
                 </View>
             </TouchableOpacity>
 
-            {/* Bottom Sheet Modal */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -114,13 +168,13 @@ const RewardDetail = () => {
 
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>사용할 포인트</Text>
-                                {/* <TextInput
+                                <TextInput
                                     style={styles.pointInput}
                                     keyboardType="number-pad"
                                     value={usePoints}
                                     onChangeText={setUsePoints}
                                     placeholder="포인트 입력"
-                                /> */}
+                                /> 
                                 <Text style={styles.bottomSheetValue}>1,000p</Text>
                             </View>
 
@@ -141,21 +195,17 @@ const RewardDetail = () => {
                         </View> 
                         
                         <View style={styles.bottomSheetButtons}>
-                                {/* <TouchableOpacity style={styles.cancelButton} onPress={closeBottomSheet}>
-                                    <Text style={styles.buttonText}>취소</Text>
-                                </TouchableOpacity> */}
                                 <TouchableOpacity style={styles.confirmButton} onPress={handlePaymentConfirmation}>
                                     <Text style={styles.buttonText}>결제하기</Text>
                                 </TouchableOpacity>
                         </View>
-
                     </View>
                 </View>
             </Modal>
         </View>
     );
 };
-``
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
