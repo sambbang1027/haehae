@@ -31,7 +31,7 @@ export default function LocalBoardMain() {
 
   const posts = [
     {
-      id: 46,
+      id: 49,
       author: '서샘이',
       date: '2025년 4월 24일',
       content: '서샘이의 광주 VS 강재현의 광주 누가 더 시골인인가요?',

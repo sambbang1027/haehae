@@ -5,9 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import api from '../../api/AxiosInstance';
 import { useUser } from '../../context/UserContext';
-//firebase 이미지
-import { uploadImageToFirebase } from '../../utils/FirebaseUploader';
-import { deleteImageFromFirebase } from '../../utils/FirebaseDelete';
+//firebase hook
+import { useFireBaseImage } from '../../hooks/UseFirebaseImage';
 //image hooks 관리
 import { useImagePicker } from '../../hooks/UseImagePicker';
 //imagePriview UI
@@ -18,37 +17,32 @@ export default function WriteLocalBoardPost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const { images, pickImages, deleteImage } = useImagePicker();
-  
+  const { uploadImage, deleteImageFB, uploading, error } = useFireBaseImage();
 
   const handleSubmit =  async () =>{
-    let uploadedImageUrls: string[] = []; 
+    let uploadedImageUrls: string[] | null = null;
+    // 밑에 함수에서 반환되는게 null일 수도 있으니 null도 추가.
 
     try {
-      if(images != null && images.length > 0){
-        uploadedImageUrls = await Promise.all(
-          images.map(img => uploadImageToFirebase(img, 'localboard_image'))
-        );
-    }
+        if(images != null && images.length > 0){
+            uploadedImageUrls = await uploadImage(images, 'localboard_image' );
+          }
 
-      const formData = {
-        userId : user?.userId,
-        regionCode : "1168010300",
-        title: title,
-        content: content,
-        localBoardImageUrl: uploadedImageUrls
-      };
+        const formData = {
+          userId : user?.userId,
+          regionCode : "1168010300",
+          title: title,
+          content: content,
+          localBoardImageUrl: uploadedImageUrls
+        };
 
       await api.post('local-board/detail/create', formData);
 
-      console.log('게시글 등록 성공!');
     } catch (error) {
       console.error('게시글 등록 실패:', error);
-
-      if(uploadedImageUrls != null && uploadedImageUrls.length > 0){
-          await Promise.all(
-        uploadedImageUrls.map(url => deleteImageFromFirebase(url))
-        );
-      }
+        if(uploadedImageUrls != null && uploadedImageUrls.length > 0){
+              await deleteImageFB(uploadedImageUrls);
+        }
     }
   };
 
