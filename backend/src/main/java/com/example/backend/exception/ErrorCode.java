@@ -10,7 +10,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_MATCH(ErrorCategory.AUTH, HttpStatus.UNAUTHORIZED, "토큰이 일치하지 않습니다."),
     ACCESS_DENIED(ErrorCategory.AUTH, HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
     EMAIL_IO_ERROR(ErrorCategory.AUTH, HttpStatus.SERVICE_UNAVAILABLE, "이메일 전송 중 네트워크 오류 발생"),
-
+    INVALID_VERIFICATION_CODE(ErrorCategory.AUTH, HttpStatus.BAD_REQUEST,"인증 코드가 유효하지 않습니다."),
 
     // USER
     USER_NOT_FOUND(ErrorCategory.USER,HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다."),

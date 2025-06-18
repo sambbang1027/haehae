@@ -11,24 +11,29 @@ import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
+@Slf4j
 @Service
 public class EmailService {
 
-
     private  String apiKey;
+    private RedisTemplate<String, Object> redisTemplate;
 
-    public  EmailService(){
-        Dotenv dotenv = Dotenv.load();
-        this.apiKey = dotenv.get("SENDGRID_API_KEY");
+    public EmailService(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.apiKey = Dotenv.load().get("SENDGRID_API_KEY");
     }
 
-    public String sendMail(String toEmail){
+    // 메일 발송
+    public void sendMail(String toEmail){
         // 보내는 사람, 받는사람
         Email from = new Email("support@haehae.it.com");
         Email to = new Email(toEmail);
@@ -63,7 +68,9 @@ public class EmailService {
             System.out.println("응답 코드: " + response.getStatusCode());
             System.out.println("응답 내용: " + response.getBody());
             System.out.println("응답 헤더: " + response.getHeaders());
-            return code;
+
+            saveVerificationCode(toEmail, code);
+
         }catch (IOException e){
             throw new HaehaeException(ErrorCode.EMAIL_IO_ERROR);
         } catch (Exception e) {
@@ -71,7 +78,36 @@ public class EmailService {
         }
     }
 
+    // 인증코드 만들기
     public String create6Code(){
         return String.valueOf((int)(Math.random()*900000 + 100000));
+    }
+
+    // redis 코드 저장
+    public void saveVerificationCode(String email, String code){
+        try{
+
+            String key = "email:verify:"+email;
+            System.out.println("⛳ Redis 저장 시도: key=" + key + ", code=" + code);
+
+            redisTemplate.opsForValue().set(key,code, Duration.ofMinutes(5));
+            System.out.println("저장된 코드 :"+ redisTemplate.opsForValue().get(key));
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
+
+    // redis 코드 조회 및 비교
+    public boolean checkVerificationCode(String email, String inputCode){
+        String key = "email:verify:"+email;
+        String saveCode = (String) redisTemplate.opsForValue().get(key);
+        return inputCode.equals(saveCode);
+    }
+
+    // 코드 삭제
+    public void deleteVerificationCode(String email){
+        String key = "email:verify:"+email;
+        redisTemplate.delete(key);
     }
 }
