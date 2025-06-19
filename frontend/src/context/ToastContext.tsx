@@ -5,11 +5,10 @@ import React, {
   useState,
   ReactNode,
 } from 'react';
-import { StyleSheet, Dimensions, Animated, Easing} from 'react-native';
+import { StyleSheet, Animated, Easing} from 'react-native';
 import AppText from '../components/common/AppText';
 import Video from 'react-native-video';
-
-const { width, height } = Dimensions.get('window');
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 type ToastOptions = {
   message: string;
@@ -41,7 +40,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     // fade in
     Animated.timing(opacity, {
       toValue: 1,
-      duration: 500,
+      duration: 100,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
@@ -50,7 +49,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => {
       Animated.timing(opacity, {
         toValue: 0,
-        duration: 500,
+        duration: 100,
         easing: Easing.in(Easing.ease),
         useNativeDriver: true,
       }).start(() => {
@@ -86,30 +85,34 @@ export const useToast = () => useContext(ToastContext);
 const styles = StyleSheet.create({
   toast: {
     position: 'absolute',
-    top: height / 2,
-    left: width / 2,
+    top: hp('40%'),
+    left: wp('50%'),
     transform: [
-      { translateX: -(width * 0.6)/2 }, 
-      { translateY: -90 }, // 대충 토스트 높이 절반 추정
+      { translateX: -wp('30%') }, // 너비의 절반 만큼 왼쪽으로 이동
+      { translateY: -hp('10%') }, // 토스트 높이 절반만큼 위로 이동
     ],
-    width: width * 0.6,
+    width: wp('60%'),
     backgroundColor: '#fff',
     borderRadius: 20,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('4%'),
     zIndex: 999,
     flexDirection: 'column',
     alignItems: 'center',
     elevation: 3,
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   text: {
-    fontSize: 18,
-    marginBottom: 20,
+    fontSize: wp('5%'),
+    marginBottom: hp('2%'),
+    textAlign: 'center',
   },
   video: {
-    width: 80,
-    height: 80,
-    marginVertical: 20,
+    width: wp('15%'),
+    height: wp('15%'),
+    marginVertical: hp('2%'),
   },
 });

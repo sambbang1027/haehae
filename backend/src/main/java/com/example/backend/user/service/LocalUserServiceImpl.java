@@ -74,4 +74,13 @@ public class LocalUserServiceImpl implements UserService {
         }
     }
 
+    // 닉네임 중복검사
+    public boolean duplicateNickname (String nickname){
+        return userRepository.existsByNickname(nickname);
+    }
+
+    // 이메일 중복검사
+    public boolean duplicateEmail (String email){
+        return userRepository.existsByEmail(email);
+    }
 }
