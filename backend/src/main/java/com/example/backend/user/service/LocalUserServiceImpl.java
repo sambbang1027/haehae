@@ -64,10 +64,10 @@ public class LocalUserServiceImpl implements UserService {
     private void validateDuplicateUser(Email email, Nickname nickname){
 
 
-        if (userRepository.existsByEmail(new Email(email.getValue()))) {
+        if (userRepository.existsByEmail(email.getValue())) {
             throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
         }
-        if(userRepository.existsByNickname(new Nickname(nickname.getValue()))){
+        if(userRepository.existsByNickname(nickname.getValue())){
             throw new HaehaeException(ErrorCode.DUPLICATE_NICKNAME);
         }
     }
@@ -75,12 +75,12 @@ public class LocalUserServiceImpl implements UserService {
     // 닉네임 중복검사
     public boolean duplicateNickname (String nickname){
         Nickname nicknameVo = new Nickname(nickname);
-        return userRepository.existsByNickname(nicknameVo);
+        return userRepository.existsByNickname(nicknameVo.getValue());
     }
 
     // 이메일 중복검사
     public boolean duplicateEmail (String email){
         Email emailVo = new Email(email);
-        return userRepository.existsByEmail(emailVo);
+        return userRepository.existsByEmail(emailVo.getValue());
     }
 }

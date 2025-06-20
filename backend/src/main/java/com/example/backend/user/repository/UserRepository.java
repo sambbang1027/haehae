@@ -17,8 +17,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // 중복검사
-    boolean existsByEmail(Email email);
-    boolean existsByNickname(Nickname nickname);
+    boolean existsByEmail(String email);
+    boolean existsByNickname(String nickname);
     @Query("SELECT u.currentPoint FROM User u WHERE u.id= :userId")
     long findCurrentPointByUserId(@Param("userId") long userId);
 
