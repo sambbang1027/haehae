@@ -21,7 +21,7 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.toMutableList().apply {
               // ✅ 수동 등록 여기
-              add(RNEncryptedStoragePackage())
+             // add(RNEncryptedStoragePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"
