@@ -17,6 +17,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
   onCodeChange: (code: string) => void;
   onSendCode: () => void;
   onVerifyCode: () => void;
+  isVerified : boolean;
 };
 
 const EmailVerification: React.FC<EmailAuthProps> = ({
@@ -27,42 +28,55 @@ const EmailVerification: React.FC<EmailAuthProps> = ({
   onCodeChange,
   onSendCode,
   onVerifyCode,
+  isVerified,
 }) => {
   return (
-    <>
-      <View style={styles.inputBox}>
-        <Text style={styles.label}>이메일 입력</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={onEmailChange}
-          placeholder="example@email.com"
-        />
-        <TouchableOpacity style={styles.codeButton} onPress={onSendCode}>
-          <Text style={styles.codeText}>인증번호 전송</Text>
-        </TouchableOpacity>
-      </View>
+  <>
+      {!isVerified && (
+        <>
+          <View style={styles.inputBox}>
+            <Text style={styles.label}>이메일 입력</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={onEmailChange}
+              placeholder="example@email.com"
+            />
+            <TouchableOpacity style={styles.codeButton} onPress={onSendCode}>
+              <Text style={styles.codeText}>인증번호 전송</Text>
+            </TouchableOpacity>
+          </View>
 
-      <View style={styles.inputBox}>
-        <Text style={styles.label}>인증번호 입력</Text>
-        <TextInput
-          style={styles.input}
-          value={authCode}
-          onChangeText={onCodeChange}
-        />
-        <TouchableOpacity style={styles.codeButton} onPress={onVerifyCode}>
-          <Text style={styles.codeText}>확인</Text>
-        </TouchableOpacity>
-        {timer > 0 && (
-          <Text style={styles.timer}>
-            {String(Math.floor(timer / 60)).padStart(2, '0')}:
-            {String(timer % 60).padStart(2, '0')}
-          </Text>
-        )}
+          <View style={styles.inputBox}>
+            <Text style={styles.label}>인증번호 입력</Text>
+            <TextInput
+              style={styles.input}
+              value={authCode}
+              onChangeText={onCodeChange}
+            />
+            <TouchableOpacity style={styles.codeButton} onPress={onVerifyCode}>
+              <Text style={styles.codeText}>확인</Text>
+            </TouchableOpacity>
+            {timer > 0 && (
+              <Text style={styles.timer}>
+                {String(Math.floor(timer / 60)).padStart(2, '0')}:
+                {String(timer % 60).padStart(2, '0')}
+              </Text>
+            )}
+          </View>
+        </>
+      )}
+
+      {isVerified && (
+      <View>
+        <Text style={styles.fixedEmail}>{email}</Text>
+        <Text style={{ color: 'green',  marginBottom: hp('1%'),}}>✅ 이메일 인증 완료</Text>
       </View>
+      )}
     </>
   );
 };
+
 const styles = StyleSheet.create({
   label: {
     marginBottom: hp('1%'),
@@ -81,6 +95,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     fontSize: wp('4%'),
   },
+  fixedEmail:{
+    borderWidth: 1,
+    borderColor: '#959595',
+    backgroundColor: '#f3f3f3',
+    borderRadius: 4,
+    height: hp('7.5%'),
+    paddingHorizontal: wp('3%'),
+    marginBottom: hp('1%'),
+    justifyContent: 'center',
+    fontSize: wp('5%'),
+    paddingVertical: hp('2%')
+  },
+
   codeButton: {
     position: 'absolute',
     right: wp('2%'),
