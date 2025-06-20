@@ -19,10 +19,10 @@
 
 | 분류 | 기술 |
 |------|------|
-| Backend | Java 17, Spring Boot, Spring Security, JPA, QueryDSL, JWT |
-| Frontend | Vue3, Vite, Composition API, <br>Pinia, Axios |
-| Infra | MySQL, Redis, Firebase, KakaoPay, SendGrid |
-| DevOps | GitHub Actions, Docker, Nginx, AWS EC2 |
+| Backend | Java 17, Spring Boot 3.2.5, Spring Security, JPA, QueryDSL, JWT |
+| Frontend | React Native,Axios |
+| Infra | MySQL, Redis, Firebase, KakaoAPI, SendGrid, Azure |
+| DevOps | GitHub Actions, Swagger |
 
 ---
 

@@ -5,10 +5,7 @@ import com.example.backend.user.service.LocalUserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,4 +20,11 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("유저 생성 완료");
     }
+
+    @GetMapping("/register/check/nickname")
+    public ResponseEntity<Boolean> duplicateNickname(@RequestParam String nickname){
+        return ResponseEntity.ok(localAuthService.duplicateNickname(nickname));
+    }
+
+
 }

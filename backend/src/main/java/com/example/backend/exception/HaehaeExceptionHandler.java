@@ -15,12 +15,14 @@ public class HaehaeExceptionHandler {
 
     @ExceptionHandler(HaehaeException.class)
     public ResponseEntity<ErrorResponse> handleHaehae(HaehaeException exception){
+        ErrorCode errorCode = exception.getErrorCode();
 
-        logger.error("[{}] {}",exception.getErrorCode().name(), exception.getMessage(),exception);
+        logger.error("[{}] {}", errorCode.name(), errorCode.getMessage(), exception);
 
-        ErrorResponse response = ErrorResponse.of(exception.getErrorCode());
-        return ResponseEntity.status(exception.getErrorCode().getStatus()).body(response);
+        ErrorResponse response = ErrorResponse.of(errorCode);
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
+
 
     // 예측 불가 에러용
     @ExceptionHandler(Exception.class)

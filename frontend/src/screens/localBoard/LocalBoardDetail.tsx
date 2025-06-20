@@ -17,10 +17,9 @@ import { LocalBoardStackParamList } from "../../navigation/LocalBoardNavigator";
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import OptionModal from "../../components/OptionModal";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import axios from "axios";
-import { fetchImageUrl } from '../../utils/FirebaseRead';
 import api from '../../api/AxiosInstance';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
 
 type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
@@ -79,36 +78,33 @@ export default function LocalBoardDetail() {
 
 
   const fetchPostDetail = async (id: number) => {
-    try {
+  try {
+    const response = await api.get(`/local-board/detail/query/${id}`);
 
-      const response = await api.get(`http://10.0.2.2:8082/local-board/detail/query/${id}`, {
-      // headers: {
-      //   'Authorization': `Bearer ${accessToken}`
-      // }
-    });
-      console.log(response.data.images);
-      const [imageUrls] = useState([]);
+    let imageUrls: string[] = [];
 
-      for (let i = 0; i < response.data.images.length; i++) {
-        const imageNames = response.data.images[i].localBoardImgUrl;
-        imageNames.push(imageUrls);
-      }
-      console.log("post 체크 : "+post);
-      
-      setPost({
-        id: id,
-        authorId: response.data.content.userId,
-        author: response.data.content.nickname,
-        date: response.data.content.createdAt,
-        title: response.data.content.title,
-        content: response.data.content.content,
-        image: imageUrls
-      });
-
-    } catch (error) {
-        console.error('게시글을 불러오는 중 오류 발생:', error);
+    for (let i = 0; i < response.data.images.length; i++) {
+      const imageName = response.data.images[i].localBoardImgUrl;
+      imageUrls.push(imageName); 
     }
+
+    //if(response.data.content.updatedAt == null){} 수정된 시간이 없을 경우 -> DTO에 해당 컬럼이 없음.
+    const convertDate =formatTOKSTDateTime(response.data.content.createdAt);
+
+    setPost({
+      id: id,
+      authorId: response.data.content.userId,
+      author: response.data.content.nickname,
+      date: convertDate,
+      title: response.data.content.title,
+      content: response.data.content.content,
+      image: imageUrls,
+    });
+
+  } catch (error) {
+    console.error('게시글을 불러오는 중 오류 발생:', error);
   }
+}
 
 
   const postingComment = [

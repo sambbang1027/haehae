@@ -61,9 +61,10 @@ api.interceptors.response.use(
                 await EncryptedStorage.clear();
                 return Promise.reject(err);
             }
-        }else if(error.code === 'ECONNABORTED' && error.message.includes('timeout'))
-
-        return Promise.reject(new Error('요청 시간이 초과되었습니다.'));
+        }else if(error.code === 'ECONNABORTED' && error.message.includes('timeout')){
+            return Promise.reject(new Error('요청 시간이 초과되었습니다.'));
+        }
+        return Promise.reject(error);
     }
 );
 

@@ -28,10 +28,10 @@ export default function FooterLayout() {
   const state = useNavigationState((state) => state);
   const currentRoute = getDeepestRouteName(state);
   useEffect(() => {
-  console.log('전체 navigation state:', JSON.stringify(state, null, 2));
+  //console.log('전체 navigation state:', JSON.stringify(state, null, 2));
 }, [state]);
 
-  console.log('현재 라우트:', currentRoute); // 디버깅 로그
+ // console.log('현재 라우트:', currentRoute); // 디버깅 로그
 
   const hideFooterRoutes = [
     'LocalBoardDetail',
