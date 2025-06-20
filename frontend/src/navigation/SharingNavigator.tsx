@@ -7,7 +7,7 @@ import ChatNavigator, { ChatStackParamList } from "./ChatNavigator";
 
 export type SharingStackParamList  = {
     SharingMain : undefined;
-    SharingDetail : { id:number };
+    SharingDetail : { sharingPostId : number };
     WriteSharingPost : undefined;
     ChatingStack: NavigatorScreenParams<ChatStackParamList>;
 }

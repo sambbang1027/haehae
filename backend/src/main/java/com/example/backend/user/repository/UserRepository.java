@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
     // 중복검사
     boolean existsByEmail(String email);
@@ -24,6 +24,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("UPDATE User u SET u.currentPoint = :currentPoint WHERE u.id = :id")
     void updateCurrentPoint(@Param("currentPoint")long currentPoint, @Param("id") long id);
+
+    @Query("SELECT u.id FROM User u WHERE u.email= :username")
+    long findIdByUsername(@Param("username") String username);
 
 
     Optional<User> findByEmail(String email);
