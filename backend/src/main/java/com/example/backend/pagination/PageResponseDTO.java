@@ -1,4 +1,4 @@
-package com.example.backend.pagenation;
+package com.example.backend.pagination;
 
 import lombok.Getter;
 import lombok.Setter;

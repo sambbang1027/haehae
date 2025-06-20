@@ -1,6 +1,8 @@
 package com.example.backend.reward.rewardItems.repository;
 
 
+import com.example.backend.pagination.PageRequestDTO;
+import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardDetailDTO;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardListDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
@@ -13,8 +15,6 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
-import com.example.backend.reward.rewardItems.dto.response.QFindRewardDetailDTO;
-import com.example.backend.reward.rewardItems.dto.response.QFindRewardListDTO;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     QRewardItemImages subQri = new QRewardItemImages("subQri");
 
     @Override
-    public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType) {
+    public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType, Long cursor , int limit) {
         return jpaQueryFactory
                 .select(new QFindRewardListDTO(
                         ri.id,
@@ -47,14 +47,15 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                             )
                         ))
                 .from(ri)
-//                .leftJoin(qri)
-//                .on(qri.rewardItemId.eq(ri.id))
                 .where(
                         rewardType !=null ? ri.rewardType.eq(rewardType) : null,
-                        ri.stock.gt(0)
+                        ri.stock.gt(0),
+                        cursor != null ? ri.id.lt(cursor) : null
                 )
+                .orderBy(ri.id.desc())
+                .limit(limit+1)
                 .fetch();
-    }
+            }
 
     @Override
     public FindRewardDetailDTO findRewardDetailById(long id) {
@@ -68,6 +69,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                                 ri.name,
                                 ri.description,
                                 ri.pointCost,
+                                ri.organization,
                                 ri.createdAt,
                                 ri.updatedAt,
                                 GroupBy.list(qri.id),

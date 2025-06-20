@@ -1,6 +1,9 @@
 package com.example.backend.reward.rewardItems.service;
 
 
+import com.example.backend.pagination.PageRequestDTO;
+import com.example.backend.pagination.PageResponseDTO;
+import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.request.RewardItemsRequestUpdateDTO;
 import com.example.backend.reward.rewardItems.dto.request.RewardRequestDTO;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardDetailDTO;
@@ -19,10 +22,12 @@ import java.util.List;
 public class RewardItemsServiceImpl implements RewardItemsService {
     private final RewardRepository rewardRepository;
     private final RewardImageRepository rewardImageRepository;
+    private final PageRequestDTO pageRequestDTO;
 
-    public RewardItemsServiceImpl(RewardRepository rewardRepository, RewardImageRepository rewardImageRepository) {
+    public RewardItemsServiceImpl(RewardRepository rewardRepository, RewardImageRepository rewardImageRepository, PageRequestDTO pageRequestDTO) {
         this.rewardRepository = rewardRepository;
         this.rewardImageRepository = rewardImageRepository;
+        this.pageRequestDTO = pageRequestDTO;
     }
 
 
@@ -52,11 +57,22 @@ public class RewardItemsServiceImpl implements RewardItemsService {
     }
 
     @Override
-    public List<FindRewardListDTO> findRewardItemList(RewardItems.RewardType rewardType) {
+    public CursorPageResponse<FindRewardListDTO> findRewardItemList(RewardItems.RewardType rewardType, Long cursor, int limit) {
         if(rewardType == null){
              rewardType = RewardItems.RewardType.DONATION;
         }
-        return rewardRepository.findRewardList(rewardType);
+
+        List<FindRewardListDTO> list = rewardRepository.findRewardList(rewardType, cursor, limit);
+
+        boolean hasNext = list.size() > limit;
+
+        if (hasNext) {
+            list.remove(limit);  // 초과 1개 제거
+        }
+
+        Long nextCursor = hasNext ? list.get(list.size() - 1).getId() : null;
+        System.out.println("서비스 : "+list);
+        return new CursorPageResponse<>(list, nextCursor, hasNext);
     }
 
     @Override

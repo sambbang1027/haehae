@@ -16,6 +16,7 @@ public class FindRewardDetailDTO {
     private String name;
     private String description;
     private long pointCost;
+    private String organization;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private List<Long> rewardImageId;
@@ -27,6 +28,7 @@ public class FindRewardDetailDTO {
                                String name,
                                String description,
                                long pointCost,
+                               String organization,
                                Timestamp createdAt,
                                Timestamp updateAt,
                                List<Long> rewardImageId,
@@ -36,6 +38,7 @@ public class FindRewardDetailDTO {
         this.name = name;
         this.description = description;
         this.pointCost = pointCost;
+        this.organization = organization;
         this.createdAt = createdAt;
         this.updatedAt = updateAt;
         this.rewardImageId = rewardImageId;

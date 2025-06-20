@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RewardRepository extends JpaRepository<RewardItems,Long>, RewardRepositoryCustom {
-
+    long countByRewardTypeAndStockGreaterThan(RewardItems.RewardType rewardType, int stock);
 }
