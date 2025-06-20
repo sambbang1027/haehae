@@ -63,7 +63,7 @@ api.interceptors.response.use(
             }
         }else if(error.code === 'ECONNABORTED' && error.message.includes('timeout'))
 
-           return Promise.reject(new Error('요청 시간이 초과되었습니다.'));
+        return Promise.reject(new Error('요청 시간이 초과되었습니다.'));
     }
 );
 
