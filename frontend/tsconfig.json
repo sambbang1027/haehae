@@ -3,6 +3,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   }
 }

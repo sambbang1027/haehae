@@ -1,7 +1,6 @@
-package com.example.backend.sharing.repository;
+package com.example.backend.sharing.repository.images;
 
 import com.example.backend.entity.sharing.QSharingImages;
-import com.example.backend.sharing.dto.response.QSharingDetailResponseDTO;
 import com.example.backend.sharing.dto.response.QSharingImageResponseDTO;
 import com.example.backend.sharing.dto.response.SharingImageResponseDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;

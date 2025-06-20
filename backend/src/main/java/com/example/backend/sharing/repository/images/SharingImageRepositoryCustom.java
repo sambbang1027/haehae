@@ -1,4 +1,4 @@
-package com.example.backend.sharing.repository;
+package com.example.backend.sharing.repository.images;
 
 import com.example.backend.sharing.dto.response.SharingImageResponseDTO;
 
