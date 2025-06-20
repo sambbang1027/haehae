@@ -62,25 +62,25 @@ public class LocalUserServiceImpl implements UserService {
 
     // 이메일, 닉네임 중복검사
     private void validateDuplicateUser(Email email, Nickname nickname){
-        System.out.println("Checking email: " + email.getValue());
-        boolean emailExists = userRepository.existsByEmail(email.getValue());
-        System.out.println("Email exists? " + emailExists);
 
-        if (userRepository.existsByEmail(email.getValue())) {
+
+        if (userRepository.existsByEmail(new Email(email.getValue()))) {
             throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
         }
-        if(userRepository.existsByNickname(nickname.getValue())){
+        if(userRepository.existsByNickname(new Nickname(nickname.getValue()))){
             throw new HaehaeException(ErrorCode.DUPLICATE_NICKNAME);
         }
     }
 
     // 닉네임 중복검사
     public boolean duplicateNickname (String nickname){
-        return userRepository.existsByNickname(nickname);
+        Nickname nicknameVo = new Nickname(nickname);
+        return userRepository.existsByNickname(nicknameVo);
     }
 
     // 이메일 중복검사
     public boolean duplicateEmail (String email){
-        return userRepository.existsByEmail(email);
+        Email emailVo = new Email(email);
+        return userRepository.existsByEmail(emailVo);
     }
 }

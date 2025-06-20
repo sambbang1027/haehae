@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   text: {
-    fontSize: wp('5%'),
+    fontSize: wp('4%'),
     marginBottom: hp('2%'),
     textAlign: 'center',
   },

@@ -1,6 +1,8 @@
 package com.example.backend.user.repository;
 
 import com.example.backend.entity.user.User;
+import com.example.backend.user.vo.Email;
+import com.example.backend.user.vo.Nickname;
 import jakarta.transaction.Transactional;
 import com.example.backend.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,8 +17,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // 중복검사
-    boolean existsByEmail(String email);
-    boolean existsByNickname(String nickname);
+    boolean existsByEmail(Email email);
+    boolean existsByNickname(Nickname nickname);
     @Query("SELECT u.currentPoint FROM User u WHERE u.id= :userId")
     long findCurrentPointByUserId(@Param("userId") long userId);
 

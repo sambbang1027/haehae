@@ -111,24 +111,24 @@ const handleSendCode = async() =>{
     });
     console.log(response);
 
-    if(response.status === 200){
+    if(response?.status === 200){
       showToast({ message: '인증코드가 발송되었습니다.' });
       handleTimer(); // 타이머 시작
     }
   }catch(error: any){
-console.log("🔥 error:", error);
-console.log("🔥 error.message:", error.message);
-
-      console.log("🔥 error.toJSON:", error.toJSON?.());
-      console.log("🔥 error.response:", error.response);
-    if (error.response?.status === 400) {
-      showToast({ message: '이미 가입된 이메일입니다' });
-    }else{
-    showToast({message: '인증코드 전송실패! \n 다시 시도 해주세요.'});
-    console.error(error);
+    const code = error.response?.data.code;
+    console.log(code);
+    switch(code){
+      case "DUPLICATE_EMAIL":
+        showToast({message: '이미 가입된 이메일입니다.'}); break;
+      case "INVALID_EMAIL_FORMAT" :
+        showToast({message: '유효하지 않은 이메일 형식입니다.'}); break;
+      case "INTERNAL_SERVER_ERROR" :
+        showToast({message : '네트워크 오류가 발생했습니다.'}); break;
+      }
     }
-  }
-};
+  };
+
 
   // 인증번호 타이머 설정 
   const handleTimer = () => {
@@ -209,8 +209,8 @@ console.log("🔥 error.message:", error.message);
       onVerifyCode={handleVerifyCode}
       isVerified={isVerified}
       />
-    )}
-
+    )
+  }
     {/* CommonSignup에 전달 */}
     <CommonSignup
       state={commonState}
