@@ -1,71 +1,80 @@
 package com.example.backend.webSocket;
 
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
 @Component
 public class OAuthTokenVerifier {
 
-    private final WebClient kakaoClient;
-    private final WebClient googleClient;
+    private final RestTemplate restTemplate;
     private final StompJwtTokenProvider jwtProvider;
 
-    public OAuthTokenVerifier(WebClient.Builder builder, StompJwtTokenProvider jwtProvider) {
-        this.kakaoClient = builder.baseUrl("https://kapi.kakao.com").build();
-        this.googleClient = builder.baseUrl("https://www.googleapis.com").build();
+    @Autowired
+    public OAuthTokenVerifier(RestTemplate restTemplate, StompJwtTokenProvider jwtProvider) {
+        this.restTemplate = restTemplate;
         this.jwtProvider = jwtProvider;
     }
 
     public String getUserIdFromAccessToken(String token) {
-        if (isKakaoToken(token)) {
-            return getKakaoUserId(token);
-        } else if (isGoogleToken(token)) {
-            return getGoogleUserId(token);
-        } else {
-            return jwtProvider.getUserId(token);
+        try {
+            if (isKakaoToken(token)) {
+                return getKakaoUserId(token);
+            } else if (isGoogleToken(token)) {
+                return getGoogleUserId(token);
+            }
+        } catch (Exception e) {
+            System.out.println("❌ OAuth 토큰 검증 실패 형님!!!");
         }
+
+        // fallback: JWT에서 userId 추출
+        return jwtProvider.getUserId(token);
     }
 
     private boolean isKakaoToken(String token) {
-        // JWT 구조가 아님 (보통 Kakao는 access_token은 서명 구조가 없음)
-        return token.startsWith("kakao_"); // 예시: 토큰 prefix로 구분하거나
+        return token.length() < 1000; // 예시: 짧고 ya29 안 붙은 토큰이면 Kakao
     }
 
     private boolean isGoogleToken(String token) {
-        return token.startsWith("ya29."); // Google OAuth 토큰은 ya29로 시작
+        return token.startsWith("ya29."); // Google OAuth token은 ya29로 시작
     }
 
     private String getKakaoUserId(String token) {
-        try {
-            Map<String, Object> response = kakaoClient.get()
-                    .uri("/v2/user/me")
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                    .block();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            return String.valueOf(response.get("id"));
-        } catch (Exception e) {
-            return null;
-        }
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.GET,
+                entity,
+                Map.class
+        );
+
+        Map<String, Object> body = response.getBody();
+        return (body != null && body.get("id") != null) ? String.valueOf(body.get("id")) : null;
     }
 
     private String getGoogleUserId(String token) {
-        try {
-            Map<String, Object> response = googleClient.get()
-                    .uri("/oauth2/v3/userinfo")
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                    .block();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            return String.valueOf(response.get("sub")); // Google은 sub가 userId
-        } catch (Exception e) {
-            return null;
-        }
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                HttpMethod.GET,
+                entity,
+                Map.class
+        );
+
+        Map<String, Object> body = response.getBody();
+        return (body != null && body.get("sub") != null) ? String.valueOf(body.get("sub")) : null;
     }
 }
-
