@@ -1,11 +1,12 @@
 package com.example.backend.localBoard.board.repository;
 
+import com.example.backend.entity.user.QUser;
 import com.example.backend.localBoard.board.dto.request.UpdateContentRequestDTO;
 import com.example.backend.localBoard.board.dto.response.BoardListResponseDTO;
 import com.example.backend.localBoard.board.dto.response.ContentResponseDTO;
 import com.example.backend.localBoard.board.dto.response.QBoardListResponseDTO;
 import com.example.backend.localBoard.board.dto.response.QContentResponseDTO;
-import com.example.backend.entity.user.QUser;
+
 import com.example.backend.entity.localBoard.QComments;
 import com.example.backend.entity.localBoard.QLocalBoards;
 import com.example.backend.localBoard.board.dto.response.QBoardListResponseDTO;

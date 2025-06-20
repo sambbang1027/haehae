@@ -17,6 +17,9 @@ import { LocalBoardStackParamList } from "../../navigation/LocalBoardNavigator";
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import OptionModal from "../../components/OptionModal";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import api from '../../api/AxiosInstance';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
 
 type LocalBoardDetailRouteProps = RouteProp<LocalBoardStackParamList, "LocalBoardDetail">;
 
@@ -43,21 +46,66 @@ export default function LocalBoardDetail() {
         title:'',
         headerShadowVisible:false,
       });
+
+      fetchPostDetail(id);
     },[navigation])
 
-  const postingInfo = [
-    {
-      id: 1,
-      authorId: 1001,
-      author: '서샘이',
-      date: '2025년 4월 24일',
-      title: '광주 vs 광주',
-      content: '경기도 광주 vs 광주광역시 누가 더 시골이라고 생각하시나요?',
-      image: 'https://via.placeholder.com/350x200',
-    },
-  ];
+  // const postingInfo = [
+  //   {
+  //     id: id,
+  //     authorId: 1001,
+  //     author: '서샘이',
+  //     date: '2025년 4월 24일',
+  //     title: '광주 vs 광주',
+  //     content: '경기도 광주 vs 광주광역시 누가 더 시골이라고 생각하시나요?',
+  //     image: 'https://via.placeholder.com/350x200',
+  //   },
+  // ];
+  
 
-  const post = postingInfo.find((p) => p.id === id);
+      const [postingInfo, setPost] = useState<{
+        id: number;
+        authorId: number;
+        author: string;
+        date: string;
+        title: string;
+        content: string;
+        image: string[];
+    } | null>(null);
+
+
+  const post = postingInfo;
+
+
+  const fetchPostDetail = async (id: number) => {
+  try {
+    const response = await api.get(`/local-board/detail/query/${id}`);
+
+    let imageUrls: string[] = [];
+
+    for (let i = 0; i < response.data.images.length; i++) {
+      const imageName = response.data.images[i].localBoardImgUrl;
+      imageUrls.push(imageName); 
+    }
+
+    //if(response.data.content.updatedAt == null){} 수정된 시간이 없을 경우 -> DTO에 해당 컬럼이 없음.
+    const convertDate =formatTOKSTDateTime(response.data.content.createdAt);
+
+    setPost({
+      id: id,
+      authorId: response.data.content.userId,
+      author: response.data.content.nickname,
+      date: convertDate,
+      title: response.data.content.title,
+      content: response.data.content.content,
+      image: imageUrls,
+    });
+
+  } catch (error) {
+    console.error('게시글을 불러오는 중 오류 발생:', error);
+  }
+}
+
 
   const postingComment = [
     {
@@ -181,9 +229,19 @@ export default function LocalBoardDetail() {
           <Text style={styles.date}>{post.date}</Text>
           <Text style={styles.content}>{post.content}</Text>
 
-          {post.image && (
+          {/* {post.image && (
             <Image source={{ uri: post.image }} style={styles.postImage} />
-          )}
+          )} */}
+
+        {post?.image && post.image.length > 0 && (
+          post.image.map((imgUrls, index) => (
+            <Image
+              key={index}
+              source={{ uri: imgUrls }}
+              style={styles.postImage}
+            />
+          ))
+        )}
 
           <View style={styles.separator} />
           <Text style={styles.commentHeader}>댓글</Text>
