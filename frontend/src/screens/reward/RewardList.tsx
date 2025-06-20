@@ -6,6 +6,8 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
+    FlatList,
+    ActivityIndicator 
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
@@ -13,14 +15,17 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RewardParamList } from '../../navigation/RewardNavigator';
 import api from '../../api/AxiosInstance';
 import { navigate } from '../../navigation/NavigationService';
-
-type RewardScreenNavigationProp = NativeStackNavigationProp<RewardParamList,'RewardList'>;
+// pagination hooks
+import usePagination from '../../hooks/UsePagination';
+import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const RewardList = () => {
     const [selectedType, setSelectedType] = useState<string>('DONATION');
-    useEffect(() => {
-        handleRewardPress("DONATION"); 
-    }, []);
+    
+    const handleRewardPress = async (type : string) => {
+            setSelectedType(type); 
+            console.log(selectedType);
+    };
 
     const handleItemClick = (id :number) => {
         navigate('RewardStack', {
@@ -36,29 +41,29 @@ const RewardList = () => {
         rewardItemsImgUrl: string[] | null;
     };
 
-    const [rewardItems, setRewardItems] = useState<RewardItem[] | null>(null);
 
-    const handleRewardPress = async (type : string) => {
-        try {
-            setSelectedType(type);
-            const response = await api.get(`/reward/list/${type}`);
-            console.log("리워드 응답:", response.data);
-            setRewardItems(response.data);
-            
-        } catch (error) {
-            console.error("에러 발생:", error);
-        }
-    };
+    const {data: rewardItems, loadMore, loading } = usePagination<RewardItem>({
+                path: `/reward/list/${selectedType}`,
+                initialCursor: undefined,
+                limit: 1,
+            })
+
+    console.log("확인 : " + loadMore);
+    console.log("로딩 상태 : " + loading);
     
-    return (
-        <View style={{ flex: 1 }}>
-        <ScrollView style={styles.container}
-        contentContainerStyle={styles.scrollViewContent}>
-            {/* <Header /> */}
-            <Image style={styles.pointIcon} source={require('../../assets/images/reward-coin.png')} resizeMode="contain" />
-            <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
-            <Text style={styles.totalPoints}>1,080P</Text>
-            <View style={styles.tabContainer}>
+    console.log(rewardItems.map(i => i.id))
+
+    const renderHeader = () => (
+        <View style={styles.container}>
+        <Image
+            style={styles.pointIcon}
+            source={require('../../assets/images/reward-coin.png')}
+            resizeMode="contain"
+        />
+        <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
+        <Text style={styles.totalPoints}>1,080P</Text>
+
+        <View style={styles.tabContainer}>
                 <TouchableOpacity    
                     style={[
                         styles.tabButton,
@@ -69,6 +74,7 @@ const RewardList = () => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={[
+
                         styles.tabButton,
                         selectedType === 'VOUCHER' && styles.selectedTabButton
                         ]}  
@@ -83,33 +89,41 @@ const RewardList = () => {
                     onPress={() => handleRewardPress("GIFTICON")}>
                     <Text style={styles.tabText}>쿠폰/기프티콘</Text>
                 </TouchableOpacity>
-            </View>
-            {rewardItems?.map((item) => (
-                <TouchableOpacity
-                    key={item.id}
-                    style={[styles.listItem]}
-                    onPress={() => handleItemClick(item.id)}
-                >
+        </View>
+        </View>
+    );
+
+    return (
+    <FlatList
+        data={rewardItems}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleItemClick(item.id)} style={styles.listItem}>
                     <Image style={styles.itemImage} source={{uri : item.rewardItemsImgUrl?.[0]}} />
                     <Text style={styles.itemTitle}>{item.name}</Text>
                     <Text style={styles.itemPoints}>{item.pointCost}P</Text>
-                </TouchableOpacity>
-            ))}
-    
-        </ScrollView>
-        </View>
-    );
-};
+            </TouchableOpacity>
+        )}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#000" /> : null}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
+        contentContainerStyle={[styles.scrollViewContent, { flexGrow: 1 }]}
+        />
+        );
+    };
+
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#ffffff',
-        paddingBottom: hp('10%'),
+        paddingBottom: hp('2%'),
         paddingHorizontal: wp('2.5%'),
     },
     scrollViewContent: {
-    paddingBottom: hp('10%'),
-    minHeight: hp('100%'), 
+        paddingBottom: hp('10%'),
+        minHeight: hp('100%'), 
+        backgroundColor : '#ffffff'
     },
     pointIcon: {
         width: wp('30%'),
@@ -167,8 +181,6 @@ const styles = StyleSheet.create({
         fontSize: hp('1.8%'),
         fontWeight: 'bold',
     },
-
-
     listItem: {
         borderBottomWidth: 1,
         borderBottomColor: '#bcbcbc',
