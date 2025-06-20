@@ -24,6 +24,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
         return queryFactory.
                 select(new QChatRoomResponseDTO(
                         cr.chatRoomId,
+                        cr.sharingPostId,
                         cr.sellerId,
                         cr.buyerId
                 ))

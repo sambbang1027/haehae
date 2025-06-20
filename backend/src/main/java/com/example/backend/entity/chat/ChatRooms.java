@@ -40,4 +40,9 @@ public class ChatRooms {
         ACTIVE,
         CLOSED
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
 }

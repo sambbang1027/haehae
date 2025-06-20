@@ -9,11 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 public class ChatRoomResponseDTO {
     private Long chatRoomId;
+    private Long sharingPostId;
     private Long sellerId;
     private Long buyerId;
 
     @QueryProjection
-    public ChatRoomResponseDTO(Long chatRoomId, Long sellerId, Long buyerId) {
+    public ChatRoomResponseDTO(Long chatRoomId, Long sharingPostId, Long sellerId, Long buyerId) {
+        this.sharingPostId = sharingPostId;
         this.chatRoomId = chatRoomId;
         this.sellerId = sellerId;
         this.buyerId = buyerId;
