@@ -34,7 +34,8 @@ repositories {
 		// SockJS
 		implementation 'org.springframework.boot:spring-boot-starter-websocket'
 		implementation 'org.webjars:sockjs-client:1.5.1'
-		//DB
+
+
 		implementation 'mysql:mysql-connector-java:8.0.33'
 		runtimeOnly 'com.mysql:mysql-connector-j'
 		// Lombok (코드 축약용)
@@ -62,6 +63,12 @@ repositories {
 
 		//fireBase
 		implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+
+		// WebClient
+		implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	}
+
 
 		//swagger
 		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
