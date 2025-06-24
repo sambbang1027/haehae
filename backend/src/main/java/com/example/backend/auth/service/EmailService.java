@@ -102,7 +102,13 @@ public class EmailService {
     public boolean checkVerificationCode(String email, String inputCode){
         String key = "email:verify:"+email;
         String saveCode = (String) redisTemplate.opsForValue().get(key);
-        return inputCode.equals(saveCode);
+
+        // 값 일치하면 삭제 후 true 반환
+        if (inputCode.equals(saveCode)) {
+            redisTemplate.delete(key); // 인증 성공 시 수동 삭제 (보안 강화)
+            return true;
+        }
+        return false;
     }
 
     // 코드 삭제
