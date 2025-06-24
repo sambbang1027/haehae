@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -31,6 +31,10 @@ export default function WriteSharingPost() {
     console.log('내용:', content);
     console.log('카테고리:', selectedCategory);
   };
+
+  useEffect(() => {
+    
+  },[])
 
   const openGallery = () => {
     launchImageLibrary(

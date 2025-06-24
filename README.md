@@ -1,97 +1,30 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+<p align="center">
+  <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/184654499/454730517-76229bf5-a281-49a9-a73e-f9787d6933ae.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250613%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250613T065635Z&X-Amz-Expires=300&X-Amz-Signature=15c704e63e2bdc63f80910e5ade8268ebc4c2851efa229ede43d106ea8acd3cb&X-Amz-SignedHeaders=host" width="300" alt="logo"/>
+</p>
 
-# Getting Started
+# 🌳 HaeHae - 폐기물 관리 및 환경 커뮤니티 어플리케이션
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-## Step 1: Start Metro
+## 📌 프로젝트 소개
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+>자취생과 빌라 거주자를 위한 종합 폐기물 관리 및 지역 기반 환경 커뮤니티 어플리케이션.
+>‘햇살처럼 따뜻하게, 웃음처럼 즐겁게 환경을 보호하자’ 의미를 가지고 있습니다.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+이 프로젝트는 Spring Boot + React Native 기반의 통합 폐기물 관리 시스템입니다.  
+사용자 인증, 배출 관리, 나눔 마켓, 포인트 상점, 결제, 채팅, AI 폐기물 인식을 포함합니다.
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
-```
+## 🧑‍💻 사용 기술 스택
 
-## Step 2: Build and run your app
+| 분류 | 기술 |
+|------|------|
+| Backend | Java 17, Spring Boot 3.2.5, Spring Security, JPA, QueryDSL, JWT |
+| Frontend | React Native,Axios |
+| Infra | MySQL, Redis, Firebase, KakaoAPI, SendGrid, Azure |
+| DevOps | GitHub Actions, Swagger |
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+---
 
-### Android
+## 📂 프로젝트 구조
 
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

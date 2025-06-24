@@ -2,20 +2,36 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MyPageStackParamList } from '../../navigation/MyPageNavigator'; 
 import AppText from '../../components/common/AppText';
 import { useModal } from '../../context/ModalContext';
+import { AppStackParamList } from '../../navigation/AppNavigator';
+import SettingPage from './SettingPage';
 
-type Navigation = NativeStackNavigationProp<MyPageStackParamList, 'MyPage'>;
 
-const CategoryItem = ({ label, route }: { label: string; route: string }) => {
-  const navigation = useNavigation();
+type Navigation = NativeStackNavigationProp<AppStackParamList>;
+
+type CategoryItemProps = {
+  label: string;
+  to: {
+    stack: keyof AppStackParamList;
+    screen: string;
+  };
+};
+
+const CategoryItem: React.FC<CategoryItemProps> = ({ label, to }) => {
+  const navigation = useNavigation<Navigation>();
+
+  const handlePress = () => {
+    navigation.navigate(to.stack, { screen: to.screen } as any);
+  };
+
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(route as never)}>
-      <AppText style={styles.menuItem}>{label}</AppText>
+    <TouchableOpacity onPress={handlePress}>
+      <Text style={styles.menuItem}>{label}</Text>
     </TouchableOpacity>
   );
 };
+          <CategoryItem label="분리수거 캘린더" to={{ stack: 'RecycleCalendarStack', screen: 'RecycleCalendarScreen' }} />
 
 const MyPage = () => {
   const navigation = useNavigation<Navigation>();
@@ -23,18 +39,21 @@ const MyPage = () => {
   const handleLogout = () => {
     showModal({
       type:'confirm',
-      content : '로그아웃 하시겠습니까?'
+      content : '로그아웃 하시겠습니까?',
+      onConfirm() {
+          navigation.navigate('LoginStack', {screen: 'Login'})
+      },
     })
-    // 추후 로그인 페이지 이동 
+   
   };
   const goToSettings = () => {
-    navigation.navigate('SettingPage');
+     navigation.navigate('MyPageStack', { screen: 'SettingPage' });
   };
   const goToLevelInfo = () => {
-    navigation.navigate('LevelInfo');
+    navigation.navigate('MyPageStack', {screen: 'LevelInfo'});
   };
   const goToPointRecord = () => {
-    navigation.navigate('PointRecord');
+    navigation.navigate('MyPageStack',{screen:'PointRecord'});
   }
 
   return (
@@ -67,21 +86,22 @@ const MyPage = () => {
       {/* My Activities */}
       <ScrollView style={styles.sectionWrapper}>
         <Text style={styles.sectionTitle}>나의 활동</Text>
-        <CategoryItem label="봉사 활동" route="MyVolunteer" />
-        <CategoryItem label="미션 참여" route="MyMission" />
-        <CategoryItem label="나의동네 게시판" route="MyLocalBoard" />
-        <CategoryItem label="나의나눔 게시판" route="MySharing" />
+        
+        <CategoryItem label="봉사 활동"  to={{ stack: 'MyPageStack', screen: 'MyVolunteer' }} />
+        <CategoryItem label="미션 참여"  to={{ stack: 'MyPageStack', screen: 'MyMission' }}/>
+        <CategoryItem label="나의동네 게시판" to={{ stack: 'MyPageStack', screen: 'MyLocalBoard' }}/>
+        <CategoryItem label="나의나눔 게시판" to={{ stack: 'MyPageStack', screen: 'MySharing' }}/>
         <View style={styles.divder}/>
 
         <Text style={styles.sectionTitle}>고객센터</Text>
-        <CategoryItem label="FAQ" route="Faq" />
-        <CategoryItem label="공지사항" route="Notice" />
-        <CategoryItem label="1:1 문의" route="Inquiry" />
+        <CategoryItem label="FAQ"to={{ stack: 'MyPageStack', screen: 'Faq' }} />
+        <CategoryItem label="공지사항" to={{ stack: 'MyPageStack', screen: 'Notice' }} />
+        <CategoryItem label="1:1 문의" to={{ stack: 'MyPageStack', screen: 'Inquiry' }} />
         <View style={styles.divder}/>
 
         <Text style={styles.sectionTitle}>앱 설정</Text>
-        <CategoryItem label="알림 설정" route="NotificationSettings"/>
-        <CategoryItem label="텍스트 크기" route="FontSize"/>
+        <CategoryItem label="알림 설정" to={{ stack: 'MyPageStack', screen: 'NotificationSettings' }} />
+        <CategoryItem label="텍스트 크기" to={{ stack: 'MyPageStack', screen: 'FontSize' }} />
         <View style={styles.thickDivider}/>
 
         <View style={styles.logout}>

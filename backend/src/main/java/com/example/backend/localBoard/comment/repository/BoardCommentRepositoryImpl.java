@@ -3,7 +3,7 @@ package com.example.backend.localBoard.comment.repository;
 import com.example.backend.localBoard.comment.dto.request.UpdateCommentRequestDTO;
 import com.example.backend.localBoard.comment.dto.response.CommentResponseDTO;
 import com.example.backend.localBoard.comment.dto.response.QCommentResponseDTO;
-import com.example.backend.entity.QUser;
+import com.example.backend.entity.user.QUser;
 import com.example.backend.entity.localBoard.QComments;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;

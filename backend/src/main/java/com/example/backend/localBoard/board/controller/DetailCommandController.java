@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/local-board")
+@RequestMapping("api/local-board")
 public class DetailCommandController {
 
     @Autowired
@@ -20,7 +20,6 @@ public class DetailCommandController {
         System.out.println("잘 저장되었는지 확인");
         System.out.println(createContentRequestDTO);
         detailCommandService.createDetail(createContentRequestDTO);
-
         return ResponseEntity.ok().build();
     };
 

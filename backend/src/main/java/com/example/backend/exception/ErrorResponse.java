@@ -1,29 +1,25 @@
 package com.example.backend.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+
+@Getter
 public class ErrorResponse {
 
     private final String code;
     private final String message;
-    private final HttpStatus status;
 
-    public ErrorResponse(ErrorCode errorCode){
-        this.code = errorCode.name();
-        this.message = errorCode.getMessage();
-        this.status = errorCode.getStatus();
+
+    private ErrorResponse(String code, String message){
+        this.code = code;
+        this.message = message;
     }
 
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
+    public static ErrorResponse of(ErrorCode errorCode) {
+        return new ErrorResponse(
+                errorCode.name(),
+                errorCode.getMessage()
+    );}
 }

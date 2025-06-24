@@ -9,10 +9,35 @@ import {
   ScrollView,
   Modal,
 } from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import CustomCheckbox from '../../components/common/CustomCheckBox';
-import dayjs from 'dayjs';
+
 import { useRoute, RouteProp } from '@react-navigation/native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import api from '../../api/AxiosInstance';
+import { navigate } from '../../navigation/NavigationService';
+import { useToast } from '../../context/ToastContext';
+import CommonSignup from '../../components/login/CommonSignup';
+import LocalSignup from '../../components/login/LocalSignup';
+import SocialSignup from '../../components/login/SocialSignup';
+import {
+  CommonState,
+  Action as CommonAction,
+  commonReducer,
+  initialCommonState
+} from '../../types/login/CommonSignupType';
+
+import{
+  LocalSignupState,
+  LocalSignupAction,
+  localSignupReducer,
+  initialLocalSignupState
+} from'../../types/login/LocalSignupType';
+
+import {
+  SocialSignupState,
+  SocialSignupAction,
+  SocialSignupReducer,
+  initialSocialSignupState
+} from '../../types/login/SocialSignupType';
 
 type SignupParams = {
   params?: {
@@ -20,63 +45,97 @@ type SignupParams = {
   };
 };
 
-type State = {
-  email: string;
-  authCode: string;
-  password: string;
-  confirmPassword: string;
-  nickname: string;
-  name: string;
-  phone: string;
-  birthDate: Date;
-  address: string;
-  residenceType: string;
-};
+const SignupPage= () => {
 
-type Action = { type: 'SET_FIELD'; field: keyof State; value: any } | { type: 'RESET' };
-
-const initialState: State = {
-  email: '',
-  authCode: '',
-  password: '',
-  confirmPassword: '',
-  nickname: '',
-  name: '',
-  phone: '',
-  birthDate: new Date(),
-  address: '',
-  residenceType: '',
-};
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case 'SET_FIELD':
-      return { ...state, [action.field]: action.value };
-    case 'RESET':
-      return initialState;
-    default:
-      return state;
-  }
-}
-
-const SignupPage: React.FC = () => {
-  const route = useRoute<RouteProp<SignupParams>>();
+  const route = useRoute<RouteProp<SignupParams>>()
   const isSocial = route.params?.loginType === 'social';
-
-  const [state, dispatch] = useReducer(reducer, initialState);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const {showToast} = useToast();
+  const [isVerified, setIsVerfied] = useState(false);
 
-  const handleSignup = () => {
-    console.log('회원가입 완료', state);
+  const [socialState, socialDispatch] = useReducer(SocialSignupReducer, initialSocialSignupState);
+  const [localState, localDispatch] = useReducer(localSignupReducer, initialLocalSignupState);
+  const [commonState, commonDispatch] = useReducer(commonReducer, initialCommonState);
+  
+  type State = {
+  email: string;
+  password: string;
+  nickname: string;
+  name: string;
+  phoneNumber: string;
+  birth: string;
+  address: string;
+  bcode: string;
+  residenceType: string;
+};
+
+const finalPayload: State = {
+  email: isSocial ? socialState.email : localState.email,
+  password: isSocial ? '' : localState.password, // 소셜은 비밀번호 없음
+  nickname: commonState.nickname,
+  name: isSocial ? socialState.name : localState.name,
+  phoneNumber: commonState.phoneNumber,
+  birth: commonState.birth.toISOString().split('T')[0],
+  address: commonState.address,
+  bcode: commonState.bcode, // ← 이건 address 선택시 함께 설정되도록 만들어야 함
+  residenceType: commonState.residenceType,
+};
+
+
+  // 회원가입 
+  const handleSignup = async() => {
+    try{
+      
+      const url = isSocial ? '/user/register/social' : 'user/register/local';
+
+      const response = await api.post(url, finalPayload);
+      
+      if(response.status === 200){
+        showToast({message: '회원가입 완료'});
+        commonDispatch({type : 'RESET'});
+        navigate('LoginStack', {screen: 'Login'});
+      }
+    }catch(error){
+      console.error(error);
+      showToast({message: '회원가입 실패'});
+    }
   };
 
+// 이메일 인증번호 전송 
+const handleSendCode = async() =>{
+  try{
+    const response = await api.post('/email/send/code', {
+      email : localState.email,
+    });
+    console.log(response);
+
+    if(response?.status === 200){
+      showToast({ message: '인증코드가 발송되었습니다.' });
+      handleTimer(); // 타이머 시작
+    }
+  }catch(error: any){
+    const code = error.response?.data.code;
+    console.log(code);
+    switch(code){
+      case "DUPLICATE_EMAIL":
+        showToast({message: '이미 가입된 이메일입니다.'}); break;
+      case "INVALID_EMAIL_FORMAT" :
+        showToast({message: '유효하지 않은 이메일 형식입니다.'}); break;
+      case "INTERNAL_SERVER_ERROR" :
+        showToast({message : '네트워크 오류가 발생했습니다.'}); break;
+      }
+    }
+  };
+
+
+  // 인증번호 타이머 설정 
   const handleTimer = () => {
     if(intervalId){
       clearInterval(intervalId);
     }
-    setTimer(180);
+    setTimer(300);
     const id = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
@@ -89,13 +148,48 @@ const SignupPage: React.FC = () => {
     setIntervalId(id);
   };
 
-  const validatePassword = (password) => ({
-    length: password.length >= 8 && password.length <= 12,
-    hasLetter: /[a-zA-Z]/.test(password),
-    hasNumber: /[0-9]/.test(password),
-    hasSpecial: /[^a-zA-Z0-9]/.test(password),
-  });
-  const pwRules = validatePassword(state.password);
+// 인증번호 체크
+  const handleVerifyCode = async()=>{
+     const body = {
+      email: localState.email,
+      code: localState.authCode,
+    };
+    try{
+      const response = await api.post('/email/verify/code', body)
+      if(response.status === 200){
+        showToast({message : '인증이 완료되었습니다.'});
+        setIsVerfied(true);
+      }
+    }catch(error){
+      showToast({message: '잘못된 인증번호입니다.'});
+      console.error(error);
+    }
+  };
+  
+  // 닉네임 중복확인
+  const handleDuplicateNickname = async() =>{
+    if(commonState.nickname.trim() == ''){
+      showToast({message: '닉네임을 입력해주세요'});
+    return;
+    }
+
+    try{
+      const response = await api.get('/user/register/check/nickname',{
+       params: {
+        nickname: commonState.nickname,
+      },
+    });
+      if(response.data === false){
+        showToast({message : '사용가능한 닉네임입니다'})
+      }else if(response.data === true){
+        showToast({message: '이미 사용중인 닉네임입니다'})
+      }
+    }catch(error){
+      showToast({message: '네트워크 오류 발생 \n 다시 시도해주세요.'});
+      console.error(error);
+    }
+  }
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -105,236 +199,61 @@ const SignupPage: React.FC = () => {
           source={require('../../assets/images/logo.png')}
         />
       </View>
-
-      {!isSocial && (
-        <>
-          <View style={styles.inputBox}>
-            <Text style={styles.label}>이메일 입력</Text>
-            <TextInput
-              style={styles.input}
-              value={state.email}
-              onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'email', value: text })}
-              placeholder="example@email.com"
-            />
-            <TouchableOpacity style={styles.codeButton} onPress={handleTimer}>
-              <Text style={styles.codeText}>인증번호 전송</Text>
-            </TouchableOpacity>      
-          </View>
-
-          <View style={styles.inputBox}>
-            <Text style={styles.label}>인증번호 입력</Text>
-            <TextInput
-              style={styles.input}
-              value={state.authCode}
-              onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'authCode', value: text })}
-            />
-            <TouchableOpacity style={styles.codeButton}><Text style={styles.codeText}>확인</Text></TouchableOpacity>
-            {timer > 0 && (
-              <Text style={styles.timer}>
-                {String(Math.floor(timer / 60)).padStart(2, '0')}:
-                {String(timer % 60).padStart(2, '0')}
-              </Text>
-            )}
-          </View>
-
-          <TextInput
-            style={styles.input}
-            placeholder="비밀번호 입력"
-            secureTextEntry
-            value={state.password}
-            onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'password', value: text })}
-          />
-          <View style={styles.pwRuleBox}>
-            <Text style={{ color: pwRules.length ? 'green' : 'gray' }}>• 8~12자</Text>
-            <Text style={{ color: pwRules.hasLetter ? 'green' : 'gray' }}>• 영문 포함</Text>
-            <Text style={{ color: pwRules.hasNumber ? 'green' : 'gray' }}>• 숫자 포함</Text>
-            <Text style={{ color: pwRules.hasSpecial ? 'green' : 'gray' }}>• 특수문자 포함</Text>
-          </View>
-
-          <TextInput
-            style={styles.input}
-            placeholder="비밀번호 확인"
-            secureTextEntry
-            value={state.confirmPassword}
-            onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'confirmPassword', value: text })}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="이름"
-            value={state.name}
-            onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'name', value: text })}
-          />
-        </>
-      )}
-
-      <TextInput
-        style={styles.input}
-        placeholder="닉네임"
-        value={state.nickname}
-        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'nickname', value: text })}
+    {isSocial ? (
+      <SocialSignup state={socialState} dispatch={socialDispatch} />
+    ) : (
+      <LocalSignup state={localState} 
+      dispatch={localDispatch} 
+      timer={timer}
+      onSendCode={handleSendCode} 
+      onVerifyCode={handleVerifyCode}
+      isVerified={isVerified}
       />
-
-      <TextInput
-        style={styles.input}
-        placeholder="휴대전화번호 - 없이 입력"
-        value={state.phone}
-        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'phone', value: text })}
-      />
-
-      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
-        <Text style={{ color: '#000' }}>{dayjs(state.birthDate).format('YYYY년 MM월 DD일')}</Text>
-      </TouchableOpacity>
-
-      <Modal visible={showDatePicker} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.calendarWrapper}>
-            <DatePicker
-              date={state.birthDate}
-              mode="date"
-              maximumDate={new Date()}
-              androidVariant="nativeAndroid"
-              onDateChange={(date) => dispatch({ type: 'SET_FIELD', field: 'birthDate', value: date })}
-            />
-            <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.calendarCloseBtn}>
-              <Text style={{ fontWeight: 'bold' }}>닫기</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <TextInput
-        style={styles.input}
-        placeholder="주소 입력"
-        value={state.address}
-        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'address', value: text })}
-      />
-
-      <Text style={styles.label}>주거유형</Text>
-      <View style={styles.checkboxContainer}>
-        <View style={styles.checkbox}>
-          <CustomCheckbox
-            checked={state.residenceType === 'villa'}
-            onToggle={() => dispatch({ type: 'SET_FIELD', field: 'residenceType', value: state.residenceType === 'villa' ? '' : 'villa' })}
-          />
-          <Text style={styles.residenceText}>빌라/주택</Text>
-        </View>
-        <View style={styles.checkbox}>
-          <CustomCheckbox
-            checked={state.residenceType === 'apt'}
-            onToggle={() => dispatch({ type: 'SET_FIELD', field: 'residenceType', value: state.residenceType === 'apt' ? '' : 'apt' })}
-          />
-          <Text style={styles.residenceText}>아파트/오피스텔</Text>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
-        <Text style={styles.signupText}>완료</Text>
-      </TouchableOpacity>
+    )
+  }
+    {/* CommonSignup에 전달 */}
+    <CommonSignup
+      state={commonState}
+      dispatch={commonDispatch}
+      showDatePicker={showDatePicker}
+      setShowDatePicker={setShowDatePicker}
+      onDuplicateNickname = {handleDuplicateNickname}
+    />
+    <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
+      <Text style={styles.signupText}>완료</Text>
+    </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: wp('5%'),
     backgroundColor: '#fff',
   },
   logoBox:{
-    width: 180,
-    height: 80,
-    marginBottom: 10,
+    width: wp('50%'),
+    height: hp('10%'),
+    marginBottom: hp('2%'),
   },
   logoImage: {
-    width: 180,
-    height: 50,
-  },
-  label: {
-    marginBottom: 4,
-    color: '#898989',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#959595',
-    borderRadius: 4,
-    height: 48,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    justifyContent: 'center',
-  },
-  codeButton: {
-    position: 'absolute',
-    right: 3,
-    top: 26,
-    backgroundColor: '#fff',
-    borderColor: '#5da000',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  codeText: {
-    color: '#5da000',
-    fontWeight: 'bold',
-  },
-  timer: {
-     marginLeft: 5 ,
-     marginBottom: 10, 
-     color: 'green', 
-     fontWeight: 500,
-     fontSize: 15,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   signupButton: {
     backgroundColor: '#C8F589',
-    height: 50,
+    height: hp('6%'),
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: hp('2.5%'),
   },
   signupText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: 'bold',
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  calendarWrapper: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    width: '90%',
-  },
-  calendarCloseBtn: {
-    marginTop: 10,
-    alignSelf: 'flex-end',
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#959595',
-    borderRadius: 4,
-    height: 48,
-    paddingHorizontal: 10,
-    marginBottom: 15,
 
-  },
-  checkbox: {
-    flexDirection: 'row'
-  },
-  residenceText: {
-    alignSelf: 'center'
-  },
-  pwRuleBox : {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
-  },
 });
 
 export default SignupPage;

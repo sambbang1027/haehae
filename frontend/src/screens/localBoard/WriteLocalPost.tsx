@@ -3,81 +3,49 @@ import { TouchableOpacity } from 'react-native';
 import { View, Text, TextInput, Button, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import type { Asset } from 'react-native-image-picker';
-import axios from 'axios';
-import { uploadImageToFirebase } from '../../utils/FirebaseUploader';
+import api from '../../api/AxiosInstance';
+import { useUser } from '../../context/UserContext';
+//firebase hook
+import { useFireBaseImage } from '../../hooks/UseFirebaseImage';
+//image hooks 관리
+import { useImagePicker } from '../../hooks/UseImagePicker';
+//imagePriview UI
+import ImagePreviewList from '../../components/image/ImagePreviewList';
 
 export default function WriteLocalBoardPost() {
+  const {user, setUser} = useUser();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [images, setImages] = useState<Asset[]>([]);
+  const { images, pickImages, deleteImage } = useImagePicker();
+  const { uploadImage, deleteImageFB, uploading, error } = useFireBaseImage();
 
   const handleSubmit =  async () =>{
-        console.log('제목:', title);
-        console.log('내용:', content);
-  try {
-    let uploadedImageUrls: string[] = []; 
-    if(images != null && images.length > 0){
-      uploadedImageUrls = await Promise.all(
-        images.map(img => uploadImageToFirebase(img, 'localboard_image'))
-      );
-  }
+    let uploadedImageUrls: string[] | null = null;
+    // 밑에 함수에서 반환되는게 null일 수도 있으니 null도 추가.
 
-    console.log("이미지 반환 체크 : "+uploadedImageUrls);
-    
-      const formData = {
-        userId : 4,
-        regionCode : "1168010300",
-        title: title,
-        content: content,
-        localBoardImageUrl: uploadedImageUrls
-      };
-      console.log("반환된 이미지 확인 : "+formData.localBoardImageUrl);
-      console.log("저장된 이미지 확인 : "+formData);
+    try {
+        if(images != null && images.length > 0){
+            uploadedImageUrls = await uploadImage(images, 'localboard_image' );
+          }
 
-      await axios.post('http://10.0.2.2:8082/local-board/detail/create', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-      );
+        const formData = {
+          userId : user?.userId,
+          regionCode : "1168010300",
+          title: title,
+          content: content,
+          localBoardImageUrl: uploadedImageUrls
+        };
 
-      console.log('게시글 등록 성공!');
+      await api.post('local-board/detail/create', formData);
+
     } catch (error) {
       console.error('게시글 등록 실패:', error);
+        if(uploadedImageUrls != null && uploadedImageUrls.length > 0){
+              await deleteImageFB(uploadedImageUrls);
+        }
     }
   };
 
-
-
-
-  //갤러리 열기
-  const openGallery = () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        selectionLimit: 10, //사진 제한 갯수
-      },
-      (response) => {
-        if (response.didCancel) return;
-        if (response.errorCode) {
-          console.warn('Gallery error: ', response.errorMessage);
-          return;
-        }
-        if (response.assets && response.assets.length > 0) {
-          setImages(response.assets);
-          setImageUri(response.assets[0].uri || null);
-        }
-      }
-    );
-  };
-
-  //이미지 삭제
-  const deleteImage = (indexToDelete: number) => {
-    setImages(prev => prev.filter((_, index) => index !== indexToDelete));
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,25 +71,11 @@ export default function WriteLocalBoardPost() {
             multiline
             />
             
+          <ImagePreviewList images={images} onDelete={deleteImage} />
 
-            {images.length > 0 && (
-              <ScrollView horizontal style={styles.imageScroll}>
-                {images.map((img, index) => (
-                  <View key={index} style={styles.imageWrapper}>
-                    <Image source={{ uri: img.uri }} style={styles.previewImage} />
-                    <TouchableOpacity
-                      onPress={() => deleteImage(index)}
-                      style={styles.deleteButton}
-                    >
-                      <Text style={styles.deleteButtonText}>×</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </ScrollView>
-            )}
         </ScrollView>
         <View style={styles.underBar}>
-          <TouchableOpacity onPress={openGallery}>
+          <TouchableOpacity onPress={pickImages}>
             <Image style={styles.selectImage} source = {require('../../assets/icons/picture.png')}></Image>
           </TouchableOpacity>
           <TouchableOpacity>
@@ -180,35 +134,6 @@ const styles = StyleSheet.create({
     marginTop: hp('2%'),
     marginLeft: wp('5%'),
     marginBottom: hp('1.5%'),
-  },
-  imageScroll: {
-    marginTop: hp('1%'),
-  },
-  imageWrapper: {
-    position: 'relative',
-    marginRight: wp('2.5%'),
-    overflow: 'visible',
-  },
-  previewImage: {
-    width: wp('25%'),
-    height: wp('25%'),
-    borderRadius: wp('2%'),
-  },
-  deleteButton: {
-    position: 'absolute',
-    top: hp('0.5%'),
-    right: wp('1%'),
-    backgroundColor: '#ff5555',
-    borderRadius: wp('3.5%'),
-    width: wp('6%'),
-    height: wp('6%'),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  deleteButtonText: {
-    color: 'white',
-    fontSize: wp('3.5%'),
-    fontWeight: 'bold',
-  },
+  }
 });
 

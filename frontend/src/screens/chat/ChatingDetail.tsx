@@ -1,5 +1,5 @@
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useLayoutEffect, useState, useRef } from 'react';
+import React, { useLayoutEffect, useState, useRef, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -14,9 +14,12 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ChatStackParamList } from '../../navigation/ChatNavigator';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import OptionModal from '../../components/OptionModal';
+import { connectWebSocket } from '../../utils/WebSocket';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import api from '../../api/AxiosInstance';
 
 type Message = {
   id: number;
@@ -32,6 +35,7 @@ export default function ChatInputArea() {
   const [text, setText] = useState('');
   const [inputHeight, setInputHeight] = useState(40);
   const optionModalRef = useRef<BottomSheetModal>(null);
+  const route = useRoute<RouteProp<ChatStackParamList, 'ChatingDetail'>>();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -58,6 +62,27 @@ export default function ChatInputArea() {
       profileImage: 'https://cdn-icons-png.flaticon.com/512/2202/2202112.png',
     },
   ]);
+
+  useEffect(() => {
+  const setupSocket = async () => {
+    const token = await EncryptedStorage.getItem('accessToken');
+    console.log('🧪 Token 가져오기 시도', token);
+    
+    if (!token) {
+      console.warn('토큰이 없습니다.');
+      return;
+    }
+
+    connectWebSocket({
+      accessToken: token,
+      onMessage: (msg: any) => {
+        setMessages((prev) => [...prev, msg]);
+      },
+    });
+    console.log("안가졌니...???????????");
+  };
+  setupSocket();
+}, []);
 
   //옵션 모달 활성화
   const activeOptionModal = () =>{
