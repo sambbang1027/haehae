@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,77 +11,151 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Image } from 'react-native-elements';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { SharingStackParamList } from '../../navigation/SharingNavigator';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import OptionModal from '../../components/OptionModal';
+import { SharingStackParamList } from '../../navigation/SharingNavigator';
+import api from '../../api/AxiosInstance';
+
 const { height: screenHeight } = Dimensions.get('window');
+
+interface SharingDetailResponse {
+  content: {
+    userId: number;
+    sharingPostId: number;
+    nickname: string;
+    profileImgUrl?: string;
+    category: string;
+    title: string;
+    description: string;
+    createdAt: string;
+  };
+  images: {
+    sharingImageId: number;
+    sharingPostId: number;
+    imgUrl: string;
+  }[];
+}
 
 export default function SharingDetail() {
   const navigation = useNavigation<NativeStackNavigationProp<SharingStackParamList>>();
   const optionModalRef = useRef<BottomSheetModal>(null);
-  const post = {
-    title: '중고 세탁기 나눕니다.',
-    content: '세탁기 나눕니다. 고장 없음. 직접 오셔서 가져가셔야합니다. \n-잔기스 있음 \n-사용기간 5년 \n-장소: 인천광역시 성북구 무슨역인지 기억안남 \n-일시: 5월 15일 14시',
-    nickname: '서샘이',
-    createdAt: '2025년 4월 24일',
-    category: '가정용품',
-    imageUri: 'https://via.placeholder.com/100',
+  const [post, setPost] = useState<SharingDetailResponse | null>(null);
+  const route = useRoute<RouteProp<SharingStackParamList, 'SharingDetail'>>();
+  const { sharingPostId } = route.params;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await api.get(`/sharing/detail/query/${sharingPostId}`);
+        setPost(res.data);
+      } catch (error) {
+        console.error('에러 발생:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const goChatRoom = async() => {
+      if(!post){
+        console.log("아직 들어온 데이터가 없습니다.");
+        return;
+      }
+      const res =  await api.post('/chat/exist',{sharingPostId: post.content.sharingPostId, sellerId: post.content.userId});
+      const chatRoomId = res.data.chatRoomId;
+      const sharingPostId = post.content.sharingPostId;
+      const sellerId = res.data.sellerId;
+
+
+      navigation.navigate('ChatingStack', {
+      screen: 'ChatingDetail',
+      params: { chatRoomId, sharingPostId, sellerId },
+    });
   };
 
-  //옵션 모달 활성화
-  const activeOptionModal = () =>{
-    optionModalRef.current?.present()
+  
+
+  const activeOptionModal = () => {
+    optionModalRef.current?.present();
   };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-      <TouchableOpacity onPress={()=>{activeOptionModal()}} style={{marginRight:20}}>
-        <Text style={{ fontSize: 25, fontWeight:'bold' }}>⁝</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={activeOptionModal} style={{ marginRight: 20 }}>
+          <Text style={{ fontSize: 25, fontWeight: 'bold' }}>⁝</Text>
+        </TouchableOpacity>
       ),
-      title:'',
-      headerShadowVisible:false,
+      title: '',
+      headerShadowVisible: false,
     });
-  },[navigation])
+  }, [navigation]);
+
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        {/* 프로필 + 이름 + 날짜 + 아이콘들 */}
-        <View style={styles.header}>
-          <Image source={{ uri: 'https://via.placeholder.com/40' }} style={styles.avatar} />
-          <View style={styles.userText}>
-            <Text style={styles.nickname}>{post.nickname}</Text>
-          </View>
-        </View>
+        {post ? (
+          <>
+            {/* 프로필 영역 */}
+            <View style={styles.header}>
+              <Image
+                source={{ uri: post.content.profileImgUrl || 'https://via.placeholder.com/40' }}
+                style={styles.avatar}
+              />
+              <View style={styles.userText}>
+                <Text style={styles.nickname}>{post.content.nickname}</Text>
+              </View>
+            </View>
 
-        {/* 제목 */}
-        <Text style={styles.title}>{post.title}</Text>
-        <Text style={styles.subDate}>{post.createdAt}</Text>
-        <Text style={styles.category}>{post.category}</Text>
+            {/* 제목 / 날짜 / 카테고리 */}
+            <Text style={styles.title}>{post.content.title}</Text>
+            <Text style={styles.subDate}>{formatDate(post.content.createdAt)}</Text>
+            <Text style={styles.category}>{post.content.category}</Text>
 
-        <View style={styles.divider} />
+            <View style={styles.divider} />
+            <Text style={styles.content}>{post.content.description}</Text>
+            <View style={styles.divider} />
 
-        {/* 내용 */}
-        <Text style={styles.content}>{post.content}</Text>
-
-        <View style={styles.divider} />
-
-        {/* 이미지 썸네일 */}
-        <View style={styles.imageSection}>
-          <Image source={{ uri: post.imageUri }} style={styles.thumbnail} />
-        </View>
+            {/* 이미지 섹션 */}
+            <View style={styles.imageSection}>
+              {post.images.map((img) => (
+                <Image
+                  key={img.sharingImageId}
+                  source={{ uri: img.imgUrl }}
+                  style={styles.thumbnail}
+                />
+              ))}
+            </View>
+          </>
+        ) : (
+          <Text style={{ textAlign: 'center', marginTop: 20 }}>게시글을 불러오는 중입니다.</Text>
+        )}
       </ScrollView>
 
-      {/* 하단 고정 버튼 */}
-      <TouchableOpacity style={styles.chatBox} onPress={()=>navigation.navigate('ChatingStack', {screen: 'ChatingDetail',})}>
+      {/* 하단 버튼 */}
+      <TouchableOpacity
+        style={styles.chatBox}
+        onPress={goChatRoom}
+      >
         <Text style={styles.chatText}>채팅하기</Text>
       </TouchableOpacity>
-      <OptionModal ref={optionModalRef} isAuthor={false} postId={1} />
+
+      {/* 옵션 모달 */}
+      <OptionModal
+        ref={optionModalRef}
+        isAuthor={false}
+        postId={post?.content.sharingPostId ?? 0}
+      />
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -112,7 +186,7 @@ const styles = StyleSheet.create({
   nickname: {
     fontWeight: 'bold',
     fontSize: wp('5%'),
-  },  
+  },
   title: {
     fontSize: wp('4.5%'),
     fontWeight: 'bold',
@@ -139,13 +213,16 @@ const styles = StyleSheet.create({
   imageSection: {
     marginTop: hp('1.2%'),
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: wp('2%'),
   },
   thumbnail: {
-    width: wp('20%'),
-    height: wp('20%'),
+    width: wp('28%'),
+    height: wp('28%'),
     borderRadius: wp('3%'),
     borderColor: '#000',
     borderWidth: 1,
+    marginBottom: hp('1.5%'),
   },
   chatBox: {
     position: 'absolute',
@@ -164,4 +241,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

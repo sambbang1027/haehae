@@ -1,4 +1,4 @@
-package com.example.backend.sharing.repository;
+package com.example.backend.sharing.repository.sharingPosts;
 
 import com.example.backend.entity.user.QUser;
 import com.example.backend.entity.sharing.QSharingPosts;
@@ -21,7 +21,7 @@ public class SharingRepositoryImpl implements SharingRepositoryCustom {
         this.queryFactory = queryFactory;
     }
 
-    //regionCode로 나눔 게시물 반환하기
+    // 조회된 지역코드(region_code/b_code)로 지역 내의 나눔 게시물들 조회
     @Override
     public List<SharingListReponseDTO> getSharingList(String regionCode){
         QSharingPosts sp = QSharingPosts.sharingPosts;
@@ -34,14 +34,39 @@ public class SharingRepositoryImpl implements SharingRepositoryCustom {
                         sp.status,
                         u.id,
                         u.nickname,
-                        u.profileImageUrl
+                        u.profileImageUrl,
+                        sp.createdAt
                 ))
                 .from(sp)
                 .join(u)
                 .on(sp.userId.eq(u.id))
                 .where(sp.regionCode.eq(regionCode))
                 .fetch();
-    };
+    }
+
+    //조회된 지역코드(region_code/b_code)와 keyword로 지역 내의 나눔 게시물들 조회
+    @Override
+    public List<SharingListReponseDTO> getSharingListByKeyword(String regionCode, String Keyword){
+        QSharingPosts sp = QSharingPosts.sharingPosts;
+        QUser u = QUser.user;
+
+        return queryFactory
+                .select(new QSharingListReponseDTO(
+                        sp.sharingPostId,
+                        sp.title,
+                        sp.status,
+                        u.id,
+                        u.nickname,
+                        u.profileImageUrl,
+                        sp.createdAt
+                ))
+                .from(sp)
+                .join(u)
+                .on(sp.userId.eq(u.id))
+                .where(sp.regionCode.eq(regionCode).and(sp.description.eq(Keyword).or(sp.title.contains(Keyword)).or(u.nickname.contains(Keyword))))
+                .fetch();
+    }
+
 
     //나눔 게시물 내용 업데이트
     @Override
@@ -78,17 +103,20 @@ public class SharingRepositoryImpl implements SharingRepositoryCustom {
 
     //나눔 게시물 상세정보불러오기
     @Override
-    public SharingDetailResponseDTO getSharingDetail(Long sharingPostId){
+    public SharingCotentResponseDTO getSharingDetail(Long sharingPostId){
         QSharingPosts sp = QSharingPosts.sharingPosts;
         QUser u = QUser.user;
 
         return queryFactory
-                .select(new QSharingDetailResponseDTO(
+                .select(new QSharingCotentResponseDTO(
                         u.id,
                         sp.sharingPostId,
                         u.nickname,
+                        u.profileImageUrl,
+                        sp.category,
                         sp.title,
-                        sp.description
+                        sp.description,
+                        sp.createdAt
                 ))
                 .from(sp)
                 .join(u)

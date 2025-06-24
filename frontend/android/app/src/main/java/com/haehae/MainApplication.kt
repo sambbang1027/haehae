@@ -12,12 +12,20 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b75c1a36a50559272ce4fa9debdca09dd9ac404a
 class MainApplication : Application(), ReactApplication {
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.toMutableList().apply {
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> b75c1a36a50559272ce4fa9debdca09dd9ac404a
             }
 
         override fun getJSMainModuleName(): String = "index"

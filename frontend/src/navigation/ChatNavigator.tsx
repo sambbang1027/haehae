@@ -5,7 +5,7 @@ import ChatingList from "../screens/chat/ChatList";
 import { Text, TouchableOpacity } from "react-native";
 
 export type ChatStackParamList = {
-    ChatingDetail: undefined;
+    ChatingDetail: { chatRoomId: number, sharingPostId:number, sellerId : number };
     ChatingList: undefined;
 }
 
