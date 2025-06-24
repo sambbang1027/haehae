@@ -57,7 +57,7 @@ const LoginPage = () => {
     console.log('kakao 로그인');
   }
   const goToSignup = () => {
-     navigate('LoginStack' ,{screen : 'Signup'});
+     navigate('LoginStack' ,{screen : 'Signup', params: { loginType: 'local' }});
   }
   const goToFindId = () => {
       navigate('LoginStack' ,{screen : 'FindId'});

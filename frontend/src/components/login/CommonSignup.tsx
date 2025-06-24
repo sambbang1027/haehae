@@ -6,18 +6,20 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  Image
 } from 'react-native';
-import DatePicker from 'react-native-date-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomCheckbox from '../../components/common/CustomCheckBox';
 import dayjs from 'dayjs';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
+import AddressSearchModal from '../common/AddressSearch';
 
 type CommonState = {
   nickname: string;
   phoneNumber: string;
   birth: Date;
   address: string;
+  bcode : string;
   residenceType: string;
 };
 
@@ -30,11 +32,17 @@ type Props = {
     showDatePicker : boolean;
     setShowDatePicker : (value : boolean) => void;
     onDuplicateNickname : ()=> void
+    onSelectAddress: (address: string, bcode: string) => void;
 }
 
 
 const CommonSignup = ({state, dispatch, showDatePicker,
    setShowDatePicker, onDuplicateNickname} : Props) =>{
+const [showAddressModal, setShowAddressModal] = useState(false);
+const addressSearch = () => {
+  setShowAddressModal(true);
+};
+
     return(
     <View>  
     <View>
@@ -52,38 +60,56 @@ const CommonSignup = ({state, dispatch, showDatePicker,
      
       <TextInput
         style={styles.input}
+        keyboardType="number-pad"
         placeholder="휴대전화번호 - 없이 입력"
         value={state.phoneNumber}
-        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'phoneNumber', value: text })}
+        onChangeText={(text) => 
+        dispatch({ type: 'SET_FIELD', field: 'phoneNumber', value: text.replace(/[^0-9]/g, '')})}
       />
 
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
         <Text style={{ color: '#000' }}>{dayjs(state.birth).format('YYYY년 MM월 DD일')}</Text>
       </TouchableOpacity>
 
-      <Modal visible={showDatePicker} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.calendarWrapper}>
-            <DatePicker
-              date={state.birth}
-              mode="date"
-              maximumDate={new Date()}
-              onDateChange={(date) => dispatch({ type: 'SET_FIELD', field: 'birth', value: date })}
+            <DateTimePickerModal
+               isVisible={showDatePicker}
+                mode="date"
+                maximumDate={new Date()}
+                onConfirm={(date) => {
+                  dispatch({ type: 'SET_FIELD', field: 'birth', value: date });
+                  setShowDatePicker(false);
+                }}
+                onCancel={() => setShowDatePicker(false)}
             />
-            <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.calendarCloseBtn}>
-              <Text style={{ fontWeight: 'bold' }}>닫기</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+          
+      {/* 주소 API  */}
+      <View>
+      <TouchableOpacity style={styles.searchAddress} onPress={addressSearch}>
+        <TextInput
+          style={styles.inputAddress}
+          placeholder="주소 검색"
+          value={state.address}
+          onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'address', value: text })}
+          editable ={false} // 직접입력 방지
+        />
+        <Image source={require('../../assets/icons/search.png')}  style={styles.searchIcon}/>
+      </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="주소 입력"
-        value={state.address}
-        onChangeText={(text) => dispatch({ type: 'SET_FIELD', field: 'address', value: text })}
-      />
+      {/* 주소 모달  */}
+      {showAddressModal && (
+        <Modal visible transparent animationType="fade">
+          <AddressSearchModal
+            onSelect={(addr, code) => {
+              dispatch({ type: 'SET_FIELD', field: 'address', value: addr });
+              dispatch({ type: 'SET_FIELD', field: 'bcode', value: code });
+            }}
+            onClose={() => setShowAddressModal(false)}
+          />
+        </Modal>
+      )}
+      </View>
 
+      {/* 주거 유형 선택 */}
       <Text style={styles.label}>주거유형</Text>
       <View style={styles.checkboxContainer}>
         <View style={styles.checkbox}>
@@ -174,6 +200,28 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: wp('3.5%'),
   },
+  searchAddress: {
+    flexDirection: 'row',
+    width: '100%'
+  },
+  searchIcon: {
+    width : wp('8%'),
+    position: 'absolute',
+    top : hp('2%'),
+    right: wp('5%')  
+  },
+  inputAddress: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#959595',
+    borderRadius: 4,
+    height: hp('7.5%'),
+    paddingHorizontal: wp('3%'),
+    marginBottom: hp('2%'),
+    justifyContent: 'center',
+    fontSize: wp('4%'),
+    color: '#000'
+  }
 });
 
 export default CommonSignup;
