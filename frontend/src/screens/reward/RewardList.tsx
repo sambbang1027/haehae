@@ -10,18 +10,14 @@ import {
     ActivityIndicator 
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RewardParamList } from '../../navigation/RewardNavigator';
-import api from '../../api/AxiosInstance';
 import { navigate } from '../../navigation/NavigationService';
 // pagination hooks
 import usePagination from '../../hooks/UsePagination';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+
 
 const RewardList = () => {
     const [selectedType, setSelectedType] = useState<string>('DONATION');
-    
+
     const handleRewardPress = async (type : string) => {
             setSelectedType(type); 
             console.log(selectedType);
@@ -42,17 +38,13 @@ const RewardList = () => {
     };
 
 
-    const {data: rewardItems, loadMore, loading } = usePagination<RewardItem>({
-                path: `/reward/list/${selectedType}`,
-                initialCursor: undefined,
-                limit: 1,
-            })
-
-    console.log("확인 : " + loadMore);
-    console.log("로딩 상태 : " + loading);
+    const {
+        items: rewardItems, fetchNextPage, hasNextPage,isFetchingNextPage, isLoading,} = usePagination<RewardItem>({
+        path: `/reward/list/${selectedType}`,
+        limit: 2,
+    });
+    console.log(rewardItems);
     
-    console.log(rewardItems.map(i => i.id))
-
     const renderHeader = () => (
         <View style={styles.container}>
         <Image
@@ -94,20 +86,22 @@ const RewardList = () => {
     );
 
     return (
-    <FlatList
+        <FlatList
         data={rewardItems}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
             <TouchableOpacity onPress={() => handleItemClick(item.id)} style={styles.listItem}>
-                    <Image style={styles.itemImage} source={{uri : item.rewardItemsImgUrl?.[0]}} />
-                    <Text style={styles.itemTitle}>{item.name}</Text>
-                    <Text style={styles.itemPoints}>{item.pointCost}P</Text>
+            <Image style={styles.itemImage} source={{ uri: item.rewardItemsImgUrl?.[0] }} />
+            <Text style={styles.itemTitle}>{item.name}</Text>
+            <Text style={styles.itemPoints}>{item.pointCost}P</Text>
             </TouchableOpacity>
         )}
         ListHeaderComponent={renderHeader}
-        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#000" /> : null}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.1}
+        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#000" /> : null}
+        onEndReached={() => {
+            if (hasNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.2}
         contentContainerStyle={[styles.scrollViewContent, { flexGrow: 1 }]}
         />
         );

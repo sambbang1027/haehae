@@ -1,8 +1,6 @@
 package com.example.backend.reward.rewardItems.repository;
 
 
-import com.example.backend.pagination.PageRequestDTO;
-import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardDetailDTO;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardListDTO;
 import com.example.backend.entity.reward.QRewardItemImages;
@@ -32,7 +30,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     QRewardItemImages subQri = new QRewardItemImages("subQri");
 
     @Override
-    public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType, Long cursor , int limit) {
+    public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType, Long cursor , int limitPlusOne) {
         return jpaQueryFactory
                 .select(new QFindRewardListDTO(
                         ri.id,
@@ -53,7 +51,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                         cursor != null ? ri.id.lt(cursor) : null
                 )
                 .orderBy(ri.id.desc())
-                .limit(limit+1)
+                .limit(limitPlusOne)
                 .fetch();
             }
 

@@ -1,8 +1,6 @@
 package com.example.backend.reward.rewardItems.service;
 
 
-import com.example.backend.pagination.PageRequestDTO;
-import com.example.backend.pagination.PageResponseDTO;
 import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.request.RewardItemsRequestUpdateDTO;
 import com.example.backend.reward.rewardItems.dto.request.RewardRequestDTO;
@@ -15,6 +13,8 @@ import com.example.backend.reward.rewardItems.repository.RewardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -22,12 +22,10 @@ import java.util.List;
 public class RewardItemsServiceImpl implements RewardItemsService {
     private final RewardRepository rewardRepository;
     private final RewardImageRepository rewardImageRepository;
-    private final PageRequestDTO pageRequestDTO;
 
-    public RewardItemsServiceImpl(RewardRepository rewardRepository, RewardImageRepository rewardImageRepository, PageRequestDTO pageRequestDTO) {
+    public RewardItemsServiceImpl(RewardRepository rewardRepository, RewardImageRepository rewardImageRepository) {
         this.rewardRepository = rewardRepository;
         this.rewardImageRepository = rewardImageRepository;
-        this.pageRequestDTO = pageRequestDTO;
     }
 
 
@@ -62,7 +60,8 @@ public class RewardItemsServiceImpl implements RewardItemsService {
              rewardType = RewardItems.RewardType.DONATION;
         }
 
-        List<FindRewardListDTO> list = rewardRepository.findRewardList(rewardType, cursor, limit);
+        int limitPlusOne = limit + 1;
+        List<FindRewardListDTO> list = rewardRepository.findRewardList(rewardType, cursor, limitPlusOne);
 
         boolean hasNext = list.size() > limit;
 

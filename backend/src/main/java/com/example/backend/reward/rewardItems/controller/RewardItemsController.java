@@ -1,7 +1,5 @@
 package com.example.backend.reward.rewardItems.controller;
 
-import com.example.backend.pagination.PageRequestDTO;
-import com.example.backend.pagination.PageResponseDTO;
 import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.request.RewardItemsRequestUpdateDTO;
 import com.example.backend.reward.rewardItems.dto.request.RewardRequestDTO;
