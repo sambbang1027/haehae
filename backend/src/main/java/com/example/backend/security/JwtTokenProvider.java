@@ -3,6 +3,7 @@ package com.example.backend.security;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -18,7 +19,6 @@ public class JwtTokenProvider {
     private final long refreshTokenExpiration;
     private final Key key;
 
-
     public JwtTokenProvider(){
         // env 파일 읽어오기
         Dotenv dotenv = Dotenv.load();
@@ -29,6 +29,12 @@ public class JwtTokenProvider {
         this.refreshTokenExpiration = Long.parseLong(dotenv.get("JWT_REFRESH_EXPIRATION","1209600000"));
 
     }
+
+    // getter
+    public String getSecret() {
+        return this.secret;
+    }
+
 
     // accessToken 생성
     public String createAccessToken(Long userId){

@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import CustomCheckbox from '../../components/common/CustomCheckBox';
 import dayjs from 'dayjs';
-import DatePicker from 'react-native-date-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const EditUserInfo = () => {
@@ -56,21 +56,16 @@ const EditUserInfo = () => {
         <Text style={styles.birthText}>{dayjs(birthDate).format('YYYY년 MM월 DD일')}</Text>
       </TouchableOpacity>
 
-      <Modal visible={showDatePicker} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.calendarWrapper}>
-            <DatePicker
-              date={birthDate}
-              mode="date"
-              maximumDate={new Date()}
-              onDateChange={(date: Date) => setBirthDate(date)}
-            />
-            <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.calendarCloseBtn}>
-              <Text style={{ fontWeight: 'bold' }}>닫기</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+       <DateTimePickerModal
+        isVisible={showDatePicker}
+        mode="date"
+        maximumDate={new Date()}
+        //onDateChange={(date: Date) => setBirthDate(date)}
+        onConfirm={(date) => {
+        setShowDatePicker(false);
+        }}
+        onCancel={() => setShowDatePicker(false)}
+      />
 
       <Text style={styles.label}>주소</Text>
       <View style={styles.addressRow}>

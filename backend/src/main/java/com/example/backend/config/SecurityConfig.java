@@ -1,6 +1,7 @@
 package com.example.backend.config;
 
 import com.example.backend.security.*;
+import com.example.backend.webSocket.StompJwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +33,9 @@ public class SecurityConfig {
         return http
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource()))
-                .csrf(csrf->csrf.disable())
+                .csrf(csrf->csrf
+                        .ignoringRequestMatchers("/ws/**")
+                        .disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -42,12 +45,14 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login",
+                                "/api/email/**",
                                 "/api/user/register/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/ws/**"
                         ).permitAll() // swagger, 로그인만 허용
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -58,7 +63,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8081","http://10.0.2.2:8082" ));
+        config.setAllowedOrigins(List.of("http://localhost:8081","http://10.0.2.2:8082","http://localhost:3000",  "http://10.0.2.2:8082" ));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

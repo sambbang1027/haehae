@@ -9,6 +9,8 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(ErrorCategory.AUTH, HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     REFRESH_TOKEN_NOT_MATCH(ErrorCategory.AUTH, HttpStatus.UNAUTHORIZED, "토큰이 일치하지 않습니다."),
     ACCESS_DENIED(ErrorCategory.AUTH, HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
+    EMAIL_IO_ERROR(ErrorCategory.AUTH, HttpStatus.SERVICE_UNAVAILABLE, "이메일 전송 중 네트워크 오류 발생"),
+    INVALID_VERIFICATION_CODE(ErrorCategory.AUTH, HttpStatus.BAD_REQUEST,"인증 코드가 유효하지 않습니다."),
 
     // USER
     USER_NOT_FOUND(ErrorCategory.USER,HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다."),
@@ -31,7 +33,8 @@ public enum ErrorCode {
     //SYSTEM
     INTERNAL_SERVER_ERROR(ErrorCategory.SYSTEM,HttpStatus.INTERNAL_SERVER_ERROR	,"서버 오류가 발생했습니다."),
     DATABASE_ERROR(ErrorCategory.SYSTEM, HttpStatus.INTERNAL_SERVER_ERROR,"데이터베이스 처리 중 오류가 발생했습니다."),
-    EXTERNAL_API_ERROR(ErrorCategory.SYSTEM, HttpStatus.BAD_GATEWAY,"외부 서비스와의 통신에 실패했습니다.");
+    EXTERNAL_API_ERROR(ErrorCategory.SYSTEM, HttpStatus.BAD_GATEWAY,"외부 서비스와의 통신에 실패했습니다."),
+    GEOCODING_FAILED(ErrorCategory.SYSTEM, HttpStatus.NOT_FOUND, "주소에 대한 지오코딩 결과가 없습니다.");
 
 
     private final ErrorCategory category;

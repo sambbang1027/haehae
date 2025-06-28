@@ -16,15 +16,25 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomSearchBar from "../../components/common/CustomSearchBar";
 import { SharingStackParamList } from "../../navigation/SharingNavigator";
+import api from "../../api/AxiosInstance";
+import { Timestamp } from "react-native-reanimated/lib/typescript/commonTypes";
+
+interface SharingListItem {
+  sharingPostId: number;
+  title: string;
+  status: 'AVAILABLE' | 'RESERVED' | 'COMPLETED';
+  userId: number;
+  nickname: string;
+  profileImageUrl?: string;
+  createdAt: Timestamp;
+}
 
 export default function ShairingMain() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<SharingStackParamList>>();
+  const [postData, setPostData] = useState<SharingListItem[]>([]);
 
-  const handleSearch = () => {
-    console.log('검색 실행:', searchQuery);
-  };
 
   useEffect(() => {
     const showListener = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
@@ -35,12 +45,38 @@ export default function ShairingMain() {
     };
   }, []);
 
-  const postData = [
-    { id: 1, title: '중고 세탁기 나눕니다.', nickname: '서샘이', status: '나눔중', color: '#C7F4C2', createdAt: '2025-04-24' },
-    { id: 2, title: '공병들 나눕니다.', nickname: '강재헌', status: '나눔완료', color: '#E0E0E0', createdAt: '2025-04-20' },
-    { id: 3, title: '노트북 나눔해요.', nickname: '김도훈', status: '예약중', color: '#F4D7A1', createdAt: '2025-04-18' },
-    { id: 4, title: '책상 나눔', nickname: '윤태현', status: '나눔완료', color: '#E0E0E0', createdAt: '2025-04-15' },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await api.get("/sharing/list/query");
+        console.log(res.data);
+        setPostData(res.data);
+      } catch (error) {
+        console.error('에러 발생:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleSearch = async() => {
+    const res = await api.get("/sharing/list/query", {
+      params: { keyword: searchQuery}
+    });
+    setPostData(res.data);
+  }
+
+  const getStatusMeta = (status: string) => {
+    switch (status) {
+      case 'AVAILABLE':
+        return { text: '나눔중', color: '#C7F4C2' };
+      case 'RESERVED':
+        return { text: '예약중', color: '#F4D7A1' };
+      case 'COMPLETED':
+        return { text: '나눔완료', color: '#E0E0E0' };
+      default:
+        return { text: '알수없음', color: '#FFFFFF' };
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,27 +95,28 @@ export default function ShairingMain() {
 
         {/* 나눔 카드 리스트 */}
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {postData.map((post) => (
-            <TouchableOpacity
-              key={post.id}
-              onPress={() => navigation.navigate('SharingDetail', { id: post.id })}
-            >
-              <View style={[styles.shairingPostCard, { borderColor: post.color }]}>
-                <View style={styles.textArea}>
-                  <Text style={styles.title}>{post.title}</Text>
-
-                  <View style={styles.metaBox}>
-                    <Text style={styles.nickname}>{post.nickname}</Text>
-                    <Text style={styles.createdAt}>{post.createdAt}</Text>
+          {postData.map((post) => {
+            const { text: statusText, color } = getStatusMeta(post.status);
+            return (
+              <TouchableOpacity
+                key={post.sharingPostId}
+                onPress={() => navigation.navigate('SharingDetail', { sharingPostId : post.sharingPostId })}
+              >
+                <View style={[styles.shairingPostCard, { borderColor: color }]}>
+                  <View style={styles.textArea}>
+                    <Text style={styles.title}>{post.title}</Text>
+                    <View style={styles.metaBox}>
+                      <Text style={styles.nickname}>{post.nickname}</Text>
+                      <Text style={styles.createdAt}>{post.createdAt}</Text>
+                    </View>
+                  </View>
+                  <View style={[styles.shairingStatus, { backgroundColor: color }]}>
+                    <Text style={styles.statusText}>{statusText}</Text>
                   </View>
                 </View>
-
-                <View style={[styles.shairingStatus, { backgroundColor: post.color }]}>
-                  <Text style={styles.statusText}>{post.status}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
         {/* 글쓰기 버튼 */}
