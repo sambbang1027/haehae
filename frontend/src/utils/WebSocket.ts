@@ -6,6 +6,7 @@ import { Client, StompHeaders } from '@stomp/stompjs';
 // yarn add react-native-websocket
 import RNWebSocket from 'react-native-websocket';
 
+
 interface WebSocketConfig {
   accessToken: string;
   onMessage: (msg: any) => void;
@@ -21,7 +22,7 @@ interface WebSocketControls {
   stompClient: Client | null; // stompClient 인스턴스를 외부에 노출 (필요 시)
 }
 
-export const useWebSocket = ({
+export const connectWebSocket = ({
   accessToken,
   onMessage,
   brokerURL = 'ws://10.0.2.2:8082/ws', // 기본값 설정
@@ -43,14 +44,14 @@ export const useWebSocket = ({
 
   useEffect(() => {
     // 액세스 토큰이 없으면 연결 시도하지 않음
-    if (!accessToken) {
-      console.warn("Access token not provided. WebSocket connection will not be established.");
-      if (stompClientRef.current) {
-        stompClientRef.current.deactivate(); // 기존 연결이 있다면 해제
-        setIsConnected(false);
-      }
-      return;
-    }
+    // if (!accessToken) {
+    //   console.warn("Access token not provided. WebSocket connection will not be established.");
+    //   if (stompClientRef.current) {
+    //     stompClientRef.current.deactivate(); // 기존 연결이 있다면 해제
+    //     setIsConnected(false);
+    //   }
+    //   return;
+    // }
 
     console.log("🪪 accessToken:", accessToken ? '****' : '없음'); // 토큰 값 직접 노출 방지
 

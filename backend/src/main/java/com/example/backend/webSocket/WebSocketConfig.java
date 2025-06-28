@@ -6,40 +6,49 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final StompHandshakeInterceptor handshakeInterceptor;
-    private final CustomHandshakeHandler customHandshakeHandler;
+//    private final StompHandshakeInterceptor handshakeInterceptor;
+//    private final CustomHandshakeHandler customHandshakeHandler;
     private final StompChannelInterceptor stompChannelInterceptor;
 
-
-    public WebSocketConfig(StompHandshakeInterceptor handshakeInterceptor,
-                           CustomHandshakeHandler customHandshakeHandler, StompChannelInterceptor stompChannelInterceptor) {
-        this.handshakeInterceptor = handshakeInterceptor;
-        this.customHandshakeHandler = customHandshakeHandler;
+    public WebSocketConfig(StompChannelInterceptor stompChannelInterceptor) {
         this.stompChannelInterceptor = stompChannelInterceptor;
     }
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue");
-        config.setApplicationDestinationPrefixes("/app");
-        config.setUserDestinationPrefix("/user");
-    }
+//    public WebSocketConfig(StompHandshakeInterceptor handshakeInterceptor,
+//                           CustomHandshakeHandler customHandshakeHandler, StompChannelInterceptor stompChannelInterceptor) {
+//        this.handshakeInterceptor = handshakeInterceptor;
+//       this.customHandshakeHandler = customHandshakeHandler;
+//        this.stompChannelInterceptor = stompChannelInterceptor;
+//    }
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")
-                .setHandshakeHandler(customHandshakeHandler)
-                .addInterceptors(handshakeInterceptor)
-                ;
+                .setAllowedOriginPatterns("*");
+//                .addInterceptors(handshakeInterceptor)
+//                .setHandshakeHandler(customHandshakeHandler)
+//               .withSockJS();
     }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/topic", "/queue");
+        config.setUserDestinationPrefix("/user");
+    }
+
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(stompChannelInterceptor); // ✅ 등록 필수 형님!!!
+        registration.interceptors(stompChannelInterceptor);
     }
+
 }

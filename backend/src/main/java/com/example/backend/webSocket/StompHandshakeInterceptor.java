@@ -26,21 +26,34 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) {
         System.out.println("👉 [Interceptor] Handshake 시도됨 형님!!!");
 
-        List<String> authHeaders = request.getHeaders().get("Authorization");
+        URI uri = request.getURI();
+        String query = uri.getQuery();
 
-        if (authHeaders == null || authHeaders.isEmpty()) {
-            System.out.println("❌ Authorization 헤더 없음 형님!!!");
+        System.out.println(query);
+
+       // List<String> authHeaders = request.getHeaders().get("Authorization");
+        if (query == null || query.isEmpty()) {
+            System.out.println("❌ 쿼리로 넘어온 토큰 없음");
             return false;
         }
 
-        String tokenHeader = authHeaders.get(0); // "Bearer eyJhbGciOi..."
+       // String tokenHeader = authHeaders.get(0); // "Bearer eyJhbGciOi..."
 
-        if (!tokenHeader.startsWith("Bearer ")) {
-            System.out.println("❌ Bearer 토큰 형식 아님 형님!!!");
+        String token = null;
+        String[] params = query.split("&");
+         for(String param : params){
+             if(param.startsWith("token")){
+                 token = param.substring("token=".length());
+                 break;
+             }
+         }
+
+        if (token == null) {
+            System.out.println("❌ token 안에 토큰이 없습니다. ");
             return false;
         }
-
-        String token = tokenHeader.substring("Bearer ".length());
+        System.out.println("쿼리로 받은 토큰 : "+ token);
+       // String token = tokenHeader.substring("Bearer ".length());
         String userId = tokenVerifier.getUserIdFromAccessToken(token);
 
         if (userId == null) {
@@ -48,7 +61,7 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
             return false;
         }
 
-        attributes.put("user", new StompPrincipal(userId));
+        attributes.put("userId", new StompPrincipal(userId));
         System.out.println("✅ 인증 성공 - 유저 ID: " + userId + " 형님!!!");
         return true;
     }
@@ -57,6 +70,10 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                WebSocketHandler wsHandler, Exception exception) {
-        // 필요 없으면 비워둬도 됨
+        if (exception == null) {
+            System.out.println("✅ Handshake 성공, 연결 준비 완료!");
+        } else {
+            System.out.println("❌ Handshake 실패: " + exception.getMessage());
+        }
     }
 }

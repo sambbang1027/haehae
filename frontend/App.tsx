@@ -14,30 +14,34 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import FooterLayout from './src/components/layouts/FooterLayout';
 import { navigationRef } from './src/navigation/NavigationService';
 import { UserProvider } from './src/context/UserContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 export default function App() {
+  const queryClient = new QueryClient();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TextSizeProvider>
-        <SafeAreaProvider>
-          <PaperProvider>
-            <ToastProvider>
-              <ModalProvider>
-                <UserProvider>
-                  <NavigationContainer ref={navigationRef}>
-                      <BottomSheetModalProvider>
-                        <AppNavigator />
-                        <ModalHost />
-                        <FooterLayout />
-                      </BottomSheetModalProvider>
-                  </NavigationContainer>
-                </UserProvider>
-              </ModalProvider>
-            </ToastProvider>
-          </PaperProvider>
-        </SafeAreaProvider>
-      </TextSizeProvider>
+      <QueryClientProvider client={queryClient}>
+        <TextSizeProvider>
+          <SafeAreaProvider>
+            <PaperProvider>
+              <ToastProvider>
+                <ModalProvider>
+                  <UserProvider>
+                    <NavigationContainer ref={navigationRef}>
+                        <BottomSheetModalProvider>
+                          <AppNavigator />
+                          <ModalHost />
+                          <FooterLayout />
+                        </BottomSheetModalProvider>
+                    </NavigationContainer>
+                  </UserProvider>
+                </ModalProvider>
+              </ToastProvider>
+            </PaperProvider>
+          </SafeAreaProvider>
+        </TextSizeProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

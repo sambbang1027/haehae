@@ -20,6 +20,10 @@ import OptionModal from '../../components/OptionModal';
 import { connectWebSocket } from '../../utils/WebSocket';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import api from '../../api/AxiosInstance';
+import { useWebSocket } from '../../utils/WebSokcet2';
+import { useRxStomp } from '../../utils/WebSocketRxSTOMP';
+import { useSTOMPTest } from '../../utils/StompTest';
+import { Client } from '@stomp/stompjs';
 
 type Message = {
   id: number;
@@ -36,6 +40,8 @@ export default function ChatInputArea() {
   const [inputHeight, setInputHeight] = useState(40);
   const optionModalRef = useRef<BottomSheetModal>(null);
   const route = useRoute<RouteProp<ChatStackParamList, 'ChatingDetail'>>();
+
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -63,26 +69,75 @@ export default function ChatInputArea() {
     },
   ]);
 
-  useEffect(() => {
-  const setupSocket = async () => {
-    const token = await EncryptedStorage.getItem('accessToken');
-    console.log('🧪 Token 가져오기 시도', token);
-    
-    if (!token) {
-      console.warn('토큰이 없습니다.');
-      return;
-    }
+  const [token, setToken] = useState<string | null>(null);
+    // useEffect(() => {
+    //   const fetchToken = async () => {
+    //     const storedToken = await EncryptedStorage.getItem('accessToken');
+    //     setToken(storedToken);
+    //   };
+    //   fetchToken();
+    // }, []); // 컴포넌트 마운트 시 1회만 실행
 
-    connectWebSocket({
-      accessToken: token,
-      onMessage: (msg: any) => {
-        setMessages((prev) => [...prev, msg]);
-      },
-    });
-    console.log("안가졌니...???????????");
-  };
-  setupSocket();
-}, []);
+    // useEffect(() => {
+    //   if (!token) {
+    //     console.warn('토큰이 없습니다.');
+    //     return;
+    //   }
+
+    // const { sendMessage, disconnect, isConnected } =  connectWebSocket({
+    //     accessToken: token,
+    //     onMessage: (msg: any) => {
+    //       setMessages((prev) => [...prev, msg]);
+    //     },
+    //   });
+    //   console.log("WebSocket 연결 시도 완료");
+    // }, [token]); // token 값이 바뀔 때만 실행
+
+      const fetchToken = async () => {
+        const storedToken = await EncryptedStorage.getItem('accessToken');
+        setToken(storedToken);
+        console.log(storedToken);
+      };
+
+    
+
+    useEffect(() => {
+      fetchToken();
+    }, []);
+
+    // const ws = new WebSocket(`ws://10.0.2.2:8082/ws?token=${token}`);
+    // ws.onopen = () => { console.log('웹소켓 연결 성공!'); };
+    // ws.onerror = (e) => { console.log('웹소켓 에러', e); };
+    // ws.onclose = (e) => { console.log('웹소켓 종료', e); };
+    
+    useWebSocket({
+    accessToken: token ?? ''
+    //onMessage: (msg: any) => setMessages(prev => [...prev, msg]),
+  });
+
+//  const ws = new WebSocket(`ws://10.0.2.2:8082/ws`);
+
+//   ws.onopen = () => {
+//   const text = 
+//     `CONNECT\n` +
+//     `accept-version:1.2\n` +
+//     `host:localhost\n` +
+//     `Authorization:Bearer ${token}\n\n`;
+
+//   const encoder = new TextEncoder();
+//   const payload = encoder.encode(text); // UTF-8 바이트 배열로 변환
+
+//   const message = new Uint8Array(payload.length + 1); // 마지막에 \x00 추가할 공간
+//   message.set(payload, 0);
+//   message[payload.length] = 0; // ✅ null 문자 삽입
+
+//   ws.send(message); // ✅ 바이너리 전송!
+
+//   console.log("✅ STOMP CONNECT 전송 완료 (바이너리)");
+// };
+
+// console.log(sendMessage);
+// console.log(isConnected);
 
   //옵션 모달 활성화
   const activeOptionModal = () =>{

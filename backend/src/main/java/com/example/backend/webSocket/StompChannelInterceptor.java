@@ -2,10 +2,12 @@ package com.example.backend.webSocket;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.messaging.support.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.*;
+
 
 @Component
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             }
 
             String token = tokenHeader.substring("Bearer ".length());
+            System.out.println("베리어 제거 후 토큰 : "+ token);
             String userId = tokenVerifier.getUserIdFromAccessToken(token);
 
             if (userId == null) {
@@ -45,6 +48,11 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         }
 
         return message;
+    }
+    @MessageMapping("/hello")
+    @SendTo("/topic/greetings")
+    public String greeting(String message) {
+        return "Hello, " + message;
     }
 }
 

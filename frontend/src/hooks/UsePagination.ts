@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/AxiosInstance';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
     interface CursorPaginationProps<T> {
             path: string;
