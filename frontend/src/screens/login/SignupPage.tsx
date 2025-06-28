@@ -2,12 +2,10 @@ import React, { useReducer, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Image,
   StyleSheet,
   ScrollView,
-  Modal,
 } from 'react-native';
 
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -91,8 +89,7 @@ const finalPayload: State = {
       const url = isSocial ? '/user/register/social' : 'user/register/local';
 
       const response = await api.post(url, finalPayload);
-      
-      if(response.status === 200){
+      if(response.status >= 200 && response.status < 300){
         showToast({message: '회원가입 완료'});
         commonDispatch({type : 'RESET'});
         navigate('LoginStack', {screen: 'Login'});
@@ -218,6 +215,10 @@ const handleSendCode = async() =>{
       showDatePicker={showDatePicker}
       setShowDatePicker={setShowDatePicker}
       onDuplicateNickname = {handleDuplicateNickname}
+      onSelectAddress={(address, bcode) => {
+      commonDispatch({ type: 'SET_FIELD', field: 'address', value : address });
+      commonDispatch({ type: 'SET_FIELD', field: 'bcode', value: bcode });
+       }}
     />
     <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
       <Text style={styles.signupText}>완료</Text>

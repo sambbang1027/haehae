@@ -1,7 +1,7 @@
 import 'react-native-reanimated';
 import React from 'react';
 
-import { NavigationContainer, useNavigationState } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -17,6 +17,7 @@ import { UserProvider } from './src/context/UserContext';
 
 
 export default function App() {
+  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TextSizeProvider>
@@ -29,7 +30,7 @@ export default function App() {
                       <BottomSheetModalProvider>
                         <AppNavigator />
                         <ModalHost />
-                        <FooterLayout />
+                        <FooterLayout  navigationRef={navigationRef}/>
                       </BottomSheetModalProvider>
                   </NavigationContainer>
                 </UserProvider>

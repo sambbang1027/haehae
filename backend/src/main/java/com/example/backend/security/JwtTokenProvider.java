@@ -30,6 +30,11 @@ public class JwtTokenProvider {
 
     }
 
+    // getter
+    public String getSecret() {
+        return this.secret;
+    }
+
 
     // accessToken 생성
     public String createAccessToken(Long userId){

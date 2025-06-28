@@ -14,6 +14,13 @@ public class CustomHandshakeHandler extends DefaultHandshakeHandler {
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
                                       Map<String, Object> attributes) {
         String userId = (String) attributes.get("userId");
+
+        // 🔐 null 체크 확실히!
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("userId is missing in WebSocket attributes");
+        }
+        System.out.println("✅ WebSocket userId: " + userId);
+
         return new StompPrincipal(userId); // Principal 구현체
     }
 }
