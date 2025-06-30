@@ -38,7 +38,10 @@ public class RewardItemsServiceImpl implements RewardItemsService {
             } else if (dto.getPointCost()<=0) {
                 throw new IllegalArgumentException("포인트 가격을 입력해주세요.");
             }
+        }else{
+            dto.setPointCost(0);
         }
+
         RewardItems item = rewardRepository.save(dto.toRewardItemsEntity());
 
         List<String> imageUrls = dto.getRewardItemsImgUrl();
@@ -93,6 +96,7 @@ public class RewardItemsServiceImpl implements RewardItemsService {
 
         rewardRepository.save(dto.toEntity());
     }
+
     @Transactional
     @Override
     public void rewardDeleteById(long id) {

@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Modal,
     TextInput,
+    Alert,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -16,6 +17,8 @@ import { RewardParamList } from '../../navigation/RewardNavigator';
 import api from '../../api/AxiosInstance';
 import { Timestamp } from 'react-native-reanimated/lib/typescript/commonTypes';
 import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
+import { useUser } from '../../context/UserContext';
+import { useModal } from '../../context/ModalContext';
 
 type RewardScreenNavigationProp = RouteProp<RewardParamList,'RewardDetail'>;
 
@@ -25,12 +28,19 @@ const RewardDetail = () => {
     const [usePoints, setUsePoints] = useState('');
     const route = useRoute<RewardScreenNavigationProp>(); 
     const { rewardId } = route.params;
-    console.log(rewardId);
-
+    const {user, setUser} = useUser();
+    const userId = user?.userId;
+    const [userCurrentPoint, setCurrentPoint] = useState<number>(0);
+    const {showModal, hideModal} = useModal();
 
     useEffect(() => {
         rewardDetailInfo(rewardId);
+        if (userId !== undefined) {
+            findUserPoint(userId);
+        }
     }, [rewardId]);
+
+    console.log(rewardId);
 
     const [rewardDetailItem, setrewardDetailItem]= useState<{
         id : number;
@@ -40,10 +50,10 @@ const RewardDetail = () => {
         organization : string;
         createdAt : string;
         updatedAt : string | null;
+        rewardType : string;
         rewardImageId : number[];
         rewardItemsImgUrl : string[];
     } | null>(null)
-
 
 
     const rewardDetailInfo = async(rewardId : number)=>{
@@ -57,16 +67,29 @@ const RewardDetail = () => {
                 name : response.data.name,
                 description : response.data.description,
                 pointCost : response.data.pointCost,
-                organization : response.data.ororganization,
+                organization : response.data.organization,
+                rewardType : response.data.rewardType,
                 createdAt : convertDate,
                 updatedAt : convertUpdateDate,
                 rewardImageId : response.data.rewardImageId,
                 rewardItemsImgUrl : response.data.rewardItemsImgUrl
             });
+            console.log(rewardDetailItem);
 
         }catch(error) {
             console.log(error);
         }
+    }
+
+    const findUserPoint = async(userId : number) => {
+        try{
+            const res = await api.get(`userReward/point/${userId}`);
+            console.log(res.data);
+            setCurrentPoint(res.data);
+        }catch(error){
+            console.log(error);
+        }
+
     }
 
     const handlerPayPress = () => {
@@ -74,6 +97,19 @@ const RewardDetail = () => {
     };
 
     const handlePayButtonPress = () => {
+        if(userCurrentPoint === 0){
+            showModal({
+                type:'confirm',
+                content : '보유하신 포인트가 없습니다.',
+            })  
+            return;
+        }else if(rewardDetailItem && userCurrentPoint < rewardDetailItem.pointCost){
+            showModal({
+                type:'confirm',
+                content : '보유하신 포인트가 없습니다.',
+            })  
+            return;
+        }
         setIsBottomSheetVisible(true);
     };
 
@@ -82,16 +118,41 @@ const RewardDetail = () => {
         setUsePoints('');
     };
 
-    const handlePaymentConfirmation = () => {
+    const handlePaymentConfirmation = async() => {
         console.log('결제 확인:', usePoints);
+        try{
+            const body = {
+                userId: user?.userId,
+                pointType: '적립', 
+                amount: rewardDetailItem?.rewardType === 'DONATION'
+                ? parsedUsePoints
+                : rewardDetailItem?.pointCost,
+                source: rewardDetailItem?.name, 
+                rewardItemId: rewardId,
+                status: 'AVAILABLE' 
+            };
+            await api.post('userReward/pay',body);
+            
+        }catch(error){
+            console.log(error);
+        }
+
         closeBottomSheet();
-        // navigation.navigate('RewardPay');
     };
 
-    const availablePoints = 1080;
-    const donationAmount = 1000;
-    const remainingPoints = availablePoints - parseInt(usePoints || '0', 10);
-    const finalPayment = Math.max(0, donationAmount - parseInt(usePoints || '0', 10));
+
+    const parsedUsePoints = parseInt(usePoints || '0', 10);
+    const [availablePoints, setAvailablePoints] = useState<number>(0);
+
+    useEffect(() => {
+        remainPoint();
+    }, [usePoints, userCurrentPoint]);
+
+    const remainPoint= () => {
+        const parsedPoints = parseInt(usePoints || '0', 10);
+        const remain = userCurrentPoint - parsedPoints;
+        setAvailablePoints(remain);
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -106,7 +167,6 @@ const RewardDetail = () => {
                             </Text>
                         <Text style={styles.organization}>{rewardDetailItem?.organization}</Text>
                     </View>
-                    {/* <Image style={styles.donationImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover" /> */}
                         {rewardDetailItem?.rewardImageId && rewardDetailItem.rewardImageId.length > 0 && (
                             rewardDetailItem.rewardImageId.map((id, index) => (
                                 <Image
@@ -122,23 +182,30 @@ const RewardDetail = () => {
                     <View style={styles.paymentSummary}>
                         <View style={styles.paymentItem}>
                             <View style={styles.paymentHeader}>
-                                <Image style={styles.paymentImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover"/>
+                                <Image style={styles.paymentImage} source={{uri: rewardDetailItem?.rewardItemsImgUrl[0]}} resizeMode="cover"/>
                                 <View style={{ flexDirection: 'column', justifyContent: 'center' }}> 
-                                    <Text style={styles.paymentOrganization}>동서남북 기부단체</Text>
-                                    <Text style={styles.paymentTitle}>불우이웃 재헌이 돕기</Text>
+                                    <Text style={styles.paymentOrganization}>{rewardDetailItem?.organization}</Text>
+                                    <Text style={styles.paymentTitle}>{rewardDetailItem?.name}</Text>
                                 </View>
                             </View>
                             <View style={styles.deviceLine}></View>
-                            <View style={styles.paymentAmountContainer}>
-                                <Text style={styles.paymentLabel}>결제 금액</Text>
-                                <Text style={styles.paymentAmount}>{donationAmount}p</Text>
-                            </View>
+                            {rewardDetailItem?.rewardType === 'DONATION' ? (
+                                <View style={styles.paymentAmountContainer}>
+                                    <Text style={styles.paymentLabel}>결제 금액</Text>
+                                    <Text style={styles.paymentAmount1}>직접 입력 </Text>
+                                </View>
+                            ) : (
+                                <View style={styles.paymentAmountContainer}>
+                                    <Text style={styles.paymentLabel}>결제 금액</Text>
+                                    <Text style={styles.paymentAmount}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
+                                </View>
+                            )}
                         </View>
                     </View>
 
                     <View style={styles.availablePointsCard}>
                         <Text style={styles.availablePointsLabel}>현재 사용가능한 포인트</Text>
-                        <Text style={styles.availablePoints}>{availablePoints}p</Text>
+                        <Text style={styles.availablePoints}>{userCurrentPoint.toLocaleString()}p</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -163,34 +230,67 @@ const RewardDetail = () => {
                         <View style={styles.bottomsheetArea}>
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>금액</Text>
-                                <Text style={styles.bottomSheetValue}>{donationAmount}p</Text>
+                                {rewardDetailItem?.rewardType === 'DONATION'?(
+                                    <Text style={styles.bottomSheetValue}>직접 입력</Text>
+                                ) : (
+                                    <Text style={styles.bottomSheetValue}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
+                                )}
                             </View>
 
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>사용할 포인트</Text>
+                                {rewardDetailItem?.rewardType === 'DONATION'?(
                                 <TextInput
-                                    style={styles.pointInput}
-                                    keyboardType="number-pad"
-                                    value={usePoints}
-                                    onChangeText={setUsePoints}
-                                    placeholder="포인트 입력"
-                                /> 
-                                <Text style={styles.bottomSheetValue}>1,000p</Text>
+                                style={styles.pointInput}
+                                keyboardType="number-pad"
+                                value={usePoints}
+                                onChangeText={(text) => {
+                                    // 숫자만 허용하도록 정리
+                                    const numericText = text.replace(/[^0-9]/g, '');
+
+                                    // 숫자 변환 후 현재 포인트보다 크면 무시
+                                    const numericValue = parseInt(numericText || '0', 10);
+                                    if (numericValue > userCurrentPoint) {
+                                    //Alert.alert('알림', `현재 보유한 포인트(${userCurrentPoint}p)를 초과할 수 없습니다.`);
+                                    showModal({
+                                        type:'confirm',
+                                        content : `현재 보유한 포인트 ${userCurrentPoint}p 보다 초과할 수 없습니다.`,
+                                    })  
+                                    return;
+                                    }
+                                    setUsePoints(numericText);
+                                }}
+                                placeholder=" 포인트 입력"
+                                />
+                                ):(
+                                <Text style={styles.bottomSheetValue}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
+                                )}
                             </View>
 
                             <View style={styles.bottomSheetItem2}>
                                 <Text style={styles.bottomSheetLabel2}>현재 보유 포인트</Text>
-                                <Text style={styles.bottomSheetValue2}>1,080p</Text>
+                                <Text style={styles.bottomSheetValue2}>{userCurrentPoint.toLocaleString()}p</Text>
                             </View>
-
+                            
+                            
                             <View style={styles.bottomSheetItem3}>
                                 <Text style={styles.bottomSheetLabel2}>결제 시 남을 포인트</Text>
-                                <Text style={styles.bottomSheetValue2}>80p</Text>
+                                <Text style={styles.bottomSheetValue2}>
+                                {rewardDetailItem?.rewardType === 'DONATION' 
+                                    ? `${availablePoints.toLocaleString()}p`
+                                    : rewardDetailItem
+                                        ? `${(userCurrentPoint - rewardDetailItem.pointCost).toLocaleString()}p`
+                                        : ''}
+                                </Text>
                             </View>
 
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>최종 결제 금액</Text>
-                                <Text style={styles.bottomSheetValue3}>{finalPayment}p</Text>
+                                <Text style={styles.bottomSheetValue3}>
+                                    {rewardDetailItem?.rewardType === 'DONATION'
+                                    ? `${parsedUsePoints.toLocaleString()}p`
+                                    : `${rewardDetailItem?.pointCost.toLocaleString()}p`}
+                                </Text>
                             </View>
                         </View> 
                         
@@ -304,21 +404,27 @@ const styles = StyleSheet.create({
         marginVertical: hp('2%'),
     },
     paymentAmountContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // 결제 금액과 금액을 양쪽 끝으로
-    alignItems: 'center',
-    marginTop: hp('1.5%'),
+        flexDirection: 'row',
+        justifyContent: 'space-between', // 결제 금액과 금액을 양쪽 끝으로
+        alignItems: 'center',
+        marginTop: hp('1.5%'),
     },
     paymentLabel: {
-    color: '#000',
-    fontSize: hp('2.2%'),
-    fontWeight: 'bold',
+        color: '#000',
+        fontSize: hp('2.2%'),
+        fontWeight: 'bold',
     },
     paymentAmount: {
-    color: '#000',
-    fontWeight: 'bold',
-    fontSize: hp('2.2%'),
-    marginLeft: wp('50%'),
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: hp('2.2%'),
+        marginLeft: wp('45%'),
+    },
+    paymentAmount1: {
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: hp('2.2%'),
+        marginLeft: wp('45%')
     },
     availablePointsCard: {
         backgroundColor: '#ffffff',
@@ -328,6 +434,7 @@ const styles = StyleSheet.create({
         padding: hp('2%'),
         marginBottom: hp('2.5%'),
         flexDirection: 'row',
+        
 
     },
     availablePointsLabel: {
@@ -343,7 +450,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-Regular',
         fontSize: hp('2.2%'),
         fontWeight: 'bold',
-        marginLeft: wp('20%'),
+        marginLeft: wp('18%'),
     },
     bottomBackground: {
         backgroundColor: '#dafcac',
@@ -378,7 +485,7 @@ const styles = StyleSheet.create({
     //     textAlign: 'center',
     // },
     slideDown : {
-        marginLeft : wp('40%'),
+        marginLeft : wp('42%'),
         marginBottom : hp('1%')
     },
     bottomsheetArea :{

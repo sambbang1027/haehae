@@ -93,7 +93,11 @@ const RewardList = () => {
             <TouchableOpacity onPress={() => handleItemClick(item.id)} style={styles.listItem}>
             <Image style={styles.itemImage} source={{ uri: item.rewardItemsImgUrl?.[0] }} />
             <Text style={styles.itemTitle}>{item.name}</Text>
-            <Text style={styles.itemPoints}>{item.pointCost}P</Text>
+            {selectedType === 'DONATION'? (
+                <Text style={styles.itemPoints}>금액 직접 입력</Text>
+            ):(
+                <Text style={styles.itemPoints}>{item.pointCost.toLocaleString()}P</Text>
+            )}
             </TouchableOpacity>
         )}
         ListHeaderComponent={renderHeader}

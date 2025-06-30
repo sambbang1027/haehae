@@ -70,6 +70,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                                 ri.organization,
                                 ri.createdAt,
                                 ri.updatedAt,
+                                ri.rewardType,
                                 GroupBy.list(qri.id),
                                 GroupBy.list(qri.rewardItemsImgUrl) // 이미지 여러 개 리스트로
                         )

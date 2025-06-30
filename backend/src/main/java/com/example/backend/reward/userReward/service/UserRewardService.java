@@ -4,4 +4,5 @@ import com.example.backend.reward.userReward.dto.request.UserRewardPointRequestI
 
 public interface UserRewardService {
     void UserRewardPointInsert(UserRewardPointRequestInsertDTO dto);
+    Long userFindPoint(Long userId);
 }

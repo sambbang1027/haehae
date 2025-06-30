@@ -4,9 +4,11 @@ import com.example.backend.entity.user.UserPoint;
 import com.example.backend.entity.reward.UserRewards;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class UserRewardPointRequestInsertDTO {
     private long userId;
     private String pointType;
@@ -22,7 +24,7 @@ public class UserRewardPointRequestInsertDTO {
                 .userId(userId)
                 .pointType(pointType)
                 .amount(amount)
-                .source(pointType)
+                .source(source)
                 .build();
     }
 

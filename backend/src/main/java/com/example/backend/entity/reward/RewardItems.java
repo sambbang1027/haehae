@@ -47,11 +47,18 @@ public class RewardItems {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 
-
     public enum RewardType {
         DONATION,
         VOUCHER,
         GIFTICON
     }
+
+    public void decreaseStock(int quantity) {
+        if (this.stock < quantity) {
+            throw new IllegalStateException("재고가 부족합니다.");
+        }
+        this.stock -= quantity;
+    }
+
 }
 
