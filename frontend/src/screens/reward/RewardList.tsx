@@ -30,7 +30,7 @@ const RewardList = () => {
         });
     };
 
-    type RewardItem = {
+    interface RewardItem {
         id: number ;
         name: string;
         pointCost: number;

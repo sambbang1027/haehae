@@ -19,6 +19,7 @@ import api from '../api/AxiosInstance';
         limit = 10,
         enabled = true,
     }: UsePaginationProps<T>) {
+
         const queryResultArrayData =  useInfiniteQuery<PaginationResponseData<T>>({
             queryKey: ['pagination', path, params, limit],
             queryFn: async ({ pageParam = null }: QueryFunctionContext) => {
@@ -38,7 +39,7 @@ import api from '../api/AxiosInstance';
             
         return {
             ...queryResultArrayData,     
-            items, // 추가된 부분
+            items, 
         };
     }
 

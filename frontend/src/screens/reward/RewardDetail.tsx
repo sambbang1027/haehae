@@ -135,6 +135,11 @@ const RewardDetail = () => {
             
         }catch(error){
             console.log(error);
+            showModal({
+                type:'confirm',
+                content : `결제에 실패하였습니다.`,
+            })  
+
         }
 
         closeBottomSheet();
