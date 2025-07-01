@@ -36,6 +36,7 @@ export default function ChatInputArea() {
   const [inputHeight, setInputHeight] = useState(40);
   const optionModalRef = useRef<BottomSheetModal>(null);
   const route = useRoute<RouteProp<ChatStackParamList, 'ChatingDetail'>>();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -65,20 +66,20 @@ export default function ChatInputArea() {
 
   useEffect(() => {
   const setupSocket = async () => {
-    const token = await EncryptedStorage.getItem('accessToken');
-    console.log('🧪 Token 가져오기 시도', token);
+    const accessToken = await EncryptedStorage.getItem('accessToken');
+    console.log('🧪 Token 가져오기 시도', accessToken);
     
-    if (!token) {
+    if (!accessToken) {
       console.warn('토큰이 없습니다.');
       return;
     }
 
-    connectWebSocket({
-      accessToken: token,
-      onMessage: (msg: any) => {
-        setMessages((prev) => [...prev, msg]);
-      },
-    });
+    connectWebSocket(
+      accessToken,
+    (msg: any) => {
+      setMessages((prev) => [...prev, msg]);
+      }
+  );
     console.log("안가졌니...???????????");
   };
   setupSocket();
@@ -143,7 +144,7 @@ export default function ChatInputArea() {
           </View>
 
           {/* ✅ 채팅 메시지 목록 */}
-          <FlatList
+          {/* <FlatList
             data={messages}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
@@ -171,7 +172,7 @@ export default function ChatInputArea() {
               </View>
             )}
             contentContainerStyle={{ padding: 10 }}
-          />
+          /> */}
 
           {/* ✅ 입력창 */}
           <View style={styles.chatContainer}>

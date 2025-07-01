@@ -5,7 +5,6 @@ import org.springframework.messaging.*;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.messaging.support.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.*;
 
 @Component
 @RequiredArgsConstructor
@@ -17,8 +16,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         System.out.println("🔥 [Interceptor] preSend 진입 형님!!!");
 
-        StompHeaderAccessor accessor =
-                MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+//        StompHeaderAccessor accessor =
+//                MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if (accessor != null) {
             System.out.println("💬 Command = " + accessor.getCommand()); // STOMP 명령 확인

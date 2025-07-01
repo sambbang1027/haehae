@@ -15,7 +15,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final CustomHandshakeHandler customHandshakeHandler;
     private final StompChannelInterceptor stompChannelInterceptor;
 
-
     public WebSocketConfig(StompHandshakeInterceptor handshakeInterceptor,
                            CustomHandshakeHandler customHandshakeHandler, StompChannelInterceptor stompChannelInterceptor) {
         this.handshakeInterceptor = handshakeInterceptor;
@@ -38,8 +37,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addInterceptors(handshakeInterceptor)
                 ;
     }
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(stompChannelInterceptor); // ✅ 등록 필수 형님!!!
+        registration.interceptors(stompChannelInterceptor);
     }
 }

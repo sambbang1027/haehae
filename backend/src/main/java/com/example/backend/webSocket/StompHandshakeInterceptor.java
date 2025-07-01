@@ -3,12 +3,11 @@ package com.example.backend.webSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -26,33 +25,32 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) {
         System.out.println("👉 [Interceptor] Handshake 시도됨 형님!!!");
 
-        List<String> authHeaders = request.getHeaders().get("Authorization");
+        // 쿼리 파라미터에서 토큰 추출
+        String token = null;
+        if (request instanceof ServletServerHttpRequest) {
+            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+            token = servletRequest.getServletRequest().getParameter("token");
+        }
 
-        if (authHeaders == null || authHeaders.isEmpty()) {
-            System.out.println("❌ Authorization 헤더 없음 형님!!!");
+        System.out.println("Token from query parameter: " + token);
+
+        if (token == null || token.isEmpty()) {
+            System.out.println("❌ 토큰 없음 형님!!!");
             return false;
         }
 
-        String tokenHeader = authHeaders.get(0); // "Bearer eyJhbGciOi..."
-
-        if (!tokenHeader.startsWith("Bearer ")) {
-            System.out.println("❌ Bearer 토큰 형식 아님 형님!!!");
-            return false;
-        }
-
-        String token = tokenHeader.substring("Bearer ".length());
         String userId = tokenVerifier.getUserIdFromAccessToken(token);
+        System.out.println("userId: " + userId);
 
         if (userId == null) {
             System.out.println("❌ 토큰 유효성 실패 형님!!!");
             return false;
         }
 
-        attributes.put("user", new StompPrincipal(userId));
+        attributes.put("userId", userId);
         System.out.println("✅ 인증 성공 - 유저 ID: " + userId + " 형님!!!");
         return true;
     }
-
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,

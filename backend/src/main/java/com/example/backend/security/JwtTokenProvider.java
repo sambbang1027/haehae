@@ -19,11 +19,13 @@ public class JwtTokenProvider {
     private final long refreshTokenExpiration;
     private final Key key;
 
+
     public JwtTokenProvider(){
         // env 파일 읽어오기
         Dotenv dotenv = Dotenv.load();
 
         this.secret = dotenv.get("JWT_SECRET");
+        System.out.println("JWTTokenProvider Secret: " + this.secret);
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)); //secret -> key 변환
         this.accessTokenExpiration = Long.parseLong(dotenv.get("JWT_ACCESS_EXPIRATION","3600000"));
         this.refreshTokenExpiration = Long.parseLong(dotenv.get("JWT_REFRESH_EXPIRATION","1209600000"));
