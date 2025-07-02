@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestControllerAdvice
 public class HaehaeExceptionHandler {
@@ -33,5 +36,15 @@ public class HaehaeExceptionHandler {
     }
 
 
+    @ExceptionHandler(RewardException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomException(RewardException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
+        return ResponseEntity.status(status).body(body);
+    }
 }
+
+
+

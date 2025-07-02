@@ -33,6 +33,9 @@ public class UserRewards {
     @Column(name = "refunded_at")
     private Timestamp refundedAt;
 
+    @Column(name="count")
+    private long count;
+
 
     @PrePersist
     protected void onCreate(){

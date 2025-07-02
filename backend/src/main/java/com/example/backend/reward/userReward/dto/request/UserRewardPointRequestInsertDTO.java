@@ -17,6 +17,7 @@ public class UserRewardPointRequestInsertDTO {
 
     private long userPointId;
     private long rewardItemId;
+    private long count;
     private UserRewards.Status status;
 
     public UserPoint toEntityUserPoint(){
@@ -32,9 +33,8 @@ public class UserRewardPointRequestInsertDTO {
         return UserRewards.builder()
                 .userPointId(userPointId)
                 .rewardItemId(rewardItemId)
+                .count(count)
                 .status(status)
                 .build();
     }
-
-
 }
