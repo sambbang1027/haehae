@@ -32,7 +32,9 @@ public class UserRewardPointRequestInsertDTO {
         return UserRewards.builder()
                 .userPointId(userPointId)
                 .rewardItemId(rewardItemId)
-                .status(UserRewards.Status.AVAILABLE)
+                .status(status)
                 .build();
     }
+
+
 }

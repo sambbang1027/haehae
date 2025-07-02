@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Table(name = "reward_items")
 public class RewardItems {
@@ -58,6 +58,13 @@ public class RewardItems {
             throw new IllegalStateException("재고가 부족합니다.");
         }
         this.stock -= quantity;
+    }
+
+    public void increaseStock(int quantity) {
+        if (quantity < 1) {
+            throw new IllegalArgumentException("증가할 재고 수량은 1 이상이어야 합니다.");
+        }
+        this.stock += quantity;
     }
 
 }
