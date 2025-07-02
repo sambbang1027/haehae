@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TouchableOpacity, Text } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-
 import RewardList from "../screens/reward/RewardList";
 import RewardDetail from "../screens/reward/RewardDetail";
 import RewardPay from "../screens/reward/RewardPay";
@@ -12,9 +11,9 @@ import RewardPay from "../screens/reward/RewardPay";
 export type RewardParamList = {
     RewardList : undefined;
     RewardDetail : { rewardId: number };
-    RewardPay : undefined;
+    RewardPay : {userPointId : number};
     Main : undefined;
-    RewardPayList : undefined;
+    RewardPayList : {userPointId : number};
 }
 
 const Stack = createNativeStackNavigator<RewardParamList>();

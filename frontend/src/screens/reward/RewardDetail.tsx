@@ -12,13 +12,12 @@ import {
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RewardParamList } from '../../navigation/RewardNavigator';
 import api from '../../api/AxiosInstance';
-import { Timestamp } from 'react-native-reanimated/lib/typescript/commonTypes';
 import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
 import { useUser } from '../../context/UserContext';
 import { useModal } from '../../context/ModalContext';
+import { navigate } from '../../navigation/NavigationService';
 
 type RewardScreenNavigationProp = RouteProp<RewardParamList,'RewardDetail'>;
 
@@ -32,6 +31,7 @@ const RewardDetail = () => {
     const userId = user?.userId;
     const [userCurrentPoint, setCurrentPoint] = useState<number>(0);
     const {showModal, hideModal} = useModal();
+    const [itemCount, setItemCount] = useState(1)
 
     useEffect(() => {
         rewardDetailInfo(rewardId);
@@ -89,7 +89,6 @@ const RewardDetail = () => {
         }catch(error){
             console.log(error);
         }
-
     }
 
     const handlerPayPress = () => {
@@ -120,28 +119,37 @@ const RewardDetail = () => {
 
     const handlePaymentConfirmation = async() => {
         console.log('결제 확인:', usePoints);
+        console.log(itemCount);
         try{
             const body = {
                 userId: user?.userId,
-                pointType: '적립', 
+                pointType: '사용', 
                 amount: rewardDetailItem?.rewardType === 'DONATION'
                 ? parsedUsePoints
-                : rewardDetailItem?.pointCost,
+                : rewardDetailItem!.pointCost * itemCount, 
                 source: rewardDetailItem?.name, 
                 rewardItemId: rewardId,
-                status: 'AVAILABLE' 
+                count : itemCount,
+                status: rewardDetailItem?.rewardType === 'DONATION'
+                ? 'USED'
+                :'AVAILABLE' 
             };
-            await api.post('userReward/pay',body);
-            
-        }catch(error){
-            console.log(error);
+            const res =   await api.post('userReward/pay',body);
+                console.log(res.data);
+                navigate('RewardStack', {
+                    screen: 'RewardPay',
+                    params: { userPointId: res.data }
+                });
+        }catch(error :any){
+            const message =
+            error.response?.data?.message ||
+            error.message
+            '알 수 없는 오류가 발생했습니다.';
             showModal({
                 type:'confirm',
-                content : `결제에 실패하였습니다.`,
+                content : message,
             })  
-
         }
-
         closeBottomSheet();
     };
 
@@ -201,7 +209,7 @@ const RewardDetail = () => {
                                 </View>
                             ) : (
                                 <View style={styles.paymentAmountContainer}>
-                                    <Text style={styles.paymentLabel}>결제 금액</Text>
+                                    <Text style={styles.paymentLabel}>개당 금액</Text>
                                     <Text style={styles.paymentAmount}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
                                 </View>
                             )}
@@ -243,8 +251,9 @@ const RewardDetail = () => {
                             </View>
 
                             <View style={styles.bottomSheetItem}>
-                                <Text style={styles.bottomSheetLabel}>사용할 포인트</Text>
                                 {rewardDetailItem?.rewardType === 'DONATION'?(
+                                <>
+                                <Text style={styles.bottomSheetLabel}>사용할 포인트</Text>
                                 <TextInput
                                 style={styles.pointInput}
                                 keyboardType="number-pad"
@@ -267,8 +276,42 @@ const RewardDetail = () => {
                                 }}
                                 placeholder=" 포인트 입력"
                                 />
-                                ):(
-                                <Text style={styles.bottomSheetValue}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
+                                </>
+                                ): (
+                                <>
+                                <Text style={styles.bottomSheetLabel}>개수</Text>
+                                <View style={styles.quantityContainer}>
+                                    <TouchableOpacity onPress={() => setItemCount(prev => Math.max(1, prev - 1))}>
+                                    <Text style={styles.quantityButton}>-</Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.quantityText}>{itemCount}</Text>
+                                    <TouchableOpacity onPress={() => {
+                                    if(!rewardDetailItem?.pointCost){
+                                        showModal({
+                                            type: 'confirm',
+                                            content: `상품 정보 에러 관리자에게 문의하세요`,
+                                            });
+                                            return;
+                                    }
+                                    const maxCount = Math.floor(userCurrentPoint / rewardDetailItem?.pointCost);
+                                    if (itemCount < maxCount && itemCount < 100) {
+                                        setItemCount(prev => prev + 1);
+                                        } else if (itemCount >= 100) {
+                                        showModal({
+                                            type: 'confirm',
+                                            content: `최대 100개까지만 구매 가능합니다.`,
+                                        });
+                                        } else {
+                                        showModal({
+                                            type: 'confirm',
+                                            content: `보유 포인트로 최대 ${maxCount}개까지 구매할 수 있습니다.`,
+                                        });
+                                        }
+                                    }}>
+                                    <Text style={styles.quantityButton}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                </>
                                 )}
                             </View>
 
@@ -283,8 +326,8 @@ const RewardDetail = () => {
                                 <Text style={styles.bottomSheetValue2}>
                                 {rewardDetailItem?.rewardType === 'DONATION' 
                                     ? `${availablePoints.toLocaleString()}p`
-                                    : rewardDetailItem
-                                        ? `${(userCurrentPoint - rewardDetailItem.pointCost).toLocaleString()}p`
+                                    : rewardDetailItem?.pointCost
+                                        ? `${(userCurrentPoint - rewardDetailItem.pointCost * itemCount).toLocaleString()}p`
                                         : ''}
                                 </Text>
                             </View>
@@ -292,9 +335,11 @@ const RewardDetail = () => {
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>최종 결제 금액</Text>
                                 <Text style={styles.bottomSheetValue3}>
-                                    {rewardDetailItem?.rewardType === 'DONATION'
+                                {rewardDetailItem?.rewardType === 'DONATION'
                                     ? `${parsedUsePoints.toLocaleString()}p`
-                                    : `${rewardDetailItem?.pointCost.toLocaleString()}p`}
+                                    : rewardDetailItem?.pointCost
+                                    ? `${(rewardDetailItem.pointCost * itemCount).toLocaleString()}p`
+                                    : ''}
                                 </Text>
                             </View>
                         </View> 
@@ -570,6 +615,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
+    quantityContainer: {
+        alignSelf: 'flex-end',
+        flexDirection: 'row',
+        alignItems: 'center',
+    
+    },
+    quantityButton: {
+        fontSize: 20,
+        paddingHorizontal: 10,
+    },
+    
+    quantityText: {
+        marginHorizontal: 10,
+        fontSize: 16,
+    }
 });
 
 export default RewardDetail;

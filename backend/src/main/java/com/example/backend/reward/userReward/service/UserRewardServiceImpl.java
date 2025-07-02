@@ -5,6 +5,7 @@ import com.example.backend.entity.reward.UserRewards;
 import com.example.backend.entity.user.UserPoint;
 import com.example.backend.exception.InsufficientPointException;
 
+import com.example.backend.exception.RewardException;
 import com.example.backend.reward.rewardItems.repository.RewardRepository;
 import com.example.backend.reward.userReward.dto.request.UserRewardPointRequestInsertDTO;
 import com.example.backend.reward.userReward.repository.UserRewardRepository;
@@ -39,9 +40,9 @@ public class UserRewardServiceImpl implements UserRewardService {
 
         long currentPoint = userRepository.findCurrentPointByUserId(id);
         if (currentPoint == 0) {
-            throw new IllegalStateException("보유하신 포인트가 없습니다.");
+            throw new RewardException("보유하신 포인트가 없습니다.");
         } else if (currentPoint < amount) {
-            throw new InsufficientPointException("보유하신 포인트가 적습니다. 보유 : " + currentPoint + "p , 차감 : " + amount + "p");
+            throw new RewardException("보유하신 포인트가 적습니다. 보유 : " + currentPoint + "p , 차감 : " + amount + "p");
         }
 
         UserPoint point = userPointRepository.save(dto.toEntityUserPoint());
@@ -50,13 +51,15 @@ public class UserRewardServiceImpl implements UserRewardService {
 
 
         RewardItems rewardItems = rewardRepository.findById(dto.getRewardItemId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재 하지 않습니다."));
+                .orElseThrow(() -> new RewardException("해당 상품이 존재 하지 않습니다."));
 
         if (rewardItems.getRewardType() != RewardItems.RewardType.DONATION) {
             if (rewardItems.getStock() <= 0) {
-                throw new InsufficientPointException("해당 상품의 재고가 현재 없습니다.");
+                throw new RewardException("해당 상품의 재고가 현재 없습니다.");
+            } else if(rewardItems.getStock() < dto.getCount()) {
+                throw new RewardException("현재 상품의 재고가 부족합니다. (현재 재고량 : "+rewardItems.getStock()+")");
             }
-            rewardItems.decreaseStock(1);
+            rewardItems.decreaseStock(dto.getCount());
             rewardRepository.save(rewardItems);
         }
 
@@ -79,10 +82,10 @@ public class UserRewardServiceImpl implements UserRewardService {
     @Transactional
     public void userRewardPayRefund(Long userPointId) {
         UserPoint point =  userPointRepository.findById(userPointId)
-        .orElseThrow(() -> new EntityNotFoundException("결제 정보가 존재하지 않습니다."));
+        .orElseThrow(() -> new RewardException("결제 정보가 존재하지 않습니다."));
 
         if(point.getPointType().equals("환불")){
-            throw new IllegalStateException("이미 환불처리된 결제 정보입니다.");
+            throw new RewardException("이미 환불처리된 결제 정보입니다.");
         }
 
         UserPoint refundPoint = point.toBuilder()
@@ -96,10 +99,10 @@ public class UserRewardServiceImpl implements UserRewardService {
         userPointRepository.save(refundPoint);
 
         UserRewards userRewards =  userRewardRepository.findByPointId(userPointId)
-                .orElseThrow(() -> new EntityNotFoundException("결제 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new RewardException("결제 정보가 존재하지 않습니다."));
 
         if(userRewards.getStatus() == UserRewards.Status.REFUND){
-            throw new IllegalStateException("이미 환불처리된 결제 정보입니다.");
+            throw new RewardException("이미 환불처리된 결제 정보입니다.");
         }
 
         UserRewards refundReward = userRewards.toBuilder()
@@ -111,10 +114,10 @@ public class UserRewardServiceImpl implements UserRewardService {
         userRewardRepository.save(refundReward);
 
         RewardItems rewardItem = rewardRepository.findById(refundReward.getRewardItemId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재 하지 않습니다."));
+                .orElseThrow(() -> new RewardException("해당 상품이 존재 하지 않습니다."));
 
         if (rewardItem.getRewardType() != RewardItems.RewardType.DONATION) {
-             rewardItem.increaseStock(1);
+             rewardItem.increaseStock(userRewards.getCount());
             rewardRepository.save(rewardItem);
         }
 
