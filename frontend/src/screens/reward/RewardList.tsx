@@ -13,10 +13,16 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { navigate } from '../../navigation/NavigationService';
 // pagination hooks
 import usePagination from '../../hooks/UsePagination';
+import { useUser } from '../../context/UserContext';
+import api from '../../api/AxiosInstance';
 
 
 const RewardList = () => {
     const [selectedType, setSelectedType] = useState<string>('DONATION');
+    const {user, setUser} = useUser();
+    const userName = user?.nickname;
+    const userId = user?.userId;
+    const [currentPoint, setCurrentPoint] = useState<number>(0); 
 
     const handleRewardPress = async (type : string) => {
             setSelectedType(type); 
@@ -29,6 +35,19 @@ const RewardList = () => {
         params: { rewardId: id }
         });
     };
+
+    
+    useEffect(()=>{
+        if(userId){
+            currentPointAxios(userId);
+        }
+    },[currentPoint]);
+
+    const currentPointAxios = async(userId: number)=> {
+            const res = await api.get(`userReward/point/${userId}`);
+            setCurrentPoint(res.data);
+    }
+
 
     interface RewardItem {
         id: number ;
@@ -52,8 +71,8 @@ const RewardList = () => {
             source={require('../../assets/images/reward-coin.png')}
             resizeMode="contain"
         />
-        <Text style={styles.currentPointsText}>현재 킹도훈님의 포인트</Text>
-        <Text style={styles.totalPoints}>1,080P</Text>
+        <Text style={styles.currentPointsText}>현재 {userName}님의 포인트</Text>
+        <Text style={styles.totalPoints}>{currentPoint.toLocaleString()}P</Text>
 
         <View style={styles.tabContainer}>
                 <TouchableOpacity    
@@ -151,11 +170,11 @@ const styles = StyleSheet.create({
     tabContainer: {
         flexDirection: 'row',
         marginTop: hp('3%'),
-        marginLeft: wp('10%'),
+        marginLeft: wp('8%'),
         marginBottom : hp('3%')
     },
     tabButton: {
-        paddingHorizontal: wp('4%'),
+        paddingHorizontal: wp('6%'),
         paddingVertical: hp('0.5%'),
         backgroundColor: 'white',
     },
@@ -190,7 +209,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: wp('4%'),
         marginBottom: hp('1%'),
-        marginLeft: wp('-3%'),
     },
     itemImage: {
         width: wp('14%'),
