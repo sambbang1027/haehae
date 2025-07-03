@@ -74,7 +74,6 @@ public class RewardItemsServiceImpl implements RewardItemsService {
         }
 
         Long nextCursor = hasNext ? list.get(list.size() - 1).getId() : null;
-        System.out.println("서비스 : "+list);
         return new CursorPageResponse<>(list, nextCursor, hasNext);
     }
 

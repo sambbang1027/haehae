@@ -2,6 +2,7 @@ package com.example.backend.entity.mission;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Builder
 @Table(name = "missions")
 public class Missions {
     @Id
@@ -34,20 +36,25 @@ public class Missions {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "mission_category" , nullable = false)
+    @Column(name = "mission_category" , nullable = false, length = 20)
     private MissionCategory missionCategory;
+
+    @Column(name = "mission_point")
+    private Long missionPoint;
 
     public enum MissionType {
         DAILY,
         WEEKLY
     }
-
+    // 1.봉사 2. 게시물 3. 댓글 4. 나눔 5. 리워드상품 6. 미션 7.기타
     public enum MissionCategory {
         VOLUNTEER,
         POST,
         COMMENT,
         SHARING,
-        REWARD
+        REWARD,
+        MISSION,
+        ETC
     }
 
 }
