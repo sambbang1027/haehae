@@ -38,7 +38,7 @@ const RewardNavigator = () => {
                 options={({ navigation }) => ({ 
                 headerTitle: "결제 완료",
                 headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                    <TouchableOpacity onPress={() => navigation.getParent()?.navigate('MainStack', { screen: 'Main' })}>
                     <Text style={{ marginRight: wp('31.8%'),fontSize:wp('6%') }}>X</Text>
                     </TouchableOpacity>
                 ),

@@ -13,14 +13,19 @@ import { RewardParamList } from '../../navigation/RewardNavigator';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useModal } from '../../context/ModalContext';
 import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../../navigation/AppNavigator';
 
 
 type RewardScreenNavigationProp = RouteProp<RewardParamList,'RewardPay'>;
+type Navigation = NativeStackNavigationProp<AppStackParamList>;
 
 const RewardPay = () => {
   const route = useRoute<RewardScreenNavigationProp>(); 
   const { userPointId } = route.params;
   const {showModal, hideModal} = useModal();
+  const navigation = useNavigation<Navigation>();
   
   interface payResultData{
     id : number,
@@ -52,13 +57,15 @@ const RewardPay = () => {
             }) 
     }
   }
-
   const refundEvent = async()=> {
       try{
           const res = await api.post(`userReward/pay/refund/${userPointId}`);
             showModal({
                   type:'confirm',
                   content : `${res.data}`,
+                  onConfirm() {
+                  navigation.navigate('MainStack', { screen: 'Main' });
+                }
               }) 
         }catch(error : any){
                 const message =
