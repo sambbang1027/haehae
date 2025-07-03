@@ -8,7 +8,7 @@ import { useUser } from '../../context/UserContext';
 //firebase hook
 import { useFireBaseImage } from '../../hooks/UseFirebaseImage';
 //image hooks 관리
-import { useImagePicker } from '../../hooks/UseImagePicker';
+import { useImagePicker } from '../../hooks/useImagePicker';
 //imagePriview UI
 import ImagePreviewList from '../../components/image/ImagePreviewList';
 
@@ -36,7 +36,7 @@ export default function WriteLocalBoardPost() {
           localBoardImageUrl: uploadedImageUrls
         };
 
-      await api.post('local-board/detail/create', formData);
+  await api.post('local-board/detail/create', formData);
 
     } catch (error) {
       console.error('게시글 등록 실패:', error);
