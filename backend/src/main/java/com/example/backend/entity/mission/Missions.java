@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Builder
 @Table(name = "missions")
 public class Missions {
@@ -53,8 +52,7 @@ public class Missions {
         COMMENT,
         SHARING,
         REWARD,
-        MISSION,
-        ETC
+        MISSION
     }
 
 }

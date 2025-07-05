@@ -16,6 +16,8 @@ public interface MissionService {
             Long cursor,
             int limit
     );
+    void missionPreviewWeekly();
+    void missionPreviewDaily();
     void missionInsert(MissionInsertRequestDTO dto);
     void missionUpdate(MissionUpdateRequestDTO dto);
     void missionDelete(Long id);

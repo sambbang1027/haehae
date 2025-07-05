@@ -1,6 +1,7 @@
-  import React, { useState } from 'react';
+  import React, { useState, useEffect } from 'react';
   import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
   import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+  import api from '../../api/AxiosInstance';
   // import Header from '../../components/MainHeader';
   // import Footer from '../../components/Footer';
 
@@ -33,6 +34,16 @@
     const [selectedTab, setSelectedTab] = useState<'weekly' | 'daily'>('daily'); // 초기 탭 설정
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    useEffect(()=> {
+      missionAxios();
+    },[]);
+
+    const missionAxios = async() => {
+      const res = await api.get("previewMission/list");
+      const missionList= JSON.stringify(res.data);
+      
+    }
 
     const showModal = () => {
       setIsModalVisible(true);
@@ -100,8 +111,6 @@
 
       </ScrollView>
       {/* <Footer/> */}
-
-
       {isModalVisible && (
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -116,7 +125,6 @@
           </View>
         </View>
       )}
-
       </View>
     );
   };
