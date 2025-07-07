@@ -23,12 +23,15 @@ public class MissionInsertRequestDTO {
     @Min(value = 0, message = "포인트는 0 이상이어야 합니다.")
     private Long missionPoint;
 
+    private Long quantityCondition;
+
     public Missions toMissionEntity(){
         return Missions.builder()
                 .missionType(missionType)
                 .missionContent(missionContent)
                 .missionCategory(missionCategory)
                 .missionPoint(missionPoint)
+                .quantityCondition(quantityCondition)
                 .build();
     }
 

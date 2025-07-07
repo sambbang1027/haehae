@@ -16,18 +16,21 @@ public class MissionPreviewDTO {
     private String missionContent;
     private Missions.MissionCategory missionCategory;
     private Long missionPoint;
+    private Long quantityCondition;
 
     public MissionPreviewDTO(
             Long id,
             Missions.MissionType missionType,
             String missionContent,
             Missions.MissionCategory missionCategory,
-            Long missionPoint
+            Long missionPoint,
+            Long quantityCondition
     ){
         this.id = id;
         this.missionType = missionType;
         this.missionContent = missionContent;
         this.missionCategory = missionCategory;
         this.missionPoint = missionPoint;
+        this.quantityCondition = quantityCondition;
     }
 }

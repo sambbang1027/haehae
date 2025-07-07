@@ -2,48 +2,64 @@
   import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
   import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
   import api from '../../api/AxiosInstance';
-  // import Header from '../../components/MainHeader';
-  // import Footer from '../../components/Footer';
+  import { useUser } from '../../context/UserContext';
+
 
   interface Mission {
     id: number;
-    type: 'weekly' | 'daily';
-    title: string;
-    reward: string;
-    status?: '완료' | '진행중';
-    duration?: string; // 주간 미션 기간
-    date?: string;     // 일일 미션 날짜
+    previewMissionContent: string;
+    previewMissionPoint: number;
+    previewMissionType: 'WEEKLY' | 'DAILY';
+    previewMissionCategory: 'string';
   }
 
-  const MissionScreen: React.FC = () => {
-    const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([
-      { id: 1, type: 'weekly', title: '주 5회 봉사 활동 참여', reward: '1,000p' },
-      { id: 4, type: 'weekly', title: '커뮤니티 글 1회 작성', reward: '300p' },
-      { id: 5, type: 'weekly', title: '나눔 거래 1회 이상', reward: '300p' },
-      { id: 7, type: 'weekly', title: '새로운 봉사 게시글 3개 이상 확인', reward: '500p'},
-      { id: 8, type: 'weekly', title: '주간 미션 추가 1', reward: '100p' },
-      { id: 9, type: 'weekly', title: '주간 미션 추가 2', reward: '200p' },
-    ]);
+  const MissionScreen = () => { 
+
+    const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
     const [dailyMissions, setDailyMissions] = useState<Mission[]>([
-      { id: 2, type: 'daily', title: '우리 동네 쓰레기 줍기 봉사 1회 참여', reward: '300p', status: '완료', date: '(2025.04.28)' },
-      { id: 3, type: 'daily', title: '질문 답변 2회 이상 참여', reward: '250p' },
-      { id: 6, type: 'daily', title: '오늘의 분리수거 인증샷 올리기', reward: '100p' },
-      { id: 10, type: 'daily', title: '일일 미션 추가 1', reward: '50p', date: '(2025.05.13)' },
-      { id: 11, type: 'daily', title: '일일 미션 추가 2', reward: '75p', date: '(2025.05.13)' },
     ]);
-    const [selectedTab, setSelectedTab] = useState<'weekly' | 'daily'>('daily'); // 초기 탭 설정
+    const [selectedTab, setSelectedTab] = useState<'weekly' | 'daily'>('daily');
+    const {user, setUser} = useUser();
+    const userId = user?.userId;
+
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(()=> {
+      checkMissionStauts();
       missionAxios();
     },[]);
 
     const missionAxios = async() => {
-      const res = await api.get("previewMission/list");
-      const missionList= JSON.stringify(res.data);
-      
+      try {
+        const res = await api.get("previewMission/list");
+        const weekly: Mission[] = [];
+        const daily: Mission[] = [];
+
+        res.data.forEach((mission :Mission) => {
+          if(mission.previewMissionType == 'WEEKLY'){
+            weekly.push(mission);
+          }else{
+            daily.push(mission);
+          }
+        });
+
+        setWeeklyMissions(weekly);
+        setDailyMissions(daily);
+        
+      } catch (error) {
+        console.error("요청 실패:", error);
+      }
     }
+
+      const checkMissionStauts = async() => {
+      try{
+        const res = api.post(`mission/status/check/${userId}`)
+        console.log(res);
+      }catch(error){
+
+        }
+      }
 
     const showModal = () => {
       setIsModalVisible(true);
@@ -77,7 +93,7 @@
             style={[styles.tabItem, selectedTab === 'weekly' && styles.activeTab]}
             onPress={() => setSelectedTab('weekly')}
           >
-            <Text style={[styles.tabText, selectedTab === 'weekly' && styles.activeTabText]}>주간 미션</Text>
+            <Text style={[styles.tabText, selectedTab === 'weekly' && styles.activeTabText]}>주간 미션</Text>   
           </TouchableOpacity>
         </View>
 
@@ -86,9 +102,9 @@
           <View style={styles.missionListContainer}>
             {weeklyMissions.map((mission, index) => (
               <View key={mission.id} style={styles.missionItem}>
-                <Text style={styles.missionTitle}>{mission.title}</Text>
+                <Text style={styles.missionTitle}>{mission.previewMissionContent}</Text>
               <TouchableOpacity onPress={showModal}> 
-                <Text style={styles.missionReward}>{mission.reward}</Text>
+                <Text style={styles.missionReward}>{mission.previewMissionPoint}p</Text>
               </TouchableOpacity>
               </View>
             ))}
@@ -100,9 +116,9 @@
           <View style={styles.missionListContainer}>
             {dailyMissions.map((mission, index) => (
               <View key={mission.id} style={styles.missionItem}>
-                <Text style={styles.missionTitle}>{mission.title}</Text>
+                <Text style={styles.missionTitle}>{mission.previewMissionContent}</Text>
               <TouchableOpacity onPress={showModal}>
-                <Text style={styles.missionReward}>{mission.reward}</Text>
+                <Text style={styles.missionReward}>{mission.previewMissionPoint}p</Text>
               </TouchableOpacity>
               </View>
             ))}
@@ -200,7 +216,7 @@
     // 미션 목록 스타일
     missionListContainer: {
       paddingHorizontal: wp('5%'),
-      marginTop: hp('2%'),
+      marginTop: hp('1.3%'),
     },
     missionItem: {
       flexDirection: 'row',
@@ -208,16 +224,17 @@
       alignItems: 'center',
       paddingVertical: hp('1.5%'),
       borderBottomWidth : hp('0.2%'),
-      borderBottomColor: '#e0e0e0'
+      borderBottomColor: '#e0e0e0',
+      marginBottom:hp('3%')
     },
     missionTitle: {
       color: '#000000',
-      fontSize: wp('5%'),
+      fontSize: wp('4%'),
       fontWeight: '400',
     },
     missionReward: {
       color: '#000000',
-      fontSize: wp('5%'),
+      fontSize: wp('4%'),
       fontWeight: 'bold',
       marginLeft: wp('5%'),
     },

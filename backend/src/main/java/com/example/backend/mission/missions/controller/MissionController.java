@@ -33,25 +33,25 @@ public class MissionController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("insert")
+    @PostMapping("/insert")
     public ResponseEntity<String> insertMission(@RequestBody MissionInsertRequestDTO dto){
         missionService.missionInsert(dto);
         return new ResponseEntity<>("미션 등록 성공",HttpStatus.OK);
     }
 
-    @PostMapping("update")
+    @PostMapping("/update")
     public ResponseEntity<String> updateMission(@RequestBody MissionUpdateRequestDTO dto){
         missionService.missionUpdate(dto);
         return new ResponseEntity<>("미션 수정 완료" ,HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteMission(@PathVariable Long id){
         missionService.missionDelete(id);
         return new ResponseEntity<>("삭제 성공",HttpStatus.OK);
     }
 
-    @DeleteMapping("delete/list")
+    @DeleteMapping("/delete/list")
     public ResponseEntity<String> deleteMissionList(@RequestParam List<Long> idList){
         missionService.missionDeleteList(idList);
         return new ResponseEntity<>("삭제 성공", HttpStatus.OK);

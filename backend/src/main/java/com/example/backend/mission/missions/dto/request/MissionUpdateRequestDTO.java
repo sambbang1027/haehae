@@ -26,6 +26,8 @@ public class MissionUpdateRequestDTO {
     @Min(value = 0, message = "포인트는 0 이상이어야 합니다.")
     private Long missionPoint;
 
+    private Long quantityCondition;
+
     public Missions toMissionEntity(){
         return Missions.builder()
                 .id(id)
@@ -33,6 +35,7 @@ public class MissionUpdateRequestDTO {
                 .missionContent(missionContent)
                 .missionCategory(missionCategory)
                 .missionPoint(missionPoint)
+                .quantityCondition(quantityCondition)
                 .build();
     }
 }
