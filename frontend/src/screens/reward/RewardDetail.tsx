@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -8,25 +8,107 @@ import {
     TouchableOpacity,
     Modal,
     TextInput,
+    Alert,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { RewardParamList } from '../../navigation/RewardNavigator';
+import api from '../../api/AxiosInstance';
+import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
+import { useUser } from '../../context/UserContext';
+import { useModal } from '../../context/ModalContext';
+import { navigate } from '../../navigation/NavigationService';
 
-type RewardScreenNavigationProp = NativeStackNavigationProp<RewardParamList,'RewardDetail'>;
+type RewardScreenNavigationProp = RouteProp<RewardParamList,'RewardDetail'>;
 
-const handlerPayPress = () => {
-    // Handle the payment logic here
-    console.log('결제하기 버튼이 눌렸습니다.');
-};
 
 const RewardDetail = () => {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
     const [usePoints, setUsePoints] = useState('');
-    const navigation = useNavigation<RewardScreenNavigationProp>(); 
-    
+    const route = useRoute<RewardScreenNavigationProp>(); 
+    const { rewardId } = route.params;
+    const {user, setUser} = useUser();
+    const userId = user?.userId;
+    const [userCurrentPoint, setCurrentPoint] = useState<number>(0);
+    const {showModal, hideModal} = useModal();
+    const [itemCount, setItemCount] = useState(1)
+
+    useEffect(() => {
+        rewardDetailInfo(rewardId);
+        if (userId !== undefined) {
+            findUserPoint(userId);
+        }
+    }, [rewardId]);
+
+    console.log(rewardId);
+
+    const [rewardDetailItem, setrewardDetailItem]= useState<{
+        id : number;
+        name : string;
+        description : string;
+        pointCost : number;
+        organization : string;
+        createdAt : string;
+        updatedAt : string | null;
+        rewardType : string;
+        rewardImageId : number[];
+        rewardItemsImgUrl : string[];
+    } | null>(null)
+
+
+    const rewardDetailInfo = async(rewardId : number)=>{
+        try{
+            const response = await api.get(`reward/detail/${rewardId}`);
+            console.log(response.data);
+            const convertDate = formatTOKSTDateTime(response.data.createdAt);
+            const convertUpdateDate = formatTOKSTDateTime(response.data.updatedAt);
+            setrewardDetailItem({
+                id : response.data.id,
+                name : response.data.name,
+                description : response.data.description,
+                pointCost : response.data.pointCost,
+                organization : response.data.organization,
+                rewardType : response.data.rewardType,
+                createdAt : convertDate,
+                updatedAt : convertUpdateDate,
+                rewardImageId : response.data.rewardImageId,
+                rewardItemsImgUrl : response.data.rewardItemsImgUrl
+            });
+            console.log(rewardDetailItem);
+
+        }catch(error) {
+            console.log(error);
+        }
+    }
+
+    const findUserPoint = async(userId : number) => {
+        try{
+            const res = await api.get(`userReward/point/${userId}`);
+            console.log(res.data);
+            setCurrentPoint(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    const handlerPayPress = () => {
+        console.log('결제하기 버튼이 눌렸습니다.');
+    };
+
     const handlePayButtonPress = () => {
+        if(userCurrentPoint === 0){
+            showModal({
+                type:'confirm',
+                content : '보유하신 포인트가 없습니다.',
+            })  
+            return;
+        }else if(rewardDetailItem && userCurrentPoint < rewardDetailItem.pointCost){
+            showModal({
+                type:'confirm',
+                content : '보유하신 포인트가 없습니다.',
+            })  
+            return;
+        }
         setIsBottomSheetVisible(true);
     };
 
@@ -35,66 +117,118 @@ const RewardDetail = () => {
         setUsePoints('');
     };
 
-    const handlePaymentConfirmation = () => {
-        // Perform payment processing logic here using the 'usePoints' value
+    const handlePaymentConfirmation = async() => {
         console.log('결제 확인:', usePoints);
+        console.log(itemCount);
+        try{
+            const body = {
+                userId: user?.userId,
+                pointType: '사용', 
+                amount: rewardDetailItem?.rewardType === 'DONATION'
+                ? parsedUsePoints
+                : rewardDetailItem!.pointCost * itemCount, 
+                source: rewardDetailItem?.name, 
+                rewardItemId: rewardId,
+                count : itemCount,
+                status: rewardDetailItem?.rewardType === 'DONATION'
+                ? 'USED'
+                :'AVAILABLE' 
+            };
+            const res =   await api.post('userReward/pay',body);
+                console.log(res.data);
+                navigate('RewardStack', {
+                    screen: 'RewardPay',
+                    params: { userPointId: res.data }
+                });
+        }catch(error :any){
+            const message =
+            error.response?.data?.message ||
+            error.message
+            '알 수 없는 오류가 발생했습니다.';
+            showModal({
+                type:'confirm',
+                content : message,
+            })  
+        }
         closeBottomSheet();
-        // You would typically navigate to a confirmation screen or show a success message
-        navigation.navigate('RewardPay');
     };
 
-    const availablePoints = 1080;
-    const donationAmount = 1000;
-    const remainingPoints = availablePoints - parseInt(usePoints || '0', 10);
-    const finalPayment = Math.max(0, donationAmount - parseInt(usePoints || '0', 10));
+
+    const parsedUsePoints = parseInt(usePoints || '0', 10);
+    const [availablePoints, setAvailablePoints] = useState<number>(0);
+
+    useEffect(() => {
+        remainPoint();
+    }, [usePoints, userCurrentPoint]);
+
+    const remainPoint= () => {
+        const parsedPoints = parseInt(usePoints || '0', 10);
+        const remain = userCurrentPoint - parsedPoints;
+        setAvailablePoints(remain);
+    }
 
     return (
         <View style={{ flex: 1 }}>
             <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
                 <View style={styles.mainContent}>
-                    <Text style={styles.donationTitle}>불우이웃 재헌이 돕기</Text>
+                    <Text style={styles.donationTitle}>{rewardDetailItem?.name}</Text>
                     <View style={styles.donationInfo}>
-                        <Text style={styles.date}>2024년 4월 23일</Text>
-                        <Text style={styles.organization}>동서남북 기부단체</Text>
+                        <Text style={styles.date}>
+                            {rewardDetailItem?.updatedAt
+                                ? rewardDetailItem.updatedAt
+                                : rewardDetailItem?.createdAt}
+                            </Text>
+                        <Text style={styles.organization}>{rewardDetailItem?.organization}</Text>
                     </View>
-                    <Image style={styles.donationImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover" />
+                        {rewardDetailItem?.rewardImageId && rewardDetailItem.rewardImageId.length > 0 && (
+                            rewardDetailItem.rewardImageId.map((id, index) => (
+                                <Image
+                                    key={id}
+                                    source={{ uri: rewardDetailItem.rewardItemsImgUrl[index] }}
+                                    style={styles.donationImage}
+                                />
+                            ))
+                        )}
                     <Text style={styles.donationDescription}>
-                        세상을 구하는게 영웅이 아닙니다. 배고픈 재헌이에게 작은 도움의 손길을 내미는 것. 작지만 따뜻한 손길이 재헌이한테 영웅이 될 수 있습니다. 밥 한 끼 사주세요.
+                            {rewardDetailItem?.description}
                     </Text>
                     <View style={styles.paymentSummary}>
                         <View style={styles.paymentItem}>
                             <View style={styles.paymentHeader}>
-                                <Image style={styles.paymentImage} source={require('../../assets/images/chimchak.png')} resizeMode="cover"/>
-                                <View style={{ flexDirection: 'column', justifyContent: 'center' }}> {/* 텍스트들을 세로로 배치 */}
-                                    <Text style={styles.paymentOrganization}>동서남북 기부단체</Text>
-                                    <Text style={styles.paymentTitle}>불우이웃 재헌이 돕기</Text>
+                                <Image style={styles.paymentImage} source={{uri: rewardDetailItem?.rewardItemsImgUrl[0]}} resizeMode="cover"/>
+                                <View style={{ flexDirection: 'column', justifyContent: 'center' }}> 
+                                    <Text style={styles.paymentOrganization}>{rewardDetailItem?.organization}</Text>
+                                    <Text style={styles.paymentTitle}>{rewardDetailItem?.name}</Text>
                                 </View>
                             </View>
                             <View style={styles.deviceLine}></View>
-                            <View style={styles.paymentAmountContainer}>
-                                <Text style={styles.paymentLabel}>결제 금액</Text>
-                                <Text style={styles.paymentAmount}>{donationAmount}p</Text>
-                            </View>
+                            {rewardDetailItem?.rewardType === 'DONATION' ? (
+                                <View style={styles.paymentAmountContainer}>
+                                    <Text style={styles.paymentLabel}>결제 금액</Text>
+                                    <Text style={styles.paymentAmount1}>직접 입력 </Text>
+                                </View>
+                            ) : (
+                                <View style={styles.paymentAmountContainer}>
+                                    <Text style={styles.paymentLabel}>개당 금액</Text>
+                                    <Text style={styles.paymentAmount}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
+                                </View>
+                            )}
                         </View>
                     </View>
 
-
-                    {/* Available Points */}
                     <View style={styles.availablePointsCard}>
                         <Text style={styles.availablePointsLabel}>현재 사용가능한 포인트</Text>
-                        <Text style={styles.availablePoints}>{availablePoints}p</Text>
+                        <Text style={styles.availablePoints}>{userCurrentPoint.toLocaleString()}p</Text>
                     </View>
                 </View>
             </ScrollView>
 
-            {/* Bottom Button */}
             <TouchableOpacity onPress={handlePayButtonPress}>
                 <View style={styles.bottomBackground}>
                     <Text style={styles.payText}>결 제 하 기</Text>
                 </View>
             </TouchableOpacity>
 
-            {/* Bottom Sheet Modal */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -109,53 +243,119 @@ const RewardDetail = () => {
                         <View style={styles.bottomsheetArea}>
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>금액</Text>
-                                <Text style={styles.bottomSheetValue}>{donationAmount}p</Text>
+                                {rewardDetailItem?.rewardType === 'DONATION'?(
+                                    <Text style={styles.bottomSheetValue}>직접 입력</Text>
+                                ) : (
+                                    <Text style={styles.bottomSheetValue}>{rewardDetailItem?.pointCost.toLocaleString()}p</Text>
+                                )}
                             </View>
 
                             <View style={styles.bottomSheetItem}>
+                                {rewardDetailItem?.rewardType === 'DONATION'?(
+                                <>
                                 <Text style={styles.bottomSheetLabel}>사용할 포인트</Text>
-                                {/* <TextInput
-                                    style={styles.pointInput}
-                                    keyboardType="number-pad"
-                                    value={usePoints}
-                                    onChangeText={setUsePoints}
-                                    placeholder="포인트 입력"
-                                /> */}
-                                <Text style={styles.bottomSheetValue}>1,000p</Text>
+                                <TextInput
+                                style={styles.pointInput}
+                                keyboardType="number-pad"
+                                value={usePoints}
+                                onChangeText={(text) => {
+                                    // 숫자만 허용하도록 정리
+                                    const numericText = text.replace(/[^0-9]/g, '');
+
+                                    // 숫자 변환 후 현재 포인트보다 크면 무시
+                                    const numericValue = parseInt(numericText || '0', 10);
+                                    if (numericValue > userCurrentPoint) {
+                                    //Alert.alert('알림', `현재 보유한 포인트(${userCurrentPoint}p)를 초과할 수 없습니다.`);
+                                    showModal({
+                                        type:'confirm',
+                                        content : `현재 보유한 포인트 ${userCurrentPoint}p 보다 초과할 수 없습니다.`,
+                                    })  
+                                    return;
+                                    }
+                                    setUsePoints(numericText);
+                                }}
+                                placeholder=" 포인트 입력"
+                                />
+                                </>
+                                ): (
+                                <>
+                                <Text style={styles.bottomSheetLabel}>개수</Text>
+                                <View style={styles.quantityContainer}>
+                                    <TouchableOpacity onPress={() => setItemCount(prev => Math.max(1, prev - 1))}>
+                                    <Text style={styles.quantityButton}>-</Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.quantityText}>{itemCount}</Text>
+                                    <TouchableOpacity onPress={() => {
+                                    if(!rewardDetailItem?.pointCost){
+                                        showModal({
+                                            type: 'confirm',
+                                            content: `상품 정보 에러 관리자에게 문의하세요`,
+                                            });
+                                            return;
+                                    }
+                                    const maxCount = Math.floor(userCurrentPoint / rewardDetailItem?.pointCost);
+                                    if (itemCount < maxCount && itemCount < 100) {
+                                        setItemCount(prev => prev + 1);
+                                        } else if (itemCount >= 100) {
+                                        showModal({
+                                            type: 'confirm',
+                                            content: `최대 100개까지만 구매 가능합니다.`,
+                                        });
+                                        } else {
+                                        showModal({
+                                            type: 'confirm',
+                                            content: `보유 포인트로 최대 ${maxCount}개까지 구매할 수 있습니다.`,
+                                        });
+                                        }
+                                    }}>
+                                    <Text style={styles.quantityButton}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                </>
+                                )}
                             </View>
 
                             <View style={styles.bottomSheetItem2}>
                                 <Text style={styles.bottomSheetLabel2}>현재 보유 포인트</Text>
-                                <Text style={styles.bottomSheetValue2}>1,080p</Text>
+                                <Text style={styles.bottomSheetValue2}>{userCurrentPoint.toLocaleString()}p</Text>
                             </View>
-
+                            
+                            
                             <View style={styles.bottomSheetItem3}>
                                 <Text style={styles.bottomSheetLabel2}>결제 시 남을 포인트</Text>
-                                <Text style={styles.bottomSheetValue2}>80p</Text>
+                                <Text style={styles.bottomSheetValue2}>
+                                {rewardDetailItem?.rewardType === 'DONATION' 
+                                    ? `${availablePoints.toLocaleString()}p`
+                                    : rewardDetailItem?.pointCost
+                                        ? `${(userCurrentPoint - rewardDetailItem.pointCost * itemCount).toLocaleString()}p`
+                                        : ''}
+                                </Text>
                             </View>
 
                             <View style={styles.bottomSheetItem}>
                                 <Text style={styles.bottomSheetLabel}>최종 결제 금액</Text>
-                                <Text style={styles.bottomSheetValue3}>{finalPayment}p</Text>
+                                <Text style={styles.bottomSheetValue3}>
+                                {rewardDetailItem?.rewardType === 'DONATION'
+                                    ? `${parsedUsePoints.toLocaleString()}p`
+                                    : rewardDetailItem?.pointCost
+                                    ? `${(rewardDetailItem.pointCost * itemCount).toLocaleString()}p`
+                                    : ''}
+                                </Text>
                             </View>
                         </View> 
                         
                         <View style={styles.bottomSheetButtons}>
-                                {/* <TouchableOpacity style={styles.cancelButton} onPress={closeBottomSheet}>
-                                    <Text style={styles.buttonText}>취소</Text>
-                                </TouchableOpacity> */}
                                 <TouchableOpacity style={styles.confirmButton} onPress={handlePaymentConfirmation}>
                                     <Text style={styles.buttonText}>결제하기</Text>
                                 </TouchableOpacity>
                         </View>
-
                     </View>
                 </View>
             </Modal>
         </View>
     );
 };
-``
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -254,21 +454,27 @@ const styles = StyleSheet.create({
         marginVertical: hp('2%'),
     },
     paymentAmountContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // 결제 금액과 금액을 양쪽 끝으로
-    alignItems: 'center',
-    marginTop: hp('1.5%'),
+        flexDirection: 'row',
+        justifyContent: 'space-between', // 결제 금액과 금액을 양쪽 끝으로
+        alignItems: 'center',
+        marginTop: hp('1.5%'),
     },
     paymentLabel: {
-    color: '#000',
-    fontSize: hp('2.2%'),
-    fontWeight: 'bold',
+        color: '#000',
+        fontSize: hp('2.2%'),
+        fontWeight: 'bold',
     },
     paymentAmount: {
-    color: '#000',
-    fontWeight: 'bold',
-    fontSize: hp('2.2%'),
-    marginLeft: wp('50%'),
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: hp('2.2%'),
+        marginLeft: wp('45%'),
+    },
+    paymentAmount1: {
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: hp('2.2%'),
+        marginLeft: wp('45%')
     },
     availablePointsCard: {
         backgroundColor: '#ffffff',
@@ -278,6 +484,7 @@ const styles = StyleSheet.create({
         padding: hp('2%'),
         marginBottom: hp('2.5%'),
         flexDirection: 'row',
+        
 
     },
     availablePointsLabel: {
@@ -293,7 +500,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-Regular',
         fontSize: hp('2.2%'),
         fontWeight: 'bold',
-        marginLeft: wp('20%'),
+        marginLeft: wp('18%'),
     },
     bottomBackground: {
         backgroundColor: '#dafcac',
@@ -328,7 +535,7 @@ const styles = StyleSheet.create({
     //     textAlign: 'center',
     // },
     slideDown : {
-        marginLeft : wp('40%'),
+        marginLeft : wp('42%'),
         marginBottom : hp('1%')
     },
     bottomsheetArea :{
@@ -408,6 +615,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
+    quantityContainer: {
+        alignSelf: 'flex-end',
+        flexDirection: 'row',
+        alignItems: 'center',
+    
+    },
+    quantityButton: {
+        fontSize: 20,
+        paddingHorizontal: 10,
+    },
+    
+    quantityText: {
+        marginHorizontal: 10,
+        fontSize: 16,
+    }
 });
 
 export default RewardDetail;

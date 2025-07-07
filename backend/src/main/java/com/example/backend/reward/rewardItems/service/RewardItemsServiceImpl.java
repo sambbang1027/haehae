@@ -1,6 +1,8 @@
 package com.example.backend.reward.rewardItems.service;
 
 
+import com.example.backend.exception.RewardException;
+import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.request.RewardItemsRequestUpdateDTO;
 import com.example.backend.reward.rewardItems.dto.request.RewardRequestDTO;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardDetailDTO;
@@ -12,6 +14,8 @@ import com.example.backend.reward.rewardItems.repository.RewardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -31,11 +35,14 @@ public class RewardItemsServiceImpl implements RewardItemsService {
     public void rewardItemInsert(RewardRequestDTO dto) {
         if(dto.getRewardType() != RewardItems.RewardType.DONATION){
             if(dto.getStock()<=0){
-                throw new IllegalArgumentException("상품의 갯수를 입력해주세요.");
+                throw new RewardException("상품의 갯수를 입력해주세요.");
             } else if (dto.getPointCost()<=0) {
-                throw new IllegalArgumentException("포인트 가격을 입력해주세요.");
+                throw new RewardException("포인트 가격을 입력해주세요.");
             }
+        }else{
+            dto.setPointCost(0);
         }
+
         RewardItems item = rewardRepository.save(dto.toRewardItemsEntity());
 
         List<String> imageUrls = dto.getRewardItemsImgUrl();
@@ -52,37 +59,53 @@ public class RewardItemsServiceImpl implements RewardItemsService {
     }
 
     @Override
-    public List<FindRewardListDTO> findRewardItemList(RewardItems.RewardType rewardType) {
+    public CursorPageResponse<FindRewardListDTO> findRewardItemList(RewardItems.RewardType rewardType, Long cursor, int limit) {
         if(rewardType == null){
              rewardType = RewardItems.RewardType.DONATION;
         }
-        return rewardRepository.findRewardList(rewardType);
+
+        int limitPlusOne = limit + 1;
+        List<FindRewardListDTO> list = rewardRepository.findRewardList(rewardType, cursor, limitPlusOne);
+
+        boolean hasNext = list.size() > limit;
+
+        if (hasNext) {
+            list.remove(limit);  // 초과 1개 제거
+        }
+
+        Long nextCursor = hasNext ? list.get(list.size() - 1).getId() : null;
+        System.out.println("서비스 : "+list);
+        return new CursorPageResponse<>(list, nextCursor, hasNext);
     }
 
     @Override
     public FindRewardDetailDTO findRewardDetail(long id) {
         FindRewardDetailDTO dto = rewardRepository.findRewardDetailById(id);
         if(dto == null){
-            throw new IllegalArgumentException("조회한 게시물의 정보가 없습니다.");
+            throw new RewardException("조회한 게시물의 정보가 없습니다.");
         }
         return dto;
     }
 
     @Override
     public void rewardItemUpdate(RewardItemsRequestUpdateDTO dto) {
-        if(dto.getStock() < 0){
-            throw new IllegalArgumentException("리워드 상품의 재고는 음수 일 수 없습니다.");
+
+        if(dto.getRewardType() != RewardItems.RewardType.DONATION) {
+            if (dto.getStock() < 0) {
+                throw new RewardException("DONATION을 제외한 리워드 상품의 재고는 음수 일 수 없습니다.");
+            }
         }
         RewardItems rewardItems= rewardRepository.findById(dto.getId())
-                        .orElseThrow(() -> new EntityNotFoundException("해당 게시물의 정보가 없습니다. "));
+                        .orElseThrow(() -> new RewardException("해당 게시물의 정보가 없습니다. "));
 
         rewardRepository.save(dto.toEntity());
     }
+
     @Transactional
     @Override
     public void rewardDeleteById(long id) {
         if(!rewardRepository.existsById(id)){
-            throw new IllegalArgumentException("해당 게시물의 정보가 없습니다.");
+            throw new RewardException("해당 게시물의 정보가 없습니다.");
         }
         rewardImageRepository.deleteByAll(id);
         rewardRepository.deleteById(id);

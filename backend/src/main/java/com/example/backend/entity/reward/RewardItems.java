@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Table(name = "reward_items")
 public class RewardItems {
@@ -47,11 +47,19 @@ public class RewardItems {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 
-
     public enum RewardType {
         DONATION,
         VOUCHER,
         GIFTICON
     }
+
+    public void decreaseStock(long quantity) {
+        this.stock -= quantity;
+    }
+
+    public void increaseStock(long quantity) {
+        this.stock += quantity;
+    }
+
 }
 

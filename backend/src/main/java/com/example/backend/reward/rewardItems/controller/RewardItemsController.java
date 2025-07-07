@@ -1,5 +1,6 @@
 package com.example.backend.reward.rewardItems.controller;
 
+import com.example.backend.pagination.response.CursorPageResponse;
 import com.example.backend.reward.rewardItems.dto.request.RewardItemsRequestUpdateDTO;
 import com.example.backend.reward.rewardItems.dto.request.RewardRequestDTO;
 import com.example.backend.reward.rewardItems.dto.response.FindRewardDetailDTO;
@@ -10,8 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/reward")
@@ -29,9 +28,14 @@ public class RewardItemsController {
     }
 
     @GetMapping("/list/{rewardType}")
-    public ResponseEntity<List<FindRewardListDTO>> findRewardItemList(@PathVariable RewardItems.RewardType rewardType){
-        List<FindRewardListDTO> list = rewardItemsService.findRewardItemList(rewardType);
-        return new ResponseEntity<>(list,HttpStatus.OK);
+    public ResponseEntity<CursorPageResponse<FindRewardListDTO>> findRewardItemList(
+                    @PathVariable RewardItems.RewardType rewardType,
+                    @RequestParam(required = false) Long cursor, @RequestParam  int limit
+                    ){
+        System.out.println("리워드 타입 : "+rewardType+ ", cursor : "+ cursor+", limit : "+limit);
+        CursorPageResponse<FindRewardListDTO> list = rewardItemsService.findRewardItemList(rewardType, cursor, limit);
+        System.out.println("체크 : " + list);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @GetMapping("/detail/{id}")

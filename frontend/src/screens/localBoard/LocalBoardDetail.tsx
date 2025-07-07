@@ -229,9 +229,6 @@ export default function LocalBoardDetail() {
           <Text style={styles.date}>{post.date}</Text>
           <Text style={styles.content}>{post.content}</Text>
 
-          {/* {post.image && (
-            <Image source={{ uri: post.image }} style={styles.postImage} />
-          )} */}
 
         {post?.image && post.image.length > 0 && (
           post.image.map((imgUrls, index) => (

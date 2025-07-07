@@ -14,12 +14,15 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import FooterLayout from './src/components/layouts/FooterLayout';
 import { navigationRef } from './src/navigation/NavigationService';
 import { UserProvider } from './src/context/UserContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+const queryClient = new QueryClient();
 
 export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
       <TextSizeProvider>
         <SafeAreaProvider>
           <PaperProvider>
@@ -39,6 +42,7 @@ export default function App() {
           </PaperProvider>
         </SafeAreaProvider>
       </TextSizeProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

@@ -10,7 +10,6 @@ import com.example.backend.reward.rewardItems.dto.response.FindRewardListDTO;
 import java.util.List;
 
 public interface RewardRepositoryCustom {
-    List<FindRewardListDTO> findRewardList(@Param("rewardType")RewardItems.RewardType rewardType);
+    List<FindRewardListDTO> findRewardList(@Param("rewardType")RewardItems.RewardType rewardType, Long cursor, int limitPlusOne);
     FindRewardDetailDTO findRewardDetailById(@Param("id") long id);
-
 }
