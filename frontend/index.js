@@ -11,7 +11,7 @@ console.warn = (msg, ...args) => {
   if (typeof msg === 'string' && msg.includes('Text strings must be rendered')) {
     console.log('📌 Text 오류 위치(WARN):', new Error().stack);
   }
-  originalWarn(msg, ...args);
+     originalWarn(msg, ...args);
 };
 
 console.error = (msg, ...args) => {
@@ -29,5 +29,6 @@ console.error = (msg, ...args) => {
 import { AppRegistry } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
+
 
 AppRegistry.registerComponent(appName, () => App);

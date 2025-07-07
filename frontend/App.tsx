@@ -17,7 +17,7 @@ import { UserProvider } from './src/context/UserContext';
 
 
 export default function App() {
-  
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TextSizeProvider>
