@@ -1,4 +1,4 @@
-package com.example.backend.mission.previeMissions.dto.request;
+package com.example.backend.mission.previewMissions.dto.request;
 
 import com.example.backend.entity.mission.PreviewMissions;
 import lombok.Getter;
@@ -19,6 +19,7 @@ public class PreviewMissionRequestDTO {
     private Timestamp startAt;
     private Timestamp endAt;
     private PreviewMissions.PreviewMissionStatus previewMissionStatus;
+    private Long quantityCondition;
 
     public PreviewMissions toPreviewMissionEntity(){
         return PreviewMissions.builder()
@@ -29,7 +30,8 @@ public class PreviewMissionRequestDTO {
                 .previewMissionCategory(previewMissionCategory)
                 .startAt(startAt)
                 .endAt(endAt)
-                .previewMissionStatus(PreviewMissions.PreviewMissionStatus.UPCOMING)
+                .previewMissionStatus(previewMissionStatus)
+                .quantityCondition(quantityCondition)
                 .build();
     }
 

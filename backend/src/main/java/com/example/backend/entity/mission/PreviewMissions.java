@@ -48,6 +48,8 @@ public class PreviewMissions {
     @Column(name = "preview_mission_status")
     private PreviewMissionStatus previewMissionStatus;
 
+    @Column(name = "quantity_condition")
+    private Long quantityCondition;
 
     @PrePersist
     protected void onCreate(){

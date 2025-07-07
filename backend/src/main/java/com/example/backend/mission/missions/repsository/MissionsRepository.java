@@ -16,14 +16,14 @@ public interface MissionsRepository extends JpaRepository<Missions, Long> , Miss
     boolean existsByMissionContentAndIdNot(String missionContent, Long id);
 
     @Query(" SELECT new com.example.backend.mission.missions.dto.response.MissionPreviewDTO" +
-            " (m.id, m.missionType, m.missionContent, m.missionCategory, m.missionPoint)" +
+            " (m.id, m.missionType, m.missionContent, m.missionCategory, m.missionPoint, m.quantityCondition)" +
             " FROM Missions m" +
             " WHERE m.missionType = :missionType")
     List<MissionPreviewDTO> findWeeklyMissionPreview(@Param("missionType")Missions.MissionType missionType);
 
 
     @Query(" SELECT new com.example.backend.mission.missions.dto.response.MissionPreviewDTO " +
-            " (m.id, m.missionType, m.missionContent, m.missionCategory, m.missionPoint)" +
+            " (m.id, m.missionType, m.missionContent, m.missionCategory, m.missionPoint, m.quantityCondition)" +
             " FROM Missions m" +
             " WHERE m.missionType = :missionType")
     List<MissionPreviewDTO> findDailyMissionPreview(@Param("missionType")Missions.MissionType missionType);

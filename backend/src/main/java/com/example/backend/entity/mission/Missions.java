@@ -41,6 +41,9 @@ public class Missions {
     @Column(name = "mission_point")
     private Long missionPoint;
 
+    @Column(name = "quantity_condition")
+    private Long quantityCondition;
+
     public enum MissionType {
         DAILY,
         WEEKLY

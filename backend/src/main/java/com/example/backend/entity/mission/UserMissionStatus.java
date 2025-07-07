@@ -22,13 +22,14 @@ public class UserMissionStatus {
     @Column(name = "mission_status")
     private MissionStatus missionStatus;
 
+
     public enum MissionStatus{
         PREVIEW,
         ACCEPTED,
         COMPLETED,
-        FAILED,
         EXPIRED
     }
+
 
     @Column(name = "user_id")
     private Long userId; // 제약조건 안둠, 유저별로 구분해주기 위한 컬럼.
