@@ -8,7 +8,7 @@ import { useUser } from '../../context/UserContext';
 //firebase hook
 import { useFireBaseImage } from '../../hooks/UseFirebaseImage';
 //image hooks 관리
-import { useImagePicker } from '../../hooks/useImagePicker';
+import { useImagePicker } from '../../hooks/UseImagePicker';
 //imagePriview UI
 import ImagePreviewList from '../../components/image/ImagePreviewList';
 

@@ -12,7 +12,11 @@
           "package_name": "com.haehae"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1032730359503-ujdiln2gmuai40ejc6m1mabid6m2u3cg.apps.googleusercontent.com"
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBNjwZNaWoIZTQ41dcNa2ahyuYKISxVc68"

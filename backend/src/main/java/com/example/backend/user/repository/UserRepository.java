@@ -33,4 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     Optional<User> findByEmail(String email);
 
+    @Query("SELECT u.email FROM User u WHERE u.name = :username AND u.phoneNumber = :phoneNumber")
+    String findEmailByUsernameAndPhoneNumber(@Param("username") String username, @Param("phoneNumber") String phoneNumber);
+
 }

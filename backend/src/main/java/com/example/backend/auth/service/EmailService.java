@@ -1,7 +1,10 @@
 package com.example.backend.auth.service;
 
+import com.example.backend.auth.dto.EmailDTO;
+import com.example.backend.auth.enums.VerificationType;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
+import com.example.backend.user.service.UserService;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -10,30 +13,51 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import io.github.cdimascio.dotenv.Dotenv;
-import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.UUID;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class EmailService {
 
-    private  String apiKey;
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final UserService userService;
+    private final String apiKey = Dotenv.load().get("SENDGRID_API_KEY");
 
-    public EmailService(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-        this.apiKey = Dotenv.load().get("SENDGRID_API_KEY");
+    // 이메일 발송 핸들러
+    public void handleSendMail(EmailDTO emailDTO){
+        String email = emailDTO.getEmail();
+        VerificationType type = emailDTO.getVerificationType();
+
+        switch (type){
+            case SignUp -> {
+                if(userService.isEmailDuplicated(email)){
+                    throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
+                }
+            }
+            case FindPw -> {
+                if(!userService.isEmailDuplicated(email)){
+                    throw new HaehaeException(ErrorCode.USER_NOT_FOUND);
+                }
+            }
+            default -> throw new HaehaeException(ErrorCode.INVALID_VERIFICATION_TYPE);
+        }
+         sendVerificationMail(type, email);
     }
 
-    // 메일 발송
-    public void sendMail(String toEmail){
+
+    //회원가입 메일 발송
+    public void sendVerificationMail(VerificationType type, String toEmail){
+
         // 보내는 사람, 받는사람
         Email from = new Email("support@haehae.it.com");
         Email to = new Email(toEmail);
@@ -46,7 +70,7 @@ public class EmailService {
         Content content = new Content("text/plain",
                 "[HaeHae] 이메일 인증 안내\n\n" +
                         "안녕하세요. HaeHae 서비스팀입니다.\n\n" +
-                        "아래 인증 코드를 회원가입 화면에 입력해 주세요.\n\n" +
+                        "아래 인증 코드를 입력해 주세요.\n\n" +
                         "인증 코드: " + code + "\n\n" +
                         "본 코드는 보안을 위해 5분 후 만료됩니다.\n" +
                         "타인에게 노출되지 않도록 주의해 주세요.\n\n" +
@@ -69,7 +93,7 @@ public class EmailService {
             System.out.println("응답 내용: " + response.getBody());
             System.out.println("응답 헤더: " + response.getHeaders());
 
-            saveVerificationCode(toEmail, code);
+            saveVerificationCode(type, toEmail, code);
 
         }catch (IOException e){
             throw new HaehaeException(ErrorCode.EMAIL_IO_ERROR);
@@ -84,10 +108,10 @@ public class EmailService {
     }
 
     // redis 코드 저장
-    public void saveVerificationCode(String email, String code){
+    public void saveVerificationCode(VerificationType verifyType, String email, String code){
         try{
 
-            String key = "email:verify:"+email;
+            String key = "email:verify:"+verifyType + ":" +email;
             System.out.println("⛳ Redis 저장 시도: key=" + key + ", code=" + code);
 
             redisTemplate.opsForValue().set(key,code, Duration.ofMinutes(5));
@@ -99,21 +123,40 @@ public class EmailService {
     }
 
     // redis 코드 조회 및 비교
-    public boolean checkVerificationCode(String email, String inputCode){
-        String key = "email:verify:"+email;
+    public boolean checkVerificationCode(VerificationType verifyType, String email, String inputCode){
+        String key = "email:verify:"+verifyType + ":" +email;
         String saveCode = (String) redisTemplate.opsForValue().get(key);
 
-        // 값 일치하면 삭제 후 true 반환
-        if (inputCode.equals(saveCode)) {
-            redisTemplate.delete(key); // 인증 성공 시 수동 삭제 (보안 강화)
-            return true;
+        if (!inputCode.equals(saveCode)) {
+            log.warn("인증코드 불일치: input={}, saved={}, key={}", inputCode, saveCode, key);
+            throw new HaehaeException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
-        return false;
+        redisTemplate.delete(key);
+        return true;
     }
 
     // 코드 삭제
-    public void deleteVerificationCode(String email){
-        String key = "email:verify:"+email;
+    public void deleteVerificationCode(VerificationType verifyType, String email){
+        String key = "email:verify:"+ verifyType + ":" +email;
         redisTemplate.delete(key);
     }
+
+
+    // 비밀번호 재설정 redis 코드 검증 토큰 발급
+    public String verifyPwCodeAndIssueToken(String email, String code) {
+        boolean verified = checkVerificationCode(VerificationType.FindPw, email, code);
+
+        if(!verified){
+            throw new HaehaeException(ErrorCode.INVALID_VERIFICATION_CODE);
+        }
+        deleteVerificationCode(VerificationType.FindPw, email);
+
+        String randomStr = UUID.randomUUID().toString();
+
+        redisTemplate.opsForValue().set("pw-reset:"+randomStr, email, Duration.ofMinutes(5));
+
+
+        return randomStr;
+    }
+
 }

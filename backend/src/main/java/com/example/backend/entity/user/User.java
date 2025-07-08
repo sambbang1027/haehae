@@ -74,4 +74,13 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
     private LocalDate birth;
+
+
+
+    public void updatePassword(String encodedPassword) {
+        this.passwordHash = encodedPassword;
+    }
+
 }
+
+
