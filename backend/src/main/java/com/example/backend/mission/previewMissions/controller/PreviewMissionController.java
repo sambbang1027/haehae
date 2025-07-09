@@ -1,10 +1,12 @@
 package com.example.backend.mission.previewMissions.controller;
 
+import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListAndUserStatusDTO;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListResponseDTO;
 import com.example.backend.mission.previewMissions.service.PreviewMissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +27,15 @@ public class PreviewMissionController {
         System.out.println("요청 들어옴");
         List<PreviewMissionListResponseDTO> missionList= previewMissionService.findPreviewALlActive();
         System.out.println("반환값 확인 : "+ missionList);
+        return new ResponseEntity<>(missionList, HttpStatus.OK);
+    }
+    
+    // 클라이언트 용 미션 리스트
+    @GetMapping("/user/list/{userId}")
+    public ResponseEntity<List<PreviewMissionListAndUserStatusDTO>> findAllActiveMissionAndUserState(
+            @PathVariable Long userId
+    ){
+        List<PreviewMissionListAndUserStatusDTO> missionList = previewMissionService.userPreviewMissionAndStatus(userId);
         return new ResponseEntity<>(missionList, HttpStatus.OK);
     }
 

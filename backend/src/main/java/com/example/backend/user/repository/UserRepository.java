@@ -1,6 +1,7 @@
 package com.example.backend.user.repository;
 
 import com.example.backend.entity.user.User;
+import com.example.backend.user.dto.UserCurrentAndTotalPointResponseDTO;
 import com.example.backend.user.vo.Email;
 import com.example.backend.user.vo.Nickname;
 import jakarta.transaction.Transactional;
@@ -19,13 +20,29 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     // 중복검사
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
+
+    // 유저의 현재 포인트
     @Query("SELECT u.currentPoint FROM User u WHERE u.id= :userId")
     long findCurrentPointByUserId(@Param("userId") long userId);
 
+    //유저의 현재 , 총 포인트
+    @Query("SELECT new com.example.backend.user.dto.UserCurrentAndTotalPointResponseDTO " +
+            " (u.currentPoint, u.totalPoint) " +
+            " FROM User u WHERE u.id= :userId ")
+    UserCurrentAndTotalPointResponseDTO findCurrentAndTotalPointByUserId(@Param("userId") long userId);
+
+    
+    // 현재 포인트 업데이트
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.currentPoint = :currentPoint WHERE u.id = :id")
     void updateCurrentPoint(@Param("currentPoint")long currentPoint, @Param("id") long id);
+    
+    // 총 포인트 업데이트
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.totalPoint = :totalPoint WHERE u.id = :id")
+    void updateTotalPoint(@Param("totalPoint")long totalPoint, @Param("id") long id);
 
     @Query("SELECT u.id FROM User u WHERE u.email= :username")
     long findIdByUsername(@Param("username") String username);

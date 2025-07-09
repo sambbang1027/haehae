@@ -3,14 +3,23 @@ package com.example.backend.mission.userMissionStatus.service;
 import com.example.backend.entity.mission.PreviewMissions;
 import com.example.backend.entity.mission.UserMissionStatus;
 import com.example.backend.entity.reward.RewardItems;
+import com.example.backend.entity.user.UserPoint;
 import com.example.backend.localBoard.board.repository.LocalBoardRepository;
 import com.example.backend.localBoard.comment.repository.BoardCommentRepository;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListResponseDTO;
 import com.example.backend.mission.previewMissions.service.PreviewMissionService;
 import com.example.backend.mission.userMissionStatus.dto.request.UserMissionStatusInsertRequestDTO;
 import com.example.backend.mission.userMissionStatus.dto.request.UserMissionStatusUpdateRequestDTO;
+import com.example.backend.mission.userMissionStatus.dto.response.UserMissionStatusCheckResponseDTO;
 import com.example.backend.mission.userMissionStatus.repository.UserMissionStatusRepository;
+import com.example.backend.mission.userMissions.dto.UserMissionInsertRequestDTO;
+import com.example.backend.mission.userMissions.repository.UserMissionRepository;
 import com.example.backend.reward.userReward.repository.UserRewardRepository;
+import com.example.backend.user.dto.UserCurrentAndTotalPointResponseDTO;
+import com.example.backend.user.repository.UserRepository;
+import com.example.backend.userPoint.dto.request.UserMissionSuccessRequestDTO;
+import com.example.backend.userPoint.repository.UserPointRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -18,22 +27,27 @@ import java.util.List;
 
 @Service
 public class UserMissionStatusServiceImpl implements UserMissionStatusService{
-
     private final UserMissionStatusRepository userMissionStatusRepository;
     private final PreviewMissionService previewMissionService;
-
     private final LocalBoardRepository localBoardRepository;
     private final UserRewardRepository userRewardRepository;
     private final BoardCommentRepository boardCommentRepository;
+    private final UserRepository userRepository;
+    private final UserPointRepository userPointRepository;
+    private final UserMissionRepository userMissionRepository;
 
-    public UserMissionStatusServiceImpl(UserMissionStatusRepository userMissionStatusRepository, PreviewMissionService previewMissionService, LocalBoardRepository localBoardRepository, UserRewardRepository userRewardRepository, BoardCommentRepository boardCommentRepository) {
+    public UserMissionStatusServiceImpl(UserMissionStatusRepository userMissionStatusRepository, PreviewMissionService previewMissionService, LocalBoardRepository localBoardRepository, UserRewardRepository userRewardRepository, BoardCommentRepository boardCommentRepository, UserRepository userRepository, UserPointRepository userPointRepository, UserMissionRepository userMissionRepository) {
         this.userMissionStatusRepository = userMissionStatusRepository;
         this.previewMissionService = previewMissionService;
         this.localBoardRepository = localBoardRepository;
         this.userRewardRepository = userRewardRepository;
         this.boardCommentRepository = boardCommentRepository;
+        this.userRepository = userRepository;
+        this.userPointRepository = userPointRepository;
+        this.userMissionRepository = userMissionRepository;
     }
-
+    
+    // PreviewMission 유저의 상태 확인
     @Override
     public void checkStatusUpdate(Long userId){
         List<PreviewMissionListResponseDTO> missinList =  previewMissionService.findPreviewALlActive();
@@ -45,8 +59,6 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
             Timestamp startAt = mission.getStartAt();
             Timestamp endAt = mission.getEndAt();
             Long countNum = mission.getQuantityCondition();
-            System.out.println(startAt);
-            System.out.println(endAt);
 
             UserMissionStatus missionStatus = userMissionStatusRepository.findByPreviewMissionId(id, userId);
 
@@ -58,21 +70,17 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
 
                 // 지역 게시판 작성 조회
                 case POST:
-                  Long countBoard =  localBoardRepository.countLocalBoardCheckMission(userId,startAt,endAt);
-                    System.out.println("지역 게시판 조건 : "+countNum);
+                  Long countBoard = localBoardRepository.countLocalBoardCheckMission(userId,startAt,endAt);
                     UserMissionStatus.MissionStatus resultStatusBoard =
                             (countBoard<countNum)
                                     ? UserMissionStatus.MissionStatus.PREVIEW
                                     : UserMissionStatus.MissionStatus.ACCEPTED;
                     uploadAndInsertMissionStatus(userId,id,resultStatusBoard,missionStatus);
-                    System.out.println("지역 게시판 조회 : "+countBoard);
                     break;
 
                 // 댓글 개수 조회    
-                case COMMENT: 
-                    System.out.println("댓글 조건 : "+countNum);
-                  Long countComment=  boardCommentRepository.countCommentMission(userId, startAt, endAt);
-                    System.out.println("댓글 조회 : "+ countComment );
+                case COMMENT:
+                  Long countComment = boardCommentRepository.countCommentMission(userId, startAt, endAt);
                     UserMissionStatus.MissionStatus resultStatusComment =
                             (countComment<countNum)
                                     ? UserMissionStatus.MissionStatus.PREVIEW
@@ -87,23 +95,17 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
 
                  // 리워드 결제 상태 확인
                 case REWARD:
-                    System.out.println("리워드 조건 : "+countNum);
                     Long countReward;
                     if(mission.getPreviewMissionContent().contains("기부")){
-                        System.out.println("기부 조회 1");
                         countReward = userRewardRepository.countUserReward(userId, startAt, endAt, RewardItems.RewardType.DONATION);
                     }else if(mission.getPreviewMissionContent().contains("상품권")){
-                        System.out.println("상품권 조회 1");
                         countReward = userRewardRepository.countUserReward(userId, startAt, endAt, RewardItems.RewardType.VOUCHER);
                     } else if (mission.getPreviewMissionContent().contains("기프티콘") || mission.getPreviewMissionContent().contains("쿠폰")) {
-                        System.out.println("기프티콘 조회 1");
                         countReward = userRewardRepository.countUserReward(userId, startAt, endAt, RewardItems.RewardType.GIFTICON);
                     }else {
-                        System.out.println("그냥 조회 1");
                         countReward = userRewardRepository.countUserReward(userId, startAt, endAt,null);
                     }
 
-                    System.out.println("리워드 조회 : "+ countReward );
 
                     UserMissionStatus.MissionStatus resultStatusReward =
                             (countReward<countNum)
@@ -115,9 +117,60 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
 
                 // 미션 달성 상태 확인
                 case MISSION:
+                    Long countMission =  userMissionRepository.countUserMission(userId,startAt,endAt);
+                    UserMissionStatus.MissionStatus resultStatusMission =
+                            (countMission<countNum)
+                                    ? UserMissionStatus.MissionStatus.PREVIEW
+                                    : UserMissionStatus.MissionStatus.ACCEPTED;
+                    uploadAndInsertMissionStatus(userId, id, resultStatusMission, missionStatus);
 
                     break;
             }
+        }
+    }
+
+    // 미션 성공 시 동작하는 메서드
+    // 1. 유저 미션 상태 변경 ACCEPTED -> COMPLETED
+    // 2. 유저 포인트 삽입
+    // 3. 유저 미션 십입.
+    // 4. 현재 포인트 반영. 
+    @Transactional
+    @Override
+    public void completeUpdateUserStatus(UserMissionSuccessRequestDTO dto) {
+
+        if(dto == null){
+            throw new IllegalArgumentException("dto의 값이 없음.");
+        }
+        // 미션 상태.
+        UserMissionStatusCheckResponseDTO checkStatus = userMissionStatusRepository.checkStatusComplete(dto.getUserMissionId());
+
+        // 미션 상태 체크
+        if(checkStatus.getMissionStatus() != UserMissionStatus.MissionStatus.COMPLETED && checkStatus.getMissionStatus() != UserMissionStatus.MissionStatus.EXPIRED){
+
+            // 1. 미션 상태 업데이트 ACCEPTED -> COMPLETED
+            userMissionStatusRepository.userStatusUpdate(dto.getUserMissionId(), UserMissionStatus.MissionStatus.COMPLETED);
+
+            // 2. 유저 포인트 삽입.
+            UserPoint userPoint =  userPointRepository.save(dto.toEntity());
+
+            // 3. 유저 미션 삽입.
+            UserMissionInsertRequestDTO requestDTO = new UserMissionInsertRequestDTO(userPoint.getId(), dto.getUserMissionId());
+            userMissionRepository.save(requestDTO.toEntity());
+
+            // 4. 유저 포인트 반영.(current , total 포인트)
+            UserCurrentAndTotalPointResponseDTO currentAndTotalPoint =  userRepository.findCurrentAndTotalPointByUserId(dto.getUserId());
+            if(currentAndTotalPoint.getCurrentPoint() == null){
+                currentAndTotalPoint.setCurrentPoint(0l);
+            }
+
+            if(currentAndTotalPoint.getTotalPoint() == null){
+                currentAndTotalPoint.setTotalPoint(0l);
+            }
+
+            long plusPoint = currentAndTotalPoint.getCurrentPoint() + dto.getAmount();
+            long totalPlusPoint = currentAndTotalPoint.getTotalPoint() + dto.getAmount();
+            userRepository.updateCurrentPoint(plusPoint, dto.getUserId());
+            userRepository.updateTotalPoint(totalPlusPoint, dto.getUserId());
         }
     }
 
@@ -129,18 +182,15 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
                                                 UserMissionStatus missionStatus
                                                 ){
         if (missionStatus == null) {
-            UserMissionStatusInsertRequestDTO dto = new UserMissionStatusInsertRequestDTO();
-            dto.setUserId(userId);
-            dto.setPreviewMissionId(previewMissionId);
-            dto.setStatus(status);
+            UserMissionStatusInsertRequestDTO dto = new UserMissionStatusInsertRequestDTO(
+                    status, userId, previewMissionId
+            );
             userMissionStatusRepository.save(dto.toUserMissionStatusEntity());
 
         }else if(missionStatus.getMissionStatus() == UserMissionStatus.MissionStatus.PREVIEW){
-            UserMissionStatusUpdateRequestDTO dto = new UserMissionStatusUpdateRequestDTO();
-            dto.setUserId(userId);
-            dto.setPreviewMissionId(previewMissionId);
-            dto.setId(missionStatus.getId());
-            dto.setStatus(status);
+            UserMissionStatusUpdateRequestDTO dto = new UserMissionStatusUpdateRequestDTO(
+                    missionStatus.getId(), status, userId, previewMissionId
+            );
             userMissionStatusRepository.save(dto.toUserMissionStatusUpdateEntity());
         }
 

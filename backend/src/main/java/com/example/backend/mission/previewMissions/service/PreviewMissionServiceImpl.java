@@ -7,6 +7,7 @@ import com.example.backend.mission.missions.repsository.MissionsRepository;
 import com.example.backend.mission.previewMissions.dto.request.PreviewMissionRequestDTO;
 import com.example.backend.mission.previewMissions.dto.request.PreviewMissionUpdateRequestDTO;
 import com.example.backend.mission.previewMissions.dto.response.PreViewMissionStatusResponseDTO;
+import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListAndUserStatusDTO;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListResponseDTO;
 import com.example.backend.mission.previewMissions.repository.PreviewMissionRepository;
 import jakarta.transaction.Transactional;
@@ -258,5 +259,23 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     @Override
     public void previewDeleteById(Long id) {
         previewMissionRepository.deleteById(id);
+    }
+
+    // 관리자가 직접 삭제
+    // 삭제시 프론트단에서 경고 모달 구현해야함!!
+    @Override
+    public void previewDeleteByType(PreviewMissions.PreviewMissionType previewMissionType, PreviewMissions.PreviewMissionStatus previewMissionStatus) {
+        previewMissionRepository.deleteByAllType(previewMissionType,previewMissionStatus);
+    }
+
+    @Override
+    public List<PreviewMissionListAndUserStatusDTO> userPreviewMissionAndStatus(Long userId) {
+       List<PreviewMissionListAndUserStatusDTO> list =  previewMissionRepository.userPreviewMissionAndStatus(PreviewMissions.PreviewMissionStatus.ACTIVE,userId);
+       if(list == null || list.isEmpty()) {
+           throw new IllegalArgumentException("미션이 존재 하지 않습니다.");
+       }
+        System.out.println(" 유저 Id " + userId);
+        System.out.println("서비스단  : "+list);
+       return list;
     }
 }

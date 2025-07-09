@@ -57,4 +57,14 @@ public interface PreviewMissionRepository extends JpaRepository<PreviewMissions,
                                       @Param("previewMissionStatus")PreviewMissions.PreviewMissionStatus previewMissionStatus);
 
 
+    // 관리자가 타입별로 전체 삭제 가능.
+    @Modifying
+    @Transactional
+    @Query(" DELETE FROM PreviewMissions p " +
+            " WHERE p.previewMissionType = :previewMissionType " +
+            " AND p.previewMissionStatus = :previewMissionStatus")
+    void deleteByAllType( @Param("previewMissionType")PreviewMissions.PreviewMissionType previewMissionType,
+                          @Param("previewMissionStatus")PreviewMissions.PreviewMissionStatus previewMissionStatus);
+
+
 }

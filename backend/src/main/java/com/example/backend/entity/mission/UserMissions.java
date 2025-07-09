@@ -20,12 +20,18 @@ public class UserMissions {
     private Long id;
 
     @Column(name = "user_point_id")
-    private long userPointId;
+    private Long userPointId;
 
     @Column(name = "completed_at")
     private Timestamp completedAt;
 
     @Column(name= "user_mission_status_id")
     private Long userMissionStatusId;
+    // 연관관계는 끊음 , 독자적 로그 테이블
+
+    @PrePersist
+    protected void onCreate(){
+        this.completedAt = new Timestamp(System.currentTimeMillis());
+    }
 
 }

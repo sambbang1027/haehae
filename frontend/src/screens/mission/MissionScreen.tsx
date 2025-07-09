@@ -10,7 +10,8 @@
     previewMissionContent: string;
     previewMissionPoint: number;
     previewMissionType: 'WEEKLY' | 'DAILY';
-    previewMissionCategory: 'string';
+    userMissionStatusId : number;
+    missionStatus: string;
   }
 
   const MissionScreen = () => { 
@@ -21,20 +22,36 @@
     const [selectedTab, setSelectedTab] = useState<'weekly' | 'daily'>('daily');
     const {user, setUser} = useUser();
     const userId = user?.userId;
+    const userName = user?.nickname;
 
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [currentPoint, setCurrentPoint] = useState<number>(0); 
+    const [modalPoint, setModalPoint] = useState<number>(0); // 추가
 
     useEffect(()=> {
-      checkMissionStauts();
-      missionAxios();
+      fetchData();
+      if(userId){
+            currentPointAxios(userId);
+        }
     },[]);
+
+      const fetchData = async () => {
+        await checkMissionStauts();
+        await missionAxios();       
+    };
+
+    const currentPointAxios = async(userId: number)=> {
+            const res = await api.get(`userReward/point/${userId}`);
+            setCurrentPoint(res.data);
+    }
 
     const missionAxios = async() => {
       try {
-        const res = await api.get("previewMission/list");
+        const res = await api.get(`previewMission/user/list/${userId}`);
         const weekly: Mission[] = [];
         const daily: Mission[] = [];
+        console.log(res.data);
 
         res.data.forEach((mission :Mission) => {
           if(mission.previewMissionType == 'WEEKLY'){
@@ -61,13 +78,48 @@
         }
       }
 
-    const showModal = () => {
+      
+
+    const updateStatus = async(userMissionStatusId : number, previewMissionPoint : number, previewMissionContent : string )=>{
+      try {
+        const requestBody = {
+          userId: user?.userId,
+          amount: previewMissionPoint,
+          source: previewMissionContent,
+          userMissionId: userMissionStatusId,
+      };
+        const res = api.post(`mission/status/update`,requestBody);
+        console.log(res);
+
+        setDailyMissions((prevMissions) =>
+      prevMissions.map((mission) =>
+        mission.userMissionStatusId === userMissionStatusId
+          ? { ...mission, missionStatus: 'COMPLETED' }
+          : mission
+      )
+    );
+
+    setWeeklyMissions((prevMissions) =>
+      prevMissions.map((mission) =>
+        mission.userMissionStatusId === userMissionStatusId
+          ? { ...mission, missionStatus: 'COMPLETED' }
+          : mission
+      )
+    );
+        
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const showModal = (point: number) => {
+      setModalPoint(point);
       setIsModalVisible(true);
     };
 
-  const hideModal = () => {
-      setIsModalVisible(false);
-    };
+    const hideModal = () => {
+        setIsModalVisible(false);
+      };
 
     return (
       <View style={{ flex: 1 }}>
@@ -76,7 +128,7 @@
         {/* <Header/> */}
         <View style={styles.headerContainer}>
           <Image style={styles.sproutIcon} source={require('../../assets/images/sprout.png')} />
-          <Text style={styles.currentGradeTitle}>현재 킹도훈님의 등급</Text>
+          <Text style={styles.currentGradeTitle}>현재 {userName}님의 등급</Text>
           <Text style={styles.currentGrade}>새싹</Text>
           <Text style={styles.remainingPoints}>꽃 등급까진 3000p 남았습니다.</Text>
         </View>
@@ -100,29 +152,71 @@
         {/* 주간 미션 목록 렌더링 (선택된 탭이 'weekly'일 때만) */}
         {selectedTab === 'weekly' && (
           <View style={styles.missionListContainer}>
-            {weeklyMissions.map((mission, index) => (
-              <View key={mission.id} style={styles.missionItem}>
-                <Text style={styles.missionTitle}>{mission.previewMissionContent}</Text>
-              <TouchableOpacity onPress={showModal}> 
-                <Text style={styles.missionReward}>{mission.previewMissionPoint}p</Text>
-              </TouchableOpacity>
-              </View>
-            ))}
-          </View>
+          {weeklyMissions.map((mission) => (
+            <TouchableOpacity
+              key={mission.id}
+              style={styles.missionItem}
+              onPress={() => {
+                if (mission.missionStatus === 'ACCEPTED') {
+                  updateStatus(mission.userMissionStatusId, mission.previewMissionPoint, mission.previewMissionContent);
+                  showModal(mission.previewMissionPoint);
+                }
+              }}
+              activeOpacity={mission.missionStatus === 'ACCEPTED' ? 0.7 : 1}
+            >
+              <Text style={[styles.missionTitle,
+                mission.missionStatus == 'ACCEPTED' && {color: 'rgba(133, 225, 5, 0.51) ', fontWeight: 'bold'},
+                mission.missionStatus == 'COMPLETED' && {color: '#bbb'}
+              ]}>{mission.previewMissionContent}</Text>
+              <Text
+                style={[
+                  styles.missionReward,
+                  mission.missionStatus == 'ACCEPTED' && { color: 'rgba(133, 225, 5, 0.51)',  fontWeight: 'bold'},
+                  mission.missionStatus == 'COMPLETED' && {color: '#bbb'}
+                ]}
+              > 
+                {mission.missionStatus === 'COMPLETED'
+                  ? '미션 완료'
+                  : `${mission.previewMissionPoint}p`}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         )}
 
         {/* 일일 미션 목록 렌더링 (선택된 탭이 'daily'일 때만) */}
         {selectedTab === 'daily' && (
           <View style={styles.missionListContainer}>
-            {dailyMissions.map((mission, index) => (
-              <View key={mission.id} style={styles.missionItem}>
-                <Text style={styles.missionTitle}>{mission.previewMissionContent}</Text>
-              <TouchableOpacity onPress={showModal}>
-                <Text style={styles.missionReward}>{mission.previewMissionPoint}p</Text>
-              </TouchableOpacity>
-              </View>
-            ))}
-          </View>
+          {dailyMissions.map((mission) => (
+            <TouchableOpacity
+              key={mission.id}
+              style={styles.missionItem}
+              onPress={() => {
+                if (mission.missionStatus === 'ACCEPTED') {
+                  updateStatus(mission.userMissionStatusId, mission.previewMissionPoint, mission.previewMissionContent);
+                  showModal(mission.previewMissionPoint);
+                }
+              }}
+              activeOpacity={mission.missionStatus === 'ACCEPTED' ? 0.7 : 1}
+            >
+              <Text style={[styles.missionTitle,
+                mission.missionStatus == 'ACCEPTED' && {color: 'rgba(133, 225, 5, 0.51) ', fontWeight: 'bold'},
+                mission.missionStatus == 'COMPLETED' && {color: '#bbb'}
+              ]}>{mission.previewMissionContent}</Text>
+              <Text
+                style={[
+                  styles.missionReward,
+                  mission.missionStatus == 'ACCEPTED' && { color: 'rgba(133, 225, 5, 0.51)',  fontWeight: 'bold'},
+                  mission.missionStatus == 'COMPLETED' && {color: '#bbb'}
+                ]}
+              > 
+                {mission.missionStatus === 'COMPLETED'
+                  ? '미션 완료'
+                  : `${mission.previewMissionPoint}p`}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         )}
 
       </ScrollView>
@@ -134,7 +228,7 @@
               source={require('../../assets/images/reward-coin.png')} // 이미지 경로를 실제 경로로 변경
               style={styles.modalImage}
             />
-            <Text style={styles.modalText}>300p가 지급되었습니다.</Text>
+            <Text style={styles.modalText}>{modalPoint}p가 지급되었습니다.</Text>
             <TouchableOpacity style={styles.modalButton} onPress={hideModal}>
               <Text style={styles.modalButtonText}>확인</Text>
             </TouchableOpacity>

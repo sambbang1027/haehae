@@ -36,7 +36,6 @@ public class UserRewardServiceImpl implements UserRewardService {
         long amount = dto.getAmount();
         long id = dto.getUserId();
 
-        System.out.println(dto);
 
         long currentPoint = userRepository.findCurrentPointByUserId(id);
         if (currentPoint == 0) {
