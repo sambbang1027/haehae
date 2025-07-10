@@ -1,8 +1,12 @@
 package com.example.backend.mission.previewMissions.controller;
 
+import com.example.backend.entity.user.UserLevel;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListAndUserStatusDTO;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListResponseDTO;
 import com.example.backend.mission.previewMissions.service.PreviewMissionService;
+import com.example.backend.user.dto.TotalAndLevelDTO;
+import com.example.backend.user.dto.UserInfoAndNextLevelInfoDTO;
+import com.example.backend.user.service.UserInfoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +21,11 @@ import java.util.List;
 public class PreviewMissionController {
 
     private final PreviewMissionService previewMissionService;
+    private final UserInfoService userInfoService;
 
-    public PreviewMissionController(PreviewMissionService previewMissionService) {
+    public PreviewMissionController(PreviewMissionService previewMissionService, UserInfoService userInfoService) {
         this.previewMissionService = previewMissionService;
+        this.userInfoService = userInfoService;
     }
 
     @GetMapping("/list")
@@ -39,6 +45,10 @@ public class PreviewMissionController {
         return new ResponseEntity<>(missionList, HttpStatus.OK);
     }
 
-
-
+    //클라이언트 현재포인트, 총 포인트, 등급
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserInfoAndNextLevelInfoDTO> userPointAndLevel(@PathVariable Long userId){
+        UserInfoAndNextLevelInfoDTO dto = userInfoService.findCurrentAndTotalPointByUserId(userId);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 }

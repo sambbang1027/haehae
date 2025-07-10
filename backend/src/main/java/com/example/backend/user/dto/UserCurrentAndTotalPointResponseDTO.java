@@ -12,4 +12,5 @@ import lombok.Setter;
 public class UserCurrentAndTotalPointResponseDTO {
     private Long currentPoint;
     private Long totalPoint;
+    private Long userLevelId;
 }

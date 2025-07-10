@@ -3,6 +3,7 @@ package com.example.backend.mission.userMissionStatus.service;
 import com.example.backend.entity.mission.PreviewMissions;
 import com.example.backend.entity.mission.UserMissionStatus;
 import com.example.backend.entity.reward.RewardItems;
+import com.example.backend.entity.user.UserLevel;
 import com.example.backend.entity.user.UserPoint;
 import com.example.backend.localBoard.board.repository.LocalBoardRepository;
 import com.example.backend.localBoard.comment.repository.BoardCommentRepository;
@@ -17,6 +18,7 @@ import com.example.backend.mission.userMissions.repository.UserMissionRepository
 import com.example.backend.reward.userReward.repository.UserRewardRepository;
 import com.example.backend.user.dto.UserCurrentAndTotalPointResponseDTO;
 import com.example.backend.user.repository.UserRepository;
+import com.example.backend.userLevel.repsoitory.UserLevelRepository;
 import com.example.backend.userPoint.dto.request.UserMissionSuccessRequestDTO;
 import com.example.backend.userPoint.repository.UserPointRepository;
 import jakarta.transaction.Transactional;
@@ -35,8 +37,9 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     private final UserRepository userRepository;
     private final UserPointRepository userPointRepository;
     private final UserMissionRepository userMissionRepository;
+    private final UserLevelRepository userLevelRepository;
 
-    public UserMissionStatusServiceImpl(UserMissionStatusRepository userMissionStatusRepository, PreviewMissionService previewMissionService, LocalBoardRepository localBoardRepository, UserRewardRepository userRewardRepository, BoardCommentRepository boardCommentRepository, UserRepository userRepository, UserPointRepository userPointRepository, UserMissionRepository userMissionRepository) {
+    public UserMissionStatusServiceImpl(UserMissionStatusRepository userMissionStatusRepository, PreviewMissionService previewMissionService, LocalBoardRepository localBoardRepository, UserRewardRepository userRewardRepository, BoardCommentRepository boardCommentRepository, UserRepository userRepository, UserPointRepository userPointRepository, UserMissionRepository userMissionRepository, UserLevelRepository userLevelRepository) {
         this.userMissionStatusRepository = userMissionStatusRepository;
         this.previewMissionService = previewMissionService;
         this.localBoardRepository = localBoardRepository;
@@ -45,9 +48,14 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
         this.userRepository = userRepository;
         this.userPointRepository = userPointRepository;
         this.userMissionRepository = userMissionRepository;
+        this.userLevelRepository = userLevelRepository;
     }
     
     // PreviewMission 유저의 상태 확인
+    // 1. 사용자 미션 리스트 조회
+    // 2. 카테고리를 기준으로 분리.
+    // 3. 사용자의 유저 미션 상태 조회
+    // 4. 사용자 미션에 맞추어서 유저 미션 상태 업데이트
     @Override
     public void checkStatusUpdate(Long userId){
         List<PreviewMissionListResponseDTO> missinList =  previewMissionService.findPreviewALlActive();
@@ -133,7 +141,8 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     // 1. 유저 미션 상태 변경 ACCEPTED -> COMPLETED
     // 2. 유저 포인트 삽입
     // 3. 유저 미션 십입.
-    // 4. 현재 포인트 반영. 
+    // 4. 현재 포인트 반영, 총포인트 반영
+    // 5. 필요시 유저 등급 업데이트
     @Transactional
     @Override
     public void completeUpdateUserStatus(UserMissionSuccessRequestDTO dto) {
@@ -144,20 +153,20 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
         // 미션 상태.
         UserMissionStatusCheckResponseDTO checkStatus = userMissionStatusRepository.checkStatusComplete(dto.getUserMissionId());
 
-        // 미션 상태 체크
+        // 미션 상태 체크.
         if(checkStatus.getMissionStatus() != UserMissionStatus.MissionStatus.COMPLETED && checkStatus.getMissionStatus() != UserMissionStatus.MissionStatus.EXPIRED){
 
             // 1. 미션 상태 업데이트 ACCEPTED -> COMPLETED
             userMissionStatusRepository.userStatusUpdate(dto.getUserMissionId(), UserMissionStatus.MissionStatus.COMPLETED);
 
-            // 2. 유저 포인트 삽입.
+            // 2. 유저 포인트 삽입(로그테이블). -> 유저 미션 상위 테이블
             UserPoint userPoint =  userPointRepository.save(dto.toEntity());
 
             // 3. 유저 미션 삽입.
             UserMissionInsertRequestDTO requestDTO = new UserMissionInsertRequestDTO(userPoint.getId(), dto.getUserMissionId());
             userMissionRepository.save(requestDTO.toEntity());
 
-            // 4. 유저 포인트 반영.(current , total 포인트)
+            // 4. 유저 포인트 반영.(현재 포인트 , 총 포인트 , 유저등급)
             UserCurrentAndTotalPointResponseDTO currentAndTotalPoint =  userRepository.findCurrentAndTotalPointByUserId(dto.getUserId());
             if(currentAndTotalPoint.getCurrentPoint() == null){
                 currentAndTotalPoint.setCurrentPoint(0l);
@@ -169,12 +178,23 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
 
             long plusPoint = currentAndTotalPoint.getCurrentPoint() + dto.getAmount();
             long totalPlusPoint = currentAndTotalPoint.getTotalPoint() + dto.getAmount();
+
             userRepository.updateCurrentPoint(plusPoint, dto.getUserId());
             userRepository.updateTotalPoint(totalPlusPoint, dto.getUserId());
+
+            //5. 필요시 유저 등급 업데이트
+            long userLevelId = currentAndTotalPoint.getUserLevelId();
+            if(userLevelId < 4) {
+                long nextLevelId = userLevelId + 1;
+                UserLevel userLevel = userLevelRepository.findUserNextLevels(nextLevelId);
+                    if (userLevel.getMinPoints() <= totalPlusPoint) {
+                        userRepository.updateUserLevelId(nextLevelId, dto.getUserId());
+                    }
+            }
         }
     }
 
-
+    // 유저 상태 업데이트 로직.
     private void uploadAndInsertMissionStatus(
                                                 Long userId,
                                                 Long previewMissionId,

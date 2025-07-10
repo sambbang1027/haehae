@@ -26,14 +26,11 @@
 
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [currentPoint, setCurrentPoint] = useState<number>(0); 
-    const [modalPoint, setModalPoint] = useState<number>(0); // 추가
+    const [modalPoint, setModalPoint] = useState<number>(0); 
 
     useEffect(()=> {
       fetchData();
-      if(userId){
-            currentPointAxios(userId);
-        }
+      fetchUserLevelInfo();
     },[]);
 
       const fetchData = async () => {
@@ -41,9 +38,37 @@
         await missionAxios();       
     };
 
-    const currentPointAxios = async(userId: number)=> {
-            const res = await api.get(`userReward/point/${userId}`);
-            setCurrentPoint(res.data);
+    const fetchUserLevelInfo = async() => {
+        if (userId) {
+          userTotalPointAndLevel(userId);  
+        }
+    }
+
+
+  interface UseLevelInfo{
+      levelName : string,
+      totalPoint : number,
+      userLevelId : number,
+    }
+    const [userLevelInfo, setUserLevelInfo] = useState<UseLevelInfo|null>(null);
+
+    interface NextLevelInfo {
+      id : number,
+      levelName : string,
+      minPoints : number
+    }
+
+    const [nextLevelInfo, setNextLevelInfo] = useState<NextLevelInfo|null>(null);
+
+    const userTotalPointAndLevel = async(userId: number)=> {
+      try {
+            const res = await api.get(`previewMission/user/${userId}`);
+            setUserLevelInfo(res.data.totalAndLevelDTO);
+            setNextLevelInfo(res.data.userLevel);
+            console.log(res.data);
+          } catch (error: any) {
+            console.error("오류 : ", error?.response?.data || error.message);
+      }
     }
 
     const missionAxios = async() => {
@@ -106,6 +131,12 @@
           : mission
       )
     );
+
+    setUserLevelInfo((prevInfo) =>
+      prevInfo
+        ? { ...prevInfo, totalPoint: prevInfo.totalPoint + previewMissionPoint }
+        : prevInfo
+    );
         
       } catch (error) {
         console.log(error);
@@ -129,8 +160,18 @@
         <View style={styles.headerContainer}>
           <Image style={styles.sproutIcon} source={require('../../assets/images/sprout.png')} />
           <Text style={styles.currentGradeTitle}>현재 {userName}님의 등급</Text>
-          <Text style={styles.currentGrade}>새싹</Text>
-          <Text style={styles.remainingPoints}>꽃 등급까진 3000p 남았습니다.</Text>
+          <Text style={styles.currentGrade}>{userLevelInfo?.levelName}</Text>
+          {userLevelInfo?.userLevelId === 4 ? (
+              <Text style={styles.remainingPoints}>최고 등급에 도달하셨습니다!</Text>
+            ) : ( 
+              (userLevelInfo?.totalPoint ?? 0) > (nextLevelInfo?.minPoints ?? 0) ? (
+                <Text style={styles.remainingPoints}>축하드립니다! {nextLevelInfo?.levelName} 등급에 달성하셨습니다.</Text>
+              ) : (
+                <Text style={styles.remainingPoints}>
+                  {nextLevelInfo?.levelName} 등급까진 {(nextLevelInfo?.minPoints ?? 0) - (userLevelInfo?.totalPoint ?? 0)}p 남았습니다.
+                </Text>
+              )
+            )}
         </View>
 
         {/* 탭 UI */}
