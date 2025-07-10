@@ -45,7 +45,7 @@ type SignupParams = {
 
 const SignupPage= () => {
 
-  const route = useRoute<RouteProp<SignupParams>>()
+  const route = useRoute<RouteProp<SignupParams>>();
   const isSocial = route.params?.loginType === 'social';
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -89,7 +89,7 @@ const finalPayload: State = {
       const url = isSocial ? '/user/register/social' : 'user/register/local';
 
       const response = await api.post(url, finalPayload);
-      if(response.status >= 200 && response.status < 300){
+      if(response.data.code = "SUCCESS"){
         showToast({message: '회원가입 완료'});
         commonDispatch({type : 'RESET'});
         navigate('LoginStack', {screen: 'Login'});
@@ -108,7 +108,7 @@ const handleSendCode = async() =>{
     });
     console.log(response);
 
-    if(response?.status === 200){
+    if(response.data.code === "SUCCESS"){
       showToast({ message: '인증코드가 발송되었습니다.' });
       handleTimer(); // 타이머 시작
     }
@@ -176,9 +176,9 @@ const handleSendCode = async() =>{
         nickname: commonState.nickname,
       },
     });
-      if(response.data === false){
+      if(response.data.data === false){
         showToast({message : '사용가능한 닉네임입니다'})
-      }else if(response.data === true){
+      }else if(response.data.data === true){
         showToast({message: '이미 사용중인 닉네임입니다'})
       }
     }catch(error){

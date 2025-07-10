@@ -37,6 +37,7 @@ const api = axios.create({
 api.interceptors.request.use(
     async(config) =>{
         const token = await EncryptedStorage.getItem('accessToken');
+        
         if(token) {
             config.headers.Authorization= `Bearer ${token}`;
         }

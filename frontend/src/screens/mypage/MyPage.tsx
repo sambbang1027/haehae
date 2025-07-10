@@ -6,6 +6,7 @@ import AppText from '../../components/common/AppText';
 import { useModal } from '../../context/ModalContext';
 import { AppStackParamList } from '../../navigation/AppNavigator';
 import SettingPage from './SettingPage';
+import { useUser } from '../../context/UserContext.tsx';
 
 
 type Navigation = NativeStackNavigationProp<AppStackParamList>;
@@ -36,16 +37,19 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ label, to }) => {
 const MyPage = () => {
   const navigation = useNavigation<Navigation>();
   const {showModal, hideModal} = useModal();
+  const {logout, user} = useUser();
+  console.log('로그인 후 유저 정보 ',user?.nickname);
   const handleLogout = () => {
-    showModal({
-      type:'confirm',
-      content : '로그아웃 하시겠습니까?',
-      onConfirm() {
-          navigation.navigate('LoginStack', {screen: 'Login'})
-      },
-    })
-   
-  };
+  showModal({
+    type: 'confirm',
+    content: '로그아웃 하시겠습니까?',
+    async onConfirm() {
+      await logout();  // 사용자 상태 초기화 및 토큰 삭제
+      navigation.navigate('LoginStack', { screen: 'Login' });
+    },
+  });
+};
+
   const goToSettings = () => {
      navigation.navigate('MyPageStack', { screen: 'SettingPage' });
   };

@@ -19,7 +19,6 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.toMutableList().apply {
 
             }
-
         override fun getJSMainModuleName(): String = "index"
 
         override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG

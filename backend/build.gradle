@@ -80,6 +80,9 @@ repositories {
 		implementation 'org.springframework.boot:spring-boot-starter-validation'
 		implementation 'org.apache.commons:commons-pool2' // 커넥션 풀 관리
 
+		// google
+		implementation 'com.google.api-client:google-api-client:1.34.1'
+
 	}
 
 tasks.named('test') {
