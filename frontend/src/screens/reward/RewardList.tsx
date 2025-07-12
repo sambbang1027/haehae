@@ -56,7 +56,6 @@ const RewardList = () => {
         rewardItemsImgUrl: string[] | null;
     };
 
-
     const {
         items: rewardItems, fetchNextPage, hasNextPage,isFetchingNextPage, isLoading,} = usePagination<RewardItem>({
         path: `/reward/list/${selectedType}`,
