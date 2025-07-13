@@ -1,6 +1,7 @@
 package com.example.backend.report.service;
 
 import com.example.backend.entity.report.Report;
+import com.example.backend.report.dto.request.ReportInsertRequestDTO;
 import com.example.backend.report.dto.response.ReportListDTO;
 import com.example.backend.report.dto.response.ReportListResponseDTO;
 import com.example.backend.report.repository.ReportRepository;
@@ -42,5 +43,10 @@ public class ReportServiceImpl implements ReportService{
         }).toList();
 
         return reportListDTO;
+    }
+
+    @Override
+    public void registerReport(ReportInsertRequestDTO reportInsertRequestDTO) {
+        reportRepository.save(reportInsertRequestDTO.toEntity());
     }
 }
