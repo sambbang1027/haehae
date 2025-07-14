@@ -27,6 +27,14 @@ public class CollectionSpotService {
         return collectionSpotRepository.findByWasteItemAndRegionCode(wasteItem, regionCode);
     }
 
+    public List<CollectionSpot> findAll() {
+        return collectionSpotRepository.findAll();
+    }
+
+    public List<CollectionSpot> findByRegionCode(String regionCode) {
+        return collectionSpotRepository.findByRegionCode(regionCode);
+    }
+
     // 결과 찍으려고 넣은 값.
     int updatedCount = 0;
 
@@ -34,6 +42,8 @@ public class CollectionSpotService {
     @Transactional
     public void geocodeAndUpdateAllSpots() {
         List<CollectionSpot> list = collectionSpotRepository.findAll();
+
+        System.out.println("서비스 찍히냐?? ===== " + list);
 
         // 행정동 코드에 한글 포함 또는 위도, 경도 없는 경우 필터링
         List<CollectionSpot> filtered = list.stream()
@@ -58,7 +68,7 @@ public class CollectionSpotService {
                 );
                 updatedCount++;
 
-                log.debug(
+                log.info(
                         "   • #{} '{}' → lat={}, lng={}, code={}",
                         spot.getCollectionsSpotId(),
                         addr,

@@ -22,6 +22,18 @@ const LoginPage = () => {
   const [password, setPassword] = useState<string>('');
   const { setUser} = useUser();
 
+  // ✅ 인터셉터가 제대로 작동하는지 확인하는 테스트용 useEffect
+  React.useEffect(() => {
+    (async () => {
+      try {
+        console.log('📡 /auth/me 호출 테스트');
+        const res = await api.get('/auth/me');
+        console.log('✅ 응답:', res.data);
+      } catch (err) {
+        console.error('❌ 에러 발생', err);
+      }
+    })();
+  }, []);
 
 
   const handleLocalLogin = async() => {
@@ -35,7 +47,9 @@ const LoginPage = () => {
         await EncryptedStorage.setItem('refreshToken', res.data.refreshToken);
 
         const userInfo = await api.get('/auth/me');
+
         console.log("유저정보 가져오기");
+
         if (userInfo.status === 200) {
           setUser(userInfo.data);
           

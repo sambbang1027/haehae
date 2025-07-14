@@ -15,6 +15,7 @@ import { WebView } from 'react-native-webview';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Config from 'react-native-config';
 import { useCurrentLocation, Location } from '../../utils/useCurrentLocation';
+import api from '../../api/AxiosInstance';
 
 type KakaoDoc = { place_name: string; x: string; y: string; };
 interface LocationItem { label: string; lat: number; lng: number; regionCode: string; }
@@ -37,25 +38,48 @@ const CollectionBoxLocationScreen: React.FC = () => {
   const webviewRef = useRef<WebView>(null);
   const [keyword, setKeyword] = useState('');
 
+  // 추가된 카테고리 상태
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const categories = ['전체', '재활용정거장', '폐형광등', '폐건전지'];
+
   // 백엔드 수거함 불러오기
   useEffect(() => {
 
     console.log('🗺 spots state:', spots);
 
+    console.log('📍 useCurrentLocation location:', location);
+
     if (locLoading || locError || !location) return;
     (async () => {
       try {
-        const res = await fetch(`http://localhost:8082/api/collectionspot?wasteItem=재활용정거장`);
-        const data: any[] = await res.json();
+        //const res = await fetch(`http://localhost:8082/api/collectionspot?wasteItem=재활용정거장`);
+        //const res = await fetch(`http://localhost:8082/api/collectionspot?wasteItem=재활용정거장`);
+        //const res = api.get(`/collectionspot?wasteItem=재활용정거장`);
 
+        let query = selectedCategory === '전체' ? '' : `?wasteItem=${encodeURIComponent(selectedCategory)}`;
+
+        //const res = api.get(`/collectionspot?wasteItem=${encodeURIComponent(selectedCategory)}`);
+
+        const res = await api.get(`/collectionspot${query}`);
+
+        console.log("🛰 요청 보냄");
+        
+        const data: any[] = res.data;
+        
         console.log('🔥 백엔드에서 받은 raw data:', data);
 
-        setSpots(data.map(d => ({
-          label: d.description ?? d.wasteItem,
-          lat: d.latitude,
-          lng: d.longitude,
-          regionCode: d.regionCode,
-        })));
+        // 배열인지 확인 후 setSpots
+        if (Array.isArray(data)) {
+          setSpots(data.map(d => ({
+            label: d.description ?? d.wasteItem,
+            lat: d.latitude,
+            lng: d.longitude,
+            regionCode: d.regionCode,
+          })));
+        } else {
+          console.warn('❗️백엔드 응답이 배열이 아님:', data);
+          Alert.alert('서버에서 받은 데이터 형식이 잘못되었습니다.');
+        }
 
       } catch (e) {
         console.error(e);
@@ -63,12 +87,18 @@ const CollectionBoxLocationScreen: React.FC = () => {
         Alert.alert('수거함 데이터를 가져오는 중 오류가 발생했습니다.');
       }
     })();
-  }, [locLoading, locError, location]);
+  }, [locLoading, locError, location, selectedCategory]); // 선택된 카테고리 변경 시 재요청
 
   if (locLoading) return <View style={styles.center}><ActivityIndicator size="large"/></View>;
   if (locError || !location) return <View style={styles.center}><Text>위치 정보를 사용할 수 없습니다.</Text></View>;
 
-  const { latitude: baseLat, longitude: baseLng } = location as Location;
+  // 에뮬레이터 임시 좌표 지정
+  const defaultLat = 37.4765;
+  const defaultLng = 126.9816;
+
+  const { latitude: baseLat, longitude: baseLng } = location ?? {latitude: defaultLat, longitude: defaultLng};
+
+  //const { latitude: baseLat, longitude: baseLng } = location as Location;
 
   // 초기 positions JSON
   const initPositions = [
@@ -146,6 +176,8 @@ const CollectionBoxLocationScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* A. 검색창 */}
+
+      <View style={styles.topBar}>
       <View style={styles.searchBox}>
         <TextInput
           style={styles.searchInput}
@@ -154,20 +186,6 @@ const CollectionBoxLocationScreen: React.FC = () => {
           value={keyword}
           onChangeText={setKeyword}
         />
-        {/* <Button
-          title="검색"
-          onPress={async () => {
-            const q = keyword.trim();
-            if (!q) return;
-            try {
-              const docs = await fetchKakaoKeyword(q);
-              const js = `window.handleSearchResults(${JSON.stringify(docs)}); true;`;
-              webviewRef.current?.injectJavaScript(js);
-            } catch {
-              Alert.alert('검색 중 오류가 발생했습니다.');
-            }
-          }}
-        /> */}
         <Button
           title="검색"
           onPress={async () => {
@@ -188,6 +206,38 @@ const CollectionBoxLocationScreen: React.FC = () => {
         />
       </View>
 
+      {/* B. 카테고리 버튼 영역 */}
+      <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryContainer}
+        >
+          {categories.map((cat, idx) => (
+            <TouchableOpacity
+              key={idx}
+              style={[
+                styles.categoryButton,
+                selectedCategory === cat && styles.categoryButtonActive,
+              ]}
+              onPress={() => {
+                setSelectedCategory(cat);
+                // 여기서 버튼 클릭 시 기능 연결(예: 해당 카테고리만 리스트 필터링) 가능,
+                // 현재 기능은 건드리지 않으므로 UI 상 표시만 합니다.
+              }}
+            >
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === cat && styles.categoryTextActive,
+                ]}
+              >
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       {/* B. 내 위치 */}
       <View style={styles.locationBox}>
         <Text style={styles.locationText}>
@@ -200,10 +250,15 @@ const CollectionBoxLocationScreen: React.FC = () => {
         <WebView
           ref={webviewRef}
           originWhitelist={['*']}
-          source={{ html: kakaoHtml }}
+          source={{ html: kakaoHtml, baseUrl: 'https://localhost' }}
           javaScriptEnabled
           domStorageEnabled
+          allowFileAccess // 추가 
+          allowUniversalAccessFromFileURLs // 추가
+          allowFileAccessFromFileURLs // 추가
           mixedContentMode="always"
+          onError={e => console.log('WV error', e.nativeEvent)} // 추가
+          onHttpError={e => console.log('WV http-error', e.nativeEvent)} // 추가
         />
       </View>
 
@@ -230,10 +285,60 @@ export default CollectionBoxLocationScreen;
 
 const styles = StyleSheet.create({
   container:    { flex:1, backgroundColor:'#fff' },
-  searchBox:    { flexDirection:'row', padding: wp('4%') },
-  searchInput:  { flex:1, borderWidth:1, borderColor:'#ccc', borderRadius:4, padding:8, marginRight:8, color: '#000' },
+  //searchBox:    { flexDirection:'row', padding: wp('4%') },
+
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: hp('1%'),
+  },
+
+  //searchInput:  { flex:1, borderWidth:1, borderColor:'#ccc', borderRadius:4, padding:8, marginRight:8, color: '#000' },
+
+  searchInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 8,
+    marginRight: 8,
+    color: '#000',
+  },
+
+  categoryContainer: {
+    // 버튼 간 간격 조절을 위해 padding 추가
+    paddingVertical: hp('0.5%'),
+  },
+
+  categoryButton: {
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('0.8%'),
+    backgroundColor: '#e0e0e0',
+    borderRadius: 20,
+    marginRight: wp('2%'),
+  },
+
+  categoryButtonActive: {
+    backgroundColor: '#4a90e2',
+  },
+  categoryText: {
+    fontSize: wp('4%'),
+    color: '#000',
+  },
+  categoryTextActive: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+
   locationBox:  { paddingHorizontal: wp('4%'), paddingBottom: hp('1%') },
   locationText: { fontSize: wp('4%'), color:'#000' },
+
+  topBar: {
+  paddingHorizontal: wp('4%'),
+  paddingTop: hp('2%'),
+  paddingBottom: hp('1%'),
+  backgroundColor: '#fff',
+  },
 
   // D. 지도 고정 높이
   mapContainer: {

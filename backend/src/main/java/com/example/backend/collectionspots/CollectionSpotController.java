@@ -16,14 +16,27 @@ public class CollectionSpotController {
 
     @GetMapping
     public ResponseEntity<List<CollectionSpotDto>> getSpots(
-            @RequestParam String wasteItem,
+            @RequestParam(required = false) String wasteItem,
             @RequestParam(required = false) String regionCode) {
 
+        System.out.println("=================================================== 진입점");
+
         List<CollectionSpot> list;
-        if (regionCode == null || regionCode.isBlank()) {
-            list = service.findByWasteItem(wasteItem);
+
+        if (wasteItem == null || wasteItem.isBlank()) {
+            // 전체 조회
+            if (regionCode == null || regionCode.isBlank()) {
+                list = service.findAll();
+            } else {
+                list = service.findByRegionCode(regionCode);
+            }
         } else {
-            list = service.findByWasteItemAndRegionCode(wasteItem, regionCode);
+            // 특정 wasteItem에 대한 조회
+            if (regionCode == null || regionCode.isBlank()) {
+                list = service.findByWasteItem(wasteItem);
+            } else {
+                list = service.findByWasteItemAndRegionCode(wasteItem, regionCode);
+            }
         }
 
         List<CollectionSpotDto> result = list.stream()
@@ -40,6 +53,8 @@ public class CollectionSpotController {
                         spot.getRegionCode()
                 ))
                 .collect(Collectors.toList());
+
+        System.out.println("데이터 한번 찍어보기" + result);
 
         return ResponseEntity.ok(result);
     }

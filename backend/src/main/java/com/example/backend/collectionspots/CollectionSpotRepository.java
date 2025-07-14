@@ -6,9 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CollectionSpotRepository extends JpaRepository<CollectionSpot, Long> {
+    // 특정 종류로 전체 조회
     List<CollectionSpot> findByWasteItem(String wasteItem);
+
+    // 특정 종류 + 지역코드로 조회
     List<CollectionSpot> findByWasteItemAndRegionCode(String wasteItem, String regionCode);
 
-    // 위도, 경도, 행정동 코드 가 null OR 한글로 작성되어있을 시
+    // 전체 조회 (조건 없음)
     List<CollectionSpot> findAll();
+
+    // 지역코드만으로 필터링
+    List<CollectionSpot> findByRegionCode(String regionCode);
 }
