@@ -1,6 +1,7 @@
 export type SocialSignupState = {
   email: string;
   name: string;
+  socialProvider : string;
 };
 
 export type SocialSignupAction =
@@ -10,6 +11,7 @@ export type SocialSignupAction =
 export const initialSocialSignupState: SocialSignupState = {
   email: '',
   name: '',
+  socialProvider : '',
 };
 
 export function SocialSignupReducer(

@@ -7,14 +7,15 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import {LoginStackParamList} from '../../navigation/LoginNavigator'
+import api from '../../api/AxiosInstance';
+import { useToast } from '../../context/ToastContext';
+import { navigate } from '../../navigation/NavigationService';
 
 const SetPwPage = () => {
-  const route = useRoute<RouteProp<LoginStackParamList,'SetPw'>>();
   const [oldPwd, setOldPwd] = useState<string>('');
   const [newPwd, setNewPwd] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const {showToast} = useToast();
 
   const validatePassword = (pwd: string) => ({
     length: pwd.length >= 8 && pwd.length <= 12,
@@ -23,9 +24,25 @@ const SetPwPage = () => {
     hasSpecial: /[^a-zA-Z0-9]/.test(pwd),
   });
 
-      const pwRules = validatePassword(newPwd);
-    
-    
+  const pwRules = validatePassword(newPwd);
+  
+  const handleChangePw = async()=>{
+    try{
+      const response = await api.post('/user/edit/userPw/reset',{
+        
+        oldPw : oldPwd,
+        newPw : newPwd
+      });
+      if(response.data.code ==='SUCCESS'){
+        showToast({
+          message : '비밀번호가 변경되었습니다.'
+        });
+        navigate('MyPageStack',{screen: 'SettingPage'});
+      }
+    }catch(error){
+      console.error('비밀번호 변경 실패', error);
+    }
+  }  
 
   return (
     <View style={styles.container}>
@@ -86,7 +103,7 @@ const SetPwPage = () => {
             </Text>
     </View>
        
-      <TouchableOpacity style={styles.submitButton}>
+      <TouchableOpacity style={styles.submitButton} onPress={handleChangePw}>
         <Text style={styles.submitText}>비밀번호 변경</Text>
       </TouchableOpacity>
     </View>

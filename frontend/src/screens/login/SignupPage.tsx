@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState , useEffect} from 'react';
 import {
   View,
   Text,
@@ -39,14 +39,28 @@ import {
 
 type SignupParams = {
   params?: {
-    loginType?: string;
+    loginType?: 'local'| 'google' | 'kakao';
+    email? : string;
+    name? : string;
   };
 };
 
 const SignupPage= () => {
 
+  // 로컬인지 소셜인지 파악 
   const route = useRoute<RouteProp<SignupParams>>();
-  const isSocial = route.params?.loginType === 'social';
+  const loginType = route.params?.loginType?? 'local';
+  const isSocial = loginType !== 'local';
+
+  useEffect (()=>{
+    if(isSocial && route.params){
+      socialDispatch({type: 'SET_FIELD', field: 'email', value :route.params?.email || ''});
+      socialDispatch({type: 'SET_FIELD', field: 'name', value :route.params?.name || ''});
+      socialDispatch({type: 'SET_FIELD', field: 'socialProvider', value : loginType.toUpperCase()});
+    }
+   
+  },[]);
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
@@ -67,6 +81,7 @@ const SignupPage= () => {
   address: string;
   bcode: string;
   residenceType: string;
+  socialProvider : string;
 };
 
 const finalPayload: State = {
@@ -79,6 +94,7 @@ const finalPayload: State = {
   address: commonState.address,
   bcode: commonState.bcode, // ← 이건 address 선택시 함께 설정되도록 만들어야 함
   residenceType: commonState.residenceType,
+  socialProvider: loginType.toUpperCase(),
 };
 
 

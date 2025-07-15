@@ -8,6 +8,8 @@ type User = {
   nickname: string;
   role: string;
   profileImage: string;
+  status : string;
+  socialProvider : string;
 };
 
 type UserContextType = {
