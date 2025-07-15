@@ -7,6 +7,9 @@ import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
 import com.example.backend.user.dto.MyPageInfo;
 import com.querydsl.core.types.Projections;
+import com.example.backend.entity.user.QUserLevel;
+import com.example.backend.user.dto.QTotalAndLevelDTO;
+import com.example.backend.user.dto.TotalAndLevelDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -89,6 +92,25 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .from(user)
                 .join(level).on(user.userLevelId.eq(level.id))
                 .where(user.id.eq(userId))
+                .fetchOne();
+    }
+
+
+    // 미션을 보여줄 사용자의 현재 포인트, 총포인트, 유저 등급
+    @Override
+    public TotalAndLevelDTO findUserLevelAndPoint(Long userId) {
+        QUser u = QUser.user;
+        QUserLevel ul = QUserLevel.userLevel;
+        return queryFactory
+                .select(new QTotalAndLevelDTO(
+                        u.totalPoint,
+                        u.userLevelId,
+                        ul.levelName
+                ))
+                .from(u)
+                .join(ul)
+                .on(u.userLevelId.eq(ul.id))
+                .where(u.id.eq(userId))
                 .fetchOne();
     }
 }

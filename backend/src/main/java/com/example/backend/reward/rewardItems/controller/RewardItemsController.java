@@ -32,9 +32,7 @@ public class RewardItemsController {
                     @PathVariable RewardItems.RewardType rewardType,
                     @RequestParam(required = false) Long cursor, @RequestParam  int limit
                     ){
-        System.out.println("리워드 타입 : "+rewardType+ ", cursor : "+ cursor+", limit : "+limit);
         CursorPageResponse<FindRewardListDTO> list = rewardItemsService.findRewardItemList(rewardType, cursor, limit);
-        System.out.println("체크 : " + list);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
