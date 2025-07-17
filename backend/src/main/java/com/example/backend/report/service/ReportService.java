@@ -10,4 +10,5 @@ import java.util.List;
 public interface ReportService {
     List<ReportListDTO> reportList(Report.Status status, Report.TargetType targetType, String searchText);
     void registerReport(ReportInsertRequestDTO reportInsertRequestDTO);
+    void updateReport(Long Id);
 }

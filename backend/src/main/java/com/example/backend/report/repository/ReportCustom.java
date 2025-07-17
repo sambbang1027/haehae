@@ -6,5 +6,6 @@ import com.example.backend.report.dto.response.ReportListResponseDTO;
 import java.util.List;
 
 public interface ReportCustom {
-    List<ReportListResponseDTO> reportList(Report.Status status,Report.TargetType targetType, String searchText );
+    List<ReportListResponseDTO> reportList(Report.Status status,Report.TargetType targetType, String searchText);
+    
 }

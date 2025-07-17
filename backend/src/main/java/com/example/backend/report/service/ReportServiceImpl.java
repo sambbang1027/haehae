@@ -49,4 +49,10 @@ public class ReportServiceImpl implements ReportService{
     public void registerReport(ReportInsertRequestDTO reportInsertRequestDTO) {
         reportRepository.save(reportInsertRequestDTO.toEntity());
     }
+
+    @Override
+    public void updateReport(Long id) {
+        Report report = reportRepository.findReportTargetTypeAndTargetId(id);
+        
+    }
 }
