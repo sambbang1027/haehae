@@ -38,15 +38,17 @@ public class DetailCommandServiceImpl implements DetailCommandService {
 
         localBoardRepository.save(localBoards);
 
-        for(String imageUrl : createContentRequestDTO.getLocalBoardImageUrl()){
+        if(createContentRequestDTO.getLocalBoardImageUrl() != null) {
+            for (String imageUrl : createContentRequestDTO.getLocalBoardImageUrl()) {
 
-            LocalBoardImages localBoardImages
-                    = LocalBoardImages.builder()
-                    .localBoardId(localBoards.getLocalBoardId())
-                    .localBoardImgUrl(imageUrl)
-                    .build();
+                LocalBoardImages localBoardImages
+                        = LocalBoardImages.builder()
+                        .localBoardId(localBoards.getLocalBoardId())
+                        .localBoardImgUrl(imageUrl)
+                        .build();
 
-            boardImageRepository.save(localBoardImages);
+                boardImageRepository.save(localBoardImages);
+            }
         }
     }
 
