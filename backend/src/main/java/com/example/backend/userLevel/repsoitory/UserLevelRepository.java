@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface UserLevelRepository extends JpaRepository<UserLevel,Long > {
+public interface UserLevelRepository extends JpaRepository<UserLevel,Long>, UserLevelRepositoryCustom {
 
     @Query(" SELECT ul FROM UserLevel ul" +
             " WHERE ul.id =:nextLevelId")

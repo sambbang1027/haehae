@@ -56,7 +56,7 @@ public class CommonUserService {
                 userEditInfoRequest.getAddress(), userEditInfoRequest.getBcode(),
                 userEditInfoRequest.getResidenceType(), userEditInfoRequest.getPhoneNumber());
 
-            if(updateCheck < 1) {
+            if(updateCheck == 0) {
                 throw new HaehaeException(ErrorCode.USER_NOT_FOUND);
             }
     }
@@ -70,9 +70,10 @@ public class CommonUserService {
 
         Long deleteCheck = userRepository.deleteAccount(deleteUserRequest.getUserId());
 
-        if(deleteCheck > 0){
-            log.info("회원 탈퇴 성공 : " + user.getId());
+        if(deleteCheck == 0){
+            throw new HaehaeException(ErrorCode.NO_CONTENT_UPDATED);
         }
+        log.info("회원 탈퇴 성공 : " + user.getId());
 
     }
 
@@ -94,9 +95,11 @@ public class CommonUserService {
                 imageUrl
         );
 
-        if (updateCheck > 0) {
-            log.info("프로필 변경 성공 : " + user.getId());
+        if (updateCheck == 0) {
+            throw new HaehaeException(ErrorCode.NO_CONTENT_UPDATED);
         }
+        log.info("프로필 업데이트 성공 : " + user.getId());
+
     }
 
     public MyPageInfo getMyPageInfo(Long userId){
@@ -105,4 +108,5 @@ public class CommonUserService {
 
         return  userRepository.getMypageInfo(userId);
     }
+    
 }

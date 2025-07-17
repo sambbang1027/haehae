@@ -5,13 +5,22 @@ import com.example.backend.entity.user.QUserLevel;
 import com.example.backend.entity.user.User;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
+import com.example.backend.user.dto.LocalRegisterDTO;
 import com.example.backend.user.dto.MyPageInfo;
+import com.example.backend.user.vo.Address;
+import com.example.backend.user.vo.Email;
+import com.example.backend.user.vo.Nickname;
+import com.example.backend.user.vo.PhoneNumber;
 import com.querydsl.core.types.Projections;
-import com.example.backend.entity.user.QUserLevel;
 import com.example.backend.user.dto.QTotalAndLevelDTO;
 import com.example.backend.user.dto.TotalAndLevelDTO;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;;
 import lombok.RequiredArgsConstructor;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -112,5 +121,37 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .on(u.userLevelId.eq(ul.id))
                 .where(u.id.eq(userId))
                 .fetchOne();
+    }
+
+
+    // 탈퇴 했던 유저 정보 리셋 후 재가입
+    @Override
+    public Long updateReActiveUser(LocalRegisterDTO localRegisterDTO, String passwordHash
+            , Email email, Nickname nickname, PhoneNumber phoneNumber, Address address){
+        QUser user = QUser.user;
+        return queryFactory
+                .update(user)
+                .set(user.userLevelId, 1L)
+                .set(user.levelAchievedAt, LocalDate.now())
+                .set(user.levelExpireAt, LocalDate.now().plusMonths(3))
+                .set(user.email, email.getValue())
+                .set(user.name, localRegisterDTO.getName())
+                .set(user.passwordHash, passwordHash)
+                .set(user.nickname, nickname.getValue())
+                .set(user.profileImageUrl, (String) null)
+                .set(user.socialProvider, (String) null)
+                .set(user.phoneNumber, phoneNumber.getValue())
+                .set(user.birth, localRegisterDTO.getBirth())
+                .set(user.address, address.getRoadAddress())
+                .set(user.bcode, address.getBcode())
+                .set(user.createdAt, Timestamp.valueOf(LocalDateTime.now()))
+                .set(user.residenceType, localRegisterDTO.getResidenceType())
+                .set(user.deletedAt, (Timestamp) null)
+                .set(user.status, User.Status.ACTIVE)
+                .set(user.currentPoint, (Long) null)
+                .set(user.totalPoint, (Long) null)
+                .where(user.email.eq(email.getValue()))
+                .execute();
+
     }
 }
