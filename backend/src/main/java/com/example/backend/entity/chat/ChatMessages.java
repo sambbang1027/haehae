@@ -1,5 +1,6 @@
 package com.example.backend.entity.chat;
 
+import com.example.backend.entity.localBoard.Comments;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +40,14 @@ public class ChatMessages {
 
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
+
+    @Enumerated(EnumType.STRING)
+    private ChatMessagesStatus chatMessagesStatus;
+
+    public enum ChatMessagesStatus{
+        ACTIVE,
+        REPORT
+    }
 
     public enum MessageType {
         text,

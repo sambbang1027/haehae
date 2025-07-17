@@ -31,4 +31,19 @@ public class UserPenalty {
     @Column(name ="created_at")
     private Timestamp createdAt;
 
+    // report 테이블의 id와 연관관계
+    @Column(name = "report_id")
+    private Long reportId;
+
+    @Enumerated(EnumType.STRING)
+    private PenaltyStatus penaltyStatus;
+
+    public enum PenaltyStatus{
+        ACTIVE,
+        CANCELED
+    }
+
+    protected void onCreate(){
+        this.createdAt=new Timestamp(System.currentTimeMillis());
+    }
 }

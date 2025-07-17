@@ -46,8 +46,10 @@ public class Report {
     public enum TargetType{
         post,
         comment,
-        chat,
-        sharing// DB에는 user라고 되어있는데 sharing추가.
+        chat_message,
+        chat_room,
+        sharing,
+        sharing_log
     }
 
     public enum Status{

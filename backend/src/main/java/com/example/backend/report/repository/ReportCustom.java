@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReportCustom {
     List<ReportListResponseDTO> reportList(Report.Status status,Report.TargetType targetType, String searchText);
-    
+    void UpdateReportStatus(Long reportId, Report.Status Status);
 }

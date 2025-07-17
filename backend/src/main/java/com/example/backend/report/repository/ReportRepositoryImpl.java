@@ -48,4 +48,12 @@ public class ReportRepositoryImpl implements ReportCustom{
                     .where(builder)
                     .fetch();
     }
+
+    @Override
+    public void UpdateReportStatus(Long reportId, Report.Status status) {
+        jpaQueryFactory.update(r)
+                .set(r.status, status)
+                .where(r.id.eq(reportId))
+                .execute();
+    }
 }

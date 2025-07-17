@@ -4,7 +4,10 @@ import com.example.backend.entity.report.Report;
 import com.example.backend.report.dto.request.ReportInsertRequestDTO;
 import com.example.backend.report.dto.response.ReportListDTO;
 import com.example.backend.report.dto.response.ReportListResponseDTO;
+import com.example.backend.report.dto.response.UpdateReportInfoDTO;
+import com.example.backend.report.dto.response.UpdateReportListDTO;
 import com.example.backend.report.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,9 +53,24 @@ public class ReportServiceImpl implements ReportService{
         reportRepository.save(reportInsertRequestDTO.toEntity());
     }
 
+
+    // 1. id로 조회
+    // 2. 타겟대상과, 타켓 타입을 가져온다. 
+    // 3. 해당 다켓대상과 타켓타입을 가진 리스트 모두 업데이트
+    @Transactional
     @Override
-    public void updateReport(Long id) {
-        Report report = reportRepository.findReportTargetTypeAndTargetId(id);
-        
+    public UpdateReportInfoDTO updateReport(Long id, Report.Status status) {
+        UpdateReportInfoDTO updateReportInfo = reportRepository.findReportTargetTypeAndTargetId(id);
+        Long targetId = updateReportInfo.getTargetId();
+        Report.TargetType targetType = updateReportInfo.getTargetType();
+
+        List<UpdateReportListDTO> listDTO =  reportRepository.findListUpdateInfo(targetId,targetType);
+
+        for(UpdateReportListDTO updateInfoDTO : listDTO){
+            if(updateInfoDTO.getStatus() == Report.Status.PENDING) {
+                reportRepository.UpdateReportStatus(updateInfoDTO.getId(), status);
+            }
+        }
+        return updateReportInfo;
     }
 }
