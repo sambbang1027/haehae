@@ -12,7 +12,7 @@ const AppText = ({ style, children, ...props }: TextProps) => {
   const { size } = useTextSize();
 
   return (
-    <Text style={[{ fontSize: fontSizeMap[size] }, style]} {...props}>
+    <Text style={[style, { fontSize: fontSizeMap[size] }]} {...props} >
       {children}
     </Text>
   );

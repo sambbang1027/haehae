@@ -15,7 +15,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { useUser } from '../../context/UserContext.tsx';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-
+import { useToast } from '../../context/ToastContext.tsx';
 
 const LoginPage = () => {
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const { login} = useUser();
-
+  const {showToast} = useToast();
   useEffect(()=> {
     GoogleSignin.configure({
       webClientId : '1032730359503-m2aidsmm9s09ch6g9qq4a9iko7q0p5t7.apps.googleusercontent.com',
@@ -45,13 +45,14 @@ const LoginPage = () => {
 
 
    // 로컬 로그인 
-  const handleLocalLogin = async() => {
+const handleLocalLogin = async() => {
     try{
     const res = await api.post('/auth/login', {
       email,
       password 
     });
       console.log(res.data);
+
      if (res.data.code === "SUCCESS") {
       const accessToken = res.data.data.accessToken;
       const refreshToken = res.data.data.refreshToken;
@@ -75,10 +76,22 @@ const LoginPage = () => {
         console.log("❌ 실패");
       }
     }
-  }catch(error){
-    console.error(error);
+  }catch(error : any){
+   switch(error.response?.data.code) {
+      case 'INACTIVE_USER':
+        showToast({ message: '이미 탈퇴한 계정입니다.' });
+        break;
+      case 'BLOCKED_USER':
+        showToast({ message: '차단된 계정입니다.' });
+        break;
+      case 'USER_NOT_FOUND':
+        showToast({ message: '존재하지 않는 계정입니다.' });
+        break;  
+      default:
+        showToast({ message: '로그인 실패. 다시 시도해주세요.' });
+    }
   }
-  }
+}
 
   
   const handleGoogleLogin = async() => {
@@ -123,7 +136,7 @@ const LoginPage = () => {
 
 
   const goToSignup = () => {
-     navigate('LoginStack' ,{screen : 'Signup', params: { loginType: 'local' }});
+     navigate('LoginStack' ,{screen : 'Signup', params: { loginType: 'LOCAL' }});
   }
   const goToFindId = () => {
       navigate('LoginStack' ,{screen : 'FindId'});

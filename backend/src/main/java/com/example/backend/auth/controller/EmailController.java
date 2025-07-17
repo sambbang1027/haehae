@@ -4,14 +4,11 @@ import com.example.backend.auth.dto.EmailDTO;
 import com.example.backend.auth.dto.VerifyRequestDTO;
 import com.example.backend.auth.service.EmailService;
 import com.example.backend.common.response.HaehaeResponse;
-import com.example.backend.exception.ErrorCode;
-import com.example.backend.exception.HaehaeException;
-import com.example.backend.user.service.LocalUserServiceImpl;
+import com.example.backend.user.service.LocalUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -20,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmailController {
 
     private final EmailService emailService;
-    private final LocalUserServiceImpl localUserService;
+    private final LocalUserService localUserService;
 
 
         // 이메일에 코드 전송
