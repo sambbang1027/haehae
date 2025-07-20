@@ -28,14 +28,6 @@ public class PreviewMissionController {
         this.userInfoService = userInfoService;
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<PreviewMissionListResponseDTO>> findAllActiveMission(){
-        System.out.println("요청 들어옴");
-        List<PreviewMissionListResponseDTO> missionList= previewMissionService.findPreviewALlActive();
-        System.out.println("반환값 확인 : "+ missionList);
-        return new ResponseEntity<>(missionList, HttpStatus.OK);
-    }
-    
     // 클라이언트 용 미션 리스트
     @GetMapping("/user/list/{userId}")
     public ResponseEntity<List<PreviewMissionListAndUserStatusDTO>> findAllActiveMissionAndUserState(

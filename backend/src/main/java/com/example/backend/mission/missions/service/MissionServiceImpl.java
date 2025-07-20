@@ -50,8 +50,6 @@ public class MissionServiceImpl implements  MissionService {
         return new CursorPageResponse<>(list, nextCursor ,hasNext);
     }
 
-    // 사용자에게 보여줄 주간 미션 저장
-
 
     // 미션 등록
     @Override

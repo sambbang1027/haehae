@@ -84,6 +84,9 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
                                     ? UserMissionStatus.MissionStatus.PREVIEW
                                     : UserMissionStatus.MissionStatus.ACCEPTED;
                     uploadAndInsertMissionStatus(userId,id,resultStatusBoard,missionStatus);
+                    System.out.println(countBoard);
+                    System.out.println(startAt);
+                    System.out.println(endAt);
                     break;
 
                 // 댓글 개수 조회    
@@ -142,7 +145,6 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     // 2. 유저 포인트 삽입
     // 3. 유저 미션 십입.
     // 4. 현재 포인트 반영, 총포인트 반영
-    // 5. 필요시 유저 등급 업데이트
     @Transactional
     @Override
     public void completeUpdateUserStatus(UserMissionSuccessRequestDTO dto) {
@@ -182,15 +184,15 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
             userRepository.updateCurrentPoint(plusPoint, dto.getUserId());
             userRepository.updateTotalPoint(totalPlusPoint, dto.getUserId());
 
-            //5. 필요시 유저 등급 업데이트
-            long userLevelId = currentAndTotalPoint.getUserLevelId();
-            if(userLevelId < 4) {
-                long nextLevelId = userLevelId + 1;
-                UserLevel userLevel = userLevelRepository.findUserNextLevels(nextLevelId);
-                    if (userLevel.getMinPoints() <= totalPlusPoint) {
-                        userRepository.updateUserLevelId(nextLevelId, dto.getUserId());
-                    }
-            }
+//            //5. 필요시 유저 등급 업데이트
+//            long userLevelId = currentAndTotalPoint.getUserLevelId();
+//            if(userLevelId < 4) {
+//                long nextLevelId = userLevelId + 1;
+//                UserLevel userLevel = userLevelRepository.findUserNextLevels(nextLevelId);
+//                    if (userLevel.getMinPoints() <= totalPlusPoint) {
+//                        userRepository.updateUserLevelId(nextLevelId, dto.getUserId());
+//                    }
+//            }
         }
     }
 

@@ -10,6 +10,9 @@ import com.example.backend.mission.previewMissions.dto.response.PreViewMissionSt
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListAndUserStatusDTO;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListResponseDTO;
 import com.example.backend.mission.previewMissions.repository.PreviewMissionRepository;
+import com.example.backend.mission.userMissionStatus.service.UserMissionStatusService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,6 @@ import java.util.*;
 
 @Service
 public class PreviewMissionServiceImpl implements  PreviewMissionService {
-
     private final PreviewMissionRepository previewMissionRepository;
     private final MissionsRepository missionsRepository;
 
@@ -30,7 +32,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 9 * * MON") // 매주 월요일 오전 9시 0 0 9 * * MON
+    @Scheduled(cron = "0 14 15 * * SUN") // 매주 월요일 오전 9시 0 0 9 * * MON
     public void scheduledWeeklyMission(){
         if(previewMissionRepository.existByActiveMission(PreviewMissions.PreviewMissionStatus.ACTIVE, PreviewMissions.PreviewMissionType.WEEKLY)) {
             missionWeeklyActiveUpdate();
@@ -40,12 +42,13 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
             missionPreviewWeekly(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }else {
             missionPreviewWeekly(PreviewMissions.PreviewMissionStatus.ACTIVE);
+            missionPreviewWeekly(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }
         expiredWeeklyMissionDelete();
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 9 * * *") // 매일 9시  0 0 9 * * *
+    @Scheduled(cron = "0 47 14 * * *") // 매일 9시  0 0 9 * * *
     public void scheduledDailyMission(){
         if(previewMissionRepository.existByActiveMission(PreviewMissions.PreviewMissionStatus.ACTIVE, PreviewMissions.PreviewMissionType.DAILY)) {
             missionDailyActiveUpdate();
@@ -55,6 +58,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
             missionPreviewDaily(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }else {
             missionPreviewDaily(PreviewMissions.PreviewMissionStatus.ACTIVE);
+            missionPreviewDaily(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }
         expiredDailyMissionDaily();
     }
@@ -235,7 +239,11 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
 
     @Override
     public List<PreviewMissionListResponseDTO> findPreviewALlActive() {
-        List<PreviewMissionListResponseDTO> list =  previewMissionRepository.findPreviewALlActive(PreviewMissions.PreviewMissionStatus.ACTIVE);
+        PreviewMissions.PreviewMissionStatus status = PreviewMissions.PreviewMissionStatus.ACTIVE;
+        System.out.println("서비스 사용자 preview 미션 리스트");
+        System.out.println(status);
+        List<PreviewMissionListResponseDTO> list =  previewMissionRepository.findPreviewALlActive(status);
+        System.out.println(list);
         if(list == null || list.isEmpty()){
             throw new IllegalArgumentException("미션이 존재 하지 않습니다.");
         }
@@ -274,8 +282,6 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
        if(list == null || list.isEmpty()) {
            throw new IllegalArgumentException("미션이 존재 하지 않습니다.");
        }
-        System.out.println(" 유저 Id " + userId);
-        System.out.println("서비스단  : "+list);
        return list;
     }
 }
