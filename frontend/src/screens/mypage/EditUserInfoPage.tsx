@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,86 +8,139 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import CustomCheckbox from '../../components/common/CustomCheckBox';
 import dayjs from 'dayjs';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { navigate } from '../../navigation/NavigationService';
+import { useUser } from '../../context/UserContext';
+import api from '../../api/AxiosInstance';
+import AppText from '../../components/common/AppText';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import AddressSearchModal from '../../components/common/AddressSearch';
+import { useToast } from '../../context/ToastContext';
 
 const EditUserInfo = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const [residenceType, setResidenceType] = useState<string>('apt');
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const [birthDate, setBirthDate] = useState<Date>(new Date());
+  useEffect(() =>{
+    getUserInfo();
+  },[]);
+  const {user} = useUser();
+  const [formData, setFormData] = useState({
+    username: '',
+    phoneNumber: '',
+    birth: '',
+    address: '',
+    bcode: '',
+    residenceType: '',
+  });
+  const {showToast} = useToast();
+  const getUserInfo = async()=>{
+    try{
+      const response = await api.get('/user/get/edit/info', {
+        params:{userId : user?.userId}
+      });
+      if(response.data.code ==='SUCCESS'){
+        setFormData(response.data.data);
+      }
+    }catch(error){
+      console.error('유저 정보 셋팅 실패 ', error);
+    }
+  }; 
 
+  const [showAddressModal, setShowAddressModal] = useState(false);
   const handleAddressSearch = () => {
-    console.log('주소 검색 실행');
+    setShowAddressModal(true);
   };
 
   const handleVerify = () => {
     console.log('본인인증 실행');
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async() => {
+    try{
+      const response = await api.post('/user/edit/info',{
+        userId : user?.userId,
+        ...formData
+      });
+      if(response.data.code ==='SUCCESS'){
+        showToast({
+          message: '회원정보가 수정되었습니다.'
+        });
+        navigate('MyPageStack',{screen:'SettingPage'});
+      }
+    }catch(error){
+      console.error('회원정보 수정 실패', error);
+    }
     console.log('회원정보 수정 완료');
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.sectionTitle}>회원정보</Text>
+      <AppText style={styles.sectionTitle}>회원정보</AppText>
 
       <View style={styles.infoRow}>
-        <Text style={styles.label}>이름</Text>
-        <Text style={styles.value}>김정우</Text>
+        <AppText style={styles.label}>이름</AppText>
+        <AppText style={styles.value}>{formData.username}</AppText>
       </View>
 
       <View style={styles.infoRow}>
-        <Text style={styles.label}>휴대전화번호</Text>
-        <Text style={styles.value}>010-1***-2***</Text>
+        <AppText style={styles.label}>휴대전화번호</AppText>
+        <AppText style={styles.value}>{formData.phoneNumber}</AppText>
+      </View>
+      
+      <View style={styles.infoRow}>
+        <AppText style={styles.label}>생년월일</AppText>
+        <AppText style={styles.value}>{dayjs(formData.birth).format('YYYY년 MM월 DD일')}</AppText>
       </View>
 
       <TouchableOpacity style={styles.verifyButton} onPress={handleVerify}>
-        <Text style={styles.verifyButtonText}>본인인증</Text>
+        <AppText style={styles.verifyButtonText}>본인인증</AppText>
       </TouchableOpacity>
-      <Text style={styles.tip}>• 인증된 정보로 휴대전화번호가 자동 적용됩니다.</Text>
+      <AppText style={styles.tip}>• 인증된 정보로 휴대전화번호가 자동 적용됩니다.</AppText>     
+      <AppText style={styles.tip}>• 생년월일 수정을 원하시면 고객센터로 문의바랍니다.</AppText>
 
-      <Text style={styles.label}>생년월일</Text>
-      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.birthButton}>
-        <Text style={styles.birthText}>{dayjs(birthDate).format('YYYY년 MM월 DD일')}</Text>
-      </TouchableOpacity>
 
-       <DateTimePickerModal
-        isVisible={showDatePicker}
-        mode="date"
-        maximumDate={new Date()}
-        //onDateChange={(date: Date) => setBirthDate(date)}
-        onConfirm={(date) => {
-        setShowDatePicker(false);
-        }}
-        onCancel={() => setShowDatePicker(false)}
-      />
 
-      <Text style={styles.label}>주소</Text>
+      <AppText style={styles.label}>주소</AppText>
       <View style={styles.addressRow}>
-        <TextInput style={styles.addressInput} placeholder="주소" editable={false} />
+        <TextInput style={styles.addressInput} value={formData.address} editable={false} />
         <TouchableOpacity style={styles.addressSearchButton} onPress={handleAddressSearch}>
-          <Text style={styles.addressSearchText}>검색</Text>
+          <AppText style={styles.addressSearchText}>검색</AppText>
         </TouchableOpacity>
+              {/* 주소 모달  */}
+      {showAddressModal && (
+        <Modal visible transparent animationType="fade">
+          <AddressSearchModal
+            onSelect={(addr, code) => {
+              setFormData(prev =>({
+                ...prev,
+                address : addr,
+                bcode : code
+              }));
+            }}
+            onClose={() => setShowAddressModal(false)}
+          />
+        </Modal>
+      )}
       </View>
 
-      <Text style={styles.label}>주거 유형</Text>
+      <AppText style={styles.label}>주거 유형</AppText>
       <View style={styles.residenceContainer}>
         <View style={styles.checkboxItem}>
           <CustomCheckbox
-            checked={residenceType === 'villa'}
-            onToggle={() => setResidenceType('villa')}
+            checked={formData.residenceType === 'HOUSE_VILLA'}
+            onToggle={() => setFormData(prev =>
+              ({...prev,
+              residenceType :'HOUSE_VILLA'
+             }))}
           />
-          <Text style={styles.residenceLabel}>빌라/주택</Text>
+          <AppText style={styles.residenceLabel}>빌라/주택</AppText>
         </View>
         <View style={styles.checkboxItem}>
           <CustomCheckbox
-            checked={residenceType === 'apt'}
-            onToggle={() => setResidenceType('apt')}
+            checked={formData.residenceType === 'APT_OFFICETEL'}
+            onToggle={() => setFormData(prev =>
+              ({ ...prev,
+                residenceType : 'APT_OFFICETEL'
+              }))}
           />
           <Text style={styles.residenceLabel}>아파트/오피스텔</Text>
         </View>
@@ -106,55 +159,56 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
-    padding: 20,
+    padding: wp('5%'),
   },
   sectionTitle: {
     color: '#006831',
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     fontWeight: '700',
-    marginTop: 30,
-    marginBottom: 10,
+    marginTop: hp('1%'),
+    marginBottom: hp('1.5%'),
   },
   label: {
-    marginTop: 25,
-    marginBottom: 6,
-    fontSize: 15,
+    marginTop: hp('2.5%'),
+    marginBottom: hp('1%'),
+    fontSize: wp('3.8%'),
     color: '#000',
   },
   value: {
-    fontSize: 15,
+    marginTop: hp('2.5%'),
+    fontSize: wp('3.8%'),
     color: '#006831',
   },
   tip: {
-    fontSize: 13,
+    fontSize: wp('3.2%'),
     color: '#000',
-    marginTop: 10,
+    marginTop: hp('1%'),
   },
   verifyButton: {
     backgroundColor: '#fff',
     borderColor: '#C8F589',
     borderWidth: 2,
-    borderRadius: 5,
-    height: 55,
+    borderRadius: wp('1.5%'),
+    height: hp('6%'),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: hp('1%'),
   },
   verifyButtonText: {
     fontWeight: '700',
-    fontSize: 15,
+    fontSize: wp('3.8%'),
   },
   birthButton: {
     borderWidth: 1,
     borderColor: '#959595',
-    borderRadius: 3,
-    height: 55,
+    borderRadius: wp('1%'),
+    height: hp('6%'),
     justifyContent: 'center',
-    paddingHorizontal: 10,
-    marginTop: 8,
+    paddingHorizontal: wp('3%'),
+    marginTop: hp('1%'),
   },
   birthText: {
-    fontSize: 15,
+    fontSize: wp('3.8%'),
     color: '#000',
   },
   modalContainer: {
@@ -165,12 +219,12 @@ const styles = StyleSheet.create({
   },
   calendarWrapper: {
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: wp('2%'),
+    padding: wp('5%'),
     width: '90%',
   },
   calendarCloseBtn: {
-    marginTop: 10,
+    marginTop: hp('1%'),
     alignSelf: 'flex-end',
   },
   addressRow: {
@@ -180,52 +234,54 @@ const styles = StyleSheet.create({
   addressInput: {
     borderWidth: 1,
     borderColor: '#959595',
-    borderRadius: 3,
-    height: 55,
+    borderRadius: wp('1%'),
+    height: hp('6%'),
     flex: 1,
-    paddingHorizontal: 10,
+    color: '#000',
+    paddingHorizontal: wp('3%'),
   },
   addressSearchButton: {
     borderWidth: 1,
     borderColor: '#5da000',
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginLeft: 10,
+    borderRadius: wp('7%'),
+    paddingVertical: hp('1.2%'),
+    paddingHorizontal: wp('4%'),
+    marginLeft: wp('2.5%'),
   },
   addressSearchText: {
     color: '#5da000',
     fontWeight: '700',
+    fontSize: wp('3.5%'),
   },
   residenceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderWidth: 1,
     borderColor: '#959595',
-    borderRadius: 4,
-    padding: 10,
-    marginTop: 10,
+    borderRadius: wp('1.2%'),
+    padding: wp('3%'),
+    marginTop: hp('1.5%'),
   },
   checkboxItem: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   residenceLabel: {
-    marginLeft: 5,
-    fontSize: 15,
+    marginLeft: wp('1.5%'),
+    fontSize: wp('3.5%'),
     color: '#898989',
   },
   updateButton: {
     backgroundColor: '#C8F589',
-    borderRadius: 5,
-    height: 55,
+    borderRadius: wp('2%'),
+    height: hp('6.5%'),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 30,
+    marginTop: hp('4%'),
   },
   updateButtonText: {
     fontWeight: '700',
-    fontSize: 17,
+    fontSize: wp('4.2%'),
   },
   infoRow: {
     flexDirection: 'row',

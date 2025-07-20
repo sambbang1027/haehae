@@ -1,12 +1,14 @@
 package com.example.backend.user.service;
 
 
-import com.example.backend.auth.enums.VerificationType;
 import com.example.backend.entity.user.User;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
+import com.example.backend.security.CustomUserDetails;
+import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.user.dto.FindIdRequest;
 import com.example.backend.user.dto.LocalRegisterDTO;
+import com.example.backend.user.dto.ResetUserPwRequest;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.vo.*;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class LocalUserServiceImpl implements UserService {
+public class LocalUserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
 
     //로컬 회원가입
     @Transactional
-    @Override
     public void localRegister(LocalRegisterDTO localRegisterDTO){
         // VO 검증
         Email email = new Email(localRegisterDTO.getEmail());
@@ -77,21 +79,18 @@ public class LocalUserServiceImpl implements UserService {
     }
 
     // 닉네임 중복검사
-    @Override
     public boolean duplicateNickname (String nickname){
         Nickname nicknameVo = new Nickname(nickname);
         return userRepository.existsByNickname(nicknameVo.getValue());
     }
 
     // 이메일 중복검사
-    @Override
     public boolean isEmailDuplicated (String email){
         Email emailVo = new Email(email);
         return userRepository.existsByEmail(emailVo.getValue());
     }
 
     // 이메일 찾기
-    @Override
     public String findEmailByNmaeAndPhoneNum(FindIdRequest findIdRequest){
         String email = userRepository.findEmailByUsernameAndPhoneNumber(findIdRequest.getName(),findIdRequest.getPhoneNumber());
         if (email == null){
@@ -115,7 +114,6 @@ public class LocalUserServiceImpl implements UserService {
 
     // 비밀번호 재설정
     @Transactional
-    @Override
     public void resetPassword (String token, String newPw){
 
         String key = "pw-reset:"+token;
@@ -135,4 +133,28 @@ public class LocalUserServiceImpl implements UserService {
         redisTemplate.delete(key);
 
     }
+
+    // 로그인 상태에서 비밀번호 변경
+    @Transactional
+    public void localUserResetPassword(ResetUserPwRequest resetUserPwRequest, CustomUserDetails customUserDetails){
+
+
+        Long userId = customUserDetails.getId();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new HaehaeException(ErrorCode.USER_NOT_FOUND));
+
+        if(!passwordEncoder.matches(resetUserPwRequest.getOldPw(), user.getPasswordHash())){
+           throw new HaehaeException(ErrorCode.PASSWORD_NOT_MATCH);
+
+        }
+
+        Password validateNewPw = new Password(resetUserPwRequest.getNewPw());
+
+        String hashPw = passwordEncoder.encode(validateNewPw.getValue());
+
+        user.updatePassword(hashPw);
+
+    }
+
 }

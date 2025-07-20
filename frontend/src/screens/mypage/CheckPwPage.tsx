@@ -14,17 +14,11 @@ import {
   RouteProp
 } from '@react-navigation/native';
 import AppText from '../../components/common/AppText';
+import { navigate } from '../../navigation/NavigationService';
 
 
-// 내비게이션 스택 타입 (필요 시 정확히 수정하세요)
-type RootStackParamList = {
-  EditUserInfo: undefined;
-  VerifySocialUser: undefined;
-  LoginStack: { screen: string };
-};
 
 const PasswordConfirmScreen = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<Partial<Record<string, { loginType?: string }>>, string>>();
   const userType = route.params?.loginType || 'email';
   const [password, setPassword] = useState('');
@@ -32,14 +26,14 @@ const PasswordConfirmScreen = () => {
   const handleConfirm = () => {
     if (userType === 'email') {
       console.log('입력된 비밀번호:', password);
-      navigation.navigate('EditUserInfo');
+      navigate('MyPageStack',{screen: 'EditUserInfo'});
     } else {
-      navigation.navigate('VerifySocialUser');
+     // navigate('MyPageStack',{screen :'VerifySocialUser'});
     }
   };
 
   const goToFindPW = () => {
-    navigation.navigate('LoginStack', { screen: 'FindPw' });
+    navigate('LoginStack', { screen: 'FindPw' });
   };
 
 

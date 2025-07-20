@@ -4,7 +4,7 @@ import com.example.backend.auth.dto.EmailDTO;
 import com.example.backend.auth.enums.VerificationType;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
-import com.example.backend.user.service.UserService;
+import com.example.backend.user.service.LocalUserService;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -30,7 +30,7 @@ import java.util.UUID;
 public class EmailService {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final UserService userService;
+    private final LocalUserService userService;
     private final String apiKey = Dotenv.load().get("SENDGRID_API_KEY");
 
     // 이메일 발송 핸들러
