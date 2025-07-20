@@ -12,7 +12,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { useToast } from '../../context/ToastContext';
 import api from '../../api/AxiosInstance';
 import { useUser } from '../../context/UserContext';
-import { useImagePicker } from '../../hooks/UseImagePicker';
+import { useImagePicker } from '../../hooks/useImagePicker';
 import { navigate } from '../../navigation/NavigationService';
 import { useFireBaseImage } from '../../hooks/UseFirebaseImage';
 import { Asset } from 'react-native-image-picker';

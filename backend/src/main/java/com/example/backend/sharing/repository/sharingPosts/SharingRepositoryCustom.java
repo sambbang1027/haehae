@@ -1,5 +1,6 @@
 package com.example.backend.sharing.repository.sharingPosts;
 
+import com.example.backend.entity.sharing.SharingPosts;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
 import com.example.backend.sharing.dto.request.UpdateSharingRequestDTO;
 import com.example.backend.sharing.dto.response.SharingCotentResponseDTO;
@@ -17,4 +18,6 @@ public interface SharingRepositoryCustom {
     public void updateSharingDetail(UpdateSharingRequestDTO updateSharingRequestDTO);
 
     public SharingCotentResponseDTO getSharingDetail(Long sharingPostId);
+
+
 }

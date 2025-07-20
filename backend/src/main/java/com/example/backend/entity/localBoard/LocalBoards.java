@@ -36,6 +36,14 @@ public class LocalBoards {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    private BoardStatus boardStatus;
+
+    public enum BoardStatus{
+        ACTIVE,
+        REPORT
+    }
+
 
     @PrePersist
     public void prePersist() {

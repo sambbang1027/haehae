@@ -30,9 +30,16 @@ public class Comments {
 
     private String content;
 
-
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @Enumerated(EnumType.STRING)
+    private CommentsStatus commentsStatus;
+
+    public enum CommentsStatus{
+        ACTIVE,
+        REPORT
+    }
 
     @PrePersist
     public void prePersist() {
