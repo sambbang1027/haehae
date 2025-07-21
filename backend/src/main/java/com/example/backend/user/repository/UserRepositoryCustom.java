@@ -1,6 +1,7 @@
 package com.example.backend.user.repository;
 
 
+import com.example.backend.entity.user.User;
 import com.example.backend.user.dto.TotalAndLevelDTO;
 
 import com.example.backend.user.dto.MyPageInfo;
@@ -15,4 +16,6 @@ public interface UserRepositoryCustom {
     Long updateProfile(Long userId, String nickname, String profileImageUrl);
 
     MyPageInfo getMypageInfo(Long userId);
+
+    void permanentStop(Long userId, User.Status status);
 }

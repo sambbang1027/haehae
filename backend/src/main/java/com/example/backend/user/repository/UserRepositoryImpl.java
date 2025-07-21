@@ -113,4 +113,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .where(u.id.eq(userId))
                 .fetchOne();
     }
+
+    // 영구정지
+    @Override
+    public void permanentStop(Long userId, User.Status status) {
+        QUser u = QUser.user;
+         queryFactory
+                .update(u)
+                .set(u.status, status)
+                .where(u.id.eq(userId))
+                .execute();
+    }
 }

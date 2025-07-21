@@ -6,12 +6,14 @@ import com.example.backend.entity.localBoard.LocalBoards;
 import com.example.backend.entity.report.Report;
 import com.example.backend.entity.report.UserPenalty;
 import com.example.backend.entity.sharing.SharingPosts;
+import com.example.backend.entity.user.User;
 import com.example.backend.localBoard.board.repository.LocalBoardRepository;
 import com.example.backend.localBoard.comment.repository.BoardCommentRepository;
 import com.example.backend.report.dto.response.UpdateReportInfoDTO;
 import com.example.backend.report.service.ReportService;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
 import com.example.backend.sharing.repository.sharingPosts.SharingRepository;
+import com.example.backend.user.repository.UserRepository;
 import com.example.backend.userPenalty.dto.FrontUserPenaltyRequestDTO;
 import com.example.backend.userPenalty.dto.UserPenaltyInsertRequestDTO;
 import com.example.backend.userPenalty.repository.UserPenaltyRepository;
@@ -19,6 +21,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -30,14 +33,16 @@ public class UserPenaltyServiceImpl implements UserPenaltyService{
     private final BoardCommentRepository boardCommentRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final SharingRepository sharingRepository;
+    private final UserRepository userRepository;
 
-    public UserPenaltyServiceImpl(UserPenaltyRepository userPenaltyRepository, ReportService reportService, LocalBoardRepository localBoardRepository, BoardCommentRepository boardCommentRepository, ChatMessageRepository chatMessageRepository, SharingRepository sharingRepository) {
+    public UserPenaltyServiceImpl(UserPenaltyRepository userPenaltyRepository, ReportService reportService, LocalBoardRepository localBoardRepository, BoardCommentRepository boardCommentRepository, ChatMessageRepository chatMessageRepository, SharingRepository sharingRepository, UserRepository userRepository) {
         this.userPenaltyRepository = userPenaltyRepository;
         this.reportService = reportService;
         this.localBoardRepository = localBoardRepository;
         this.boardCommentRepository = boardCommentRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.sharingRepository = sharingRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -124,15 +129,8 @@ public class UserPenaltyServiceImpl implements UserPenaltyService{
                         reportId
                 );
             } else {
-                // 1000년 정지.
-                Timestamp permanentStop = Timestamp.valueOf(LocalDateTime.now().plusYears(1000));
-                userPenaltyInsertRequestDTO = new UserPenaltyInsertRequestDTO(
-                        userId,
-                        reasonCode,
-                        now,
-                        permanentStop,
-                        reportId
-                );
+                // 영구정지
+                userRepository.permanentStop(userId, User.Status.BLOCKED);
             }
        }else {
           LocalDateTime endAt = userEndAt.toLocalDateTime();
@@ -155,16 +153,38 @@ public class UserPenaltyServiceImpl implements UserPenaltyService{
                        reportId
                );
            } else {
-               Timestamp permanentStop = Timestamp.valueOf(endAt.plusYears(1000));
-               userPenaltyInsertRequestDTO = new UserPenaltyInsertRequestDTO(
-                       userId,
-                       reasonCode,
-                       userEndAt,
-                       permanentStop,
-                       reportId
-               );
+               // 영구정지.
+                userRepository.permanentStop(userId, User.Status.BLOCKED);
            }
        }
        userPenaltyRepository.save(userPenaltyInsertRequestDTO.toUserPenaltyEntity());
+    }
+    
+    // 유저 패널티 적용 기간 체크 메서드
+    // 1. 지역 게시판  작성 , 수정
+    // 2. 댓글 작성, 대댓글 작성,  수정(보류)
+    // 3. 나눔 게시판 작성, 수정
+    @Override
+    public String existEndAtUserId(Long userId) {
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        Timestamp endAt =  userPenaltyRepository.existEndAtUserId(userId, UserPenalty.PenaltyStatus.ACTIVE);
+        String remainTime = null;
+
+        if(endAt == null){
+            throw new IllegalArgumentException("제제 정보가 없습니다.");
+        }
+
+        if(endAt.after(now)){
+            Duration duration = Duration.between(now.toLocalDateTime(), endAt.toLocalDateTime());
+
+            long day = duration.toDaysPart();
+            long hours = duration.toHoursPart();
+            long minutes = duration.toMinutesPart();
+
+            remainTime = day + "일 "+hours+"시 "+minutes+"분";
+        }
+
+
+        return remainTime;
     }
 }

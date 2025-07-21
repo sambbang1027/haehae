@@ -1,5 +1,7 @@
 package com.example.backend.webSocket;
 
+import com.example.backend.exception.PenaltyException;
+import com.example.backend.userPenalty.service.UserPenaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -16,9 +18,12 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
 
     private final OAuthTokenVerifier tokenVerifier;
 
+    private final UserPenaltyService userPenaltyService;
+
     @Autowired
-    public StompHandshakeInterceptor(OAuthTokenVerifier tokenVerifier) {
+    public StompHandshakeInterceptor(OAuthTokenVerifier tokenVerifier, UserPenaltyService userPenaltyService) {
         this.tokenVerifier = tokenVerifier;
+        this.userPenaltyService = userPenaltyService;
     }
 
     @Override
@@ -42,6 +47,13 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
 
         String token = tokenHeader.substring("Bearer ".length());
         String userId = tokenVerifier.getUserIdFromAccessToken(token);
+
+        // 유저의 패널티 적용 기간.
+        String penaltyTime =  userPenaltyService.existEndAtUserId(Long.valueOf(userId));
+        if(penaltyTime != null){
+            System.out.println("해당 유저의 패널티 적용기간이 남아있습니다."+penaltyTime);
+            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
+        }
 
         if (userId == null) {
             System.out.println("❌ 토큰 유효성 실패 형님!!!");

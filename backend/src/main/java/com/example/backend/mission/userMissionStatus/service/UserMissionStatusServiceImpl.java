@@ -184,6 +184,7 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
             userRepository.updateCurrentPoint(plusPoint, dto.getUserId());
             userRepository.updateTotalPoint(totalPlusPoint, dto.getUserId());
 
+
 //            //5. 필요시 유저 등급 업데이트
 //            long userLevelId = currentAndTotalPoint.getUserLevelId();
 //            if(userLevelId < 4) {

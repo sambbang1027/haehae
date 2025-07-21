@@ -32,7 +32,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 14 15 * * SUN") // 매주 월요일 오전 9시 0 0 9 * * MON
+    @Scheduled(cron = "0 0 9 * * MON") // 매주 월요일 오전 9시 0 0 9 * * MON
     public void scheduledWeeklyMission(){
         if(previewMissionRepository.existByActiveMission(PreviewMissions.PreviewMissionStatus.ACTIVE, PreviewMissions.PreviewMissionType.WEEKLY)) {
             missionWeeklyActiveUpdate();
@@ -48,7 +48,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 47 14 * * *") // 매일 9시  0 0 9 * * *
+    @Scheduled(cron = "0 0 9 * * *") // 매일 9시  0 0 9 * * *
     public void scheduledDailyMission(){
         if(previewMissionRepository.existByActiveMission(PreviewMissions.PreviewMissionStatus.ACTIVE, PreviewMissions.PreviewMissionType.DAILY)) {
             missionDailyActiveUpdate();
