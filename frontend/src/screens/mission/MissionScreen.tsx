@@ -116,9 +116,8 @@
           source: previewMissionContent,
           userMissionId: userMissionStatusId,
       };
-        const res = api.post(`mission/status/update`,requestBody);
+        const res = api.post(`mission/status/update/${userId}`,requestBody);
         console.log(res);
-
         setDailyMissions((prevMissions) =>
       prevMissions.map((mission) =>
         mission.userMissionStatusId === userMissionStatusId
