@@ -8,6 +8,7 @@ import com.example.backend.report.dto.response.UpdateReportInfoDTO;
 import com.example.backend.report.dto.response.UpdateReportListDTO;
 import com.example.backend.report.repository.ReportRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,16 +50,17 @@ public class ReportServiceImpl implements ReportService{
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     public void registerReport(ReportInsertRequestDTO reportInsertRequestDTO) {
         reportRepository.save(reportInsertRequestDTO.toEntity());
     }
-
 
     // 1. id로 조회
     // 2. 타겟대상과, 타켓 타입을 가져온다. 
     // 3. 해당 다켓대상과 타켓타입을 가진 리스트 모두 업데이트
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public UpdateReportInfoDTO updateReport(Long id, Report.Status status) {
         UpdateReportInfoDTO updateReportInfo = reportRepository.findReportTargetTypeAndTargetId(id);
         Long targetId = updateReportInfo.getTargetId();

@@ -5,6 +5,7 @@ import com.example.backend.exception.RewardException;
 import com.example.backend.userPoint.dto.response.PaymentResponseDTO;
 import com.example.backend.userPoint.repository.UserPointRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service

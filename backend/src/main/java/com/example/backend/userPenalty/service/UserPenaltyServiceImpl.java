@@ -18,6 +18,7 @@ import com.example.backend.userPenalty.dto.FrontUserPenaltyRequestDTO;
 import com.example.backend.userPenalty.dto.UserPenaltyInsertRequestDTO;
 import com.example.backend.userPenalty.repository.UserPenaltyRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -54,6 +55,7 @@ public class UserPenaltyServiceImpl implements UserPenaltyService{
     // 5. 유저 정지.
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void userPenaltySave(FrontUserPenaltyRequestDTO dto) {
         Long reportId = dto.getReportId();
         Long period = dto.getPeriod();
@@ -181,7 +183,7 @@ public class UserPenaltyServiceImpl implements UserPenaltyService{
             long hours = duration.toHoursPart();
             long minutes = duration.toMinutesPart();
 
-            remainTime = day + "일 "+hours+"시 "+minutes+"분";
+            remainTime = day + "일 "+hours+"시간 "+minutes+"분";
         }
 
 

@@ -11,11 +11,9 @@ import com.example.backend.entity.reward.RewardItemImages;
 import com.example.backend.entity.reward.RewardItems;
 import com.example.backend.reward.rewardItmeImages.repository.RewardImageRepository;
 import com.example.backend.reward.rewardItems.repository.RewardRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -32,6 +30,7 @@ public class RewardItemsServiceImpl implements RewardItemsService {
 
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void rewardItemInsert(RewardRequestDTO dto) {
         if(dto.getRewardType() != RewardItems.RewardType.DONATION){
             if(dto.getStock()<=0){
@@ -87,6 +86,7 @@ public class RewardItemsServiceImpl implements RewardItemsService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void rewardItemUpdate(RewardItemsRequestUpdateDTO dto) {
 
         if(dto.getRewardType() != RewardItems.RewardType.DONATION) {
@@ -102,6 +102,7 @@ public class RewardItemsServiceImpl implements RewardItemsService {
 
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void rewardDeleteById(long id) {
         if(!rewardRepository.existsById(id)){
             throw new RewardException("해당 게시물의 정보가 없습니다.");

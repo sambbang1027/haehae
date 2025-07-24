@@ -2,6 +2,7 @@ package com.example.backend.mission.userMissionStatus.service;
 
 import com.example.backend.entity.mission.PreviewMissions;
 import com.example.backend.entity.mission.UserMissionStatus;
+import com.example.backend.entity.mission.UserMissions;
 import com.example.backend.entity.reward.RewardItems;
 import com.example.backend.entity.user.UserLevel;
 import com.example.backend.entity.user.UserPoint;
@@ -22,6 +23,7 @@ import com.example.backend.userLevel.repsoitory.UserLevelRepository;
 import com.example.backend.userPoint.dto.request.UserMissionSuccessRequestDTO;
 import com.example.backend.userPoint.repository.UserPointRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -57,6 +59,7 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     // 3. 사용자의 유저 미션 상태 조회
     // 4. 사용자 미션에 맞추어서 유저 미션 상태 업데이트
     @Override
+    @PreAuthorize("isAuthenticated()")
     public void checkStatusUpdate(Long userId){
         List<PreviewMissionListResponseDTO> missinList =  previewMissionService.findPreviewALlActive();
 
@@ -147,7 +150,8 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     // 4. 현재 포인트 반영, 총포인트 반영
     @Transactional
     @Override
-    public void completeUpdateUserStatus(UserMissionSuccessRequestDTO dto) {
+    @PreAuthorize("isAuthenticated() and @userMissionStatusServiceImpl.isOwnerOfUserMissionStatus(#dto.userMissionId, principal.id)")
+    public void completeUpdateUserStatus(Long userId, UserMissionSuccessRequestDTO dto) {
 
         if(dto == null){
             throw new IllegalArgumentException("dto의 값이 없음.");
@@ -217,5 +221,12 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
             userMissionStatusRepository.save(dto.toUserMissionStatusUpdateEntity());
         }
 
+    }
+
+    private boolean isOwnerOfUserMissionStatus(Long userMissionStatusId, Long principalId){
+        return userMissionStatusRepository.findById(userMissionStatusId)
+                .map(UserMissionStatus::getUserId)
+                .map(statusUserId -> statusUserId.equals(principalId))
+                .orElse(false);
     }
 }
