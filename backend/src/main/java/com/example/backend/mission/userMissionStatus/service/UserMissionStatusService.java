@@ -5,5 +5,5 @@ import com.example.backend.userPoint.dto.request.UserMissionSuccessRequestDTO;
 
 public interface UserMissionStatusService {
     void checkStatusUpdate(Long userId);
-    void completeUpdateUserStatus(UserMissionSuccessRequestDTO dto);
+    void completeUpdateUserStatus(Long userId, UserMissionSuccessRequestDTO dto);
 }

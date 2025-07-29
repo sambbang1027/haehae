@@ -29,19 +29,21 @@
     const [modalPoint, setModalPoint] = useState<number>(0); 
 
     useEffect(()=> {
-      fetchData();
-      fetchUserLevelInfo();
+    const init = async () => {
+        await checkMissionStauts();   
+        await missionAxios();         
+  };
+  fetchUserLevelInfo()
+  init();
     },[]);
 
-      const fetchData = async () => {
-        await checkMissionStauts();
-        await missionAxios();       
-    };
 
     const fetchUserLevelInfo = async() => {
+      await missionAxios();  
         if (userId) {
           userTotalPointAndLevel(userId);  
         }
+        
     }
 
 
@@ -63,6 +65,7 @@
     const userTotalPointAndLevel = async(userId: number)=> {
       try {
             const res = await api.get(`previewMission/user/${userId}`);
+            console.log(res.data);
             setUserLevelInfo(res.data.totalAndLevelDTO);
             setNextLevelInfo(res.data.userLevel);
             console.log(res.data);
@@ -113,9 +116,8 @@
           source: previewMissionContent,
           userMissionId: userMissionStatusId,
       };
-        const res = api.post(`mission/status/update`,requestBody);
+        const res = api.post(`mission/status/update/${userId}`,requestBody);
         console.log(res);
-
         setDailyMissions((prevMissions) =>
       prevMissions.map((mission) =>
         mission.userMissionStatusId === userMissionStatusId

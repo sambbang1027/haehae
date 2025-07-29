@@ -51,6 +51,7 @@ public class PreviewMissionRepositoryImpl implements PreviewMissionCustom{
                 .from(pm)
                 .leftJoin(um)
                 .on(pm.id.eq(um.previewMissionId))
+                .where(builder)
                 .fetch();
     }
 }

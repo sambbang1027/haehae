@@ -14,4 +14,8 @@ public interface BoardCommentRepository extends JpaRepository<Comments, Long>, B
             " WHERE c.userId =:userId" +
             " AND c.createdAt BETWEEN :startAt AND :endAt")
     Long countCommentMission(@Param("userId") Long userId, @Param("startAt") Timestamp startAt, @Param("endAt") Timestamp endAt);
+
+    @Query(" SELECT c.userId FROM Comments c" +
+            " WHERE c.id = :id")
+    Long findCommentsUserId(@Param("id") Long id);
 }

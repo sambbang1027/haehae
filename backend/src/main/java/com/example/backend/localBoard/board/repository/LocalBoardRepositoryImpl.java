@@ -1,5 +1,6 @@
 package com.example.backend.localBoard.board.repository;
 
+import com.example.backend.entity.localBoard.LocalBoards;
 import com.example.backend.entity.user.QUser;
 import com.example.backend.localBoard.board.dto.request.UpdateContentRequestDTO;
 import com.example.backend.localBoard.board.dto.response.BoardListResponseDTO;
@@ -51,6 +52,8 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
                 .where(u.id.eq(userId))
                 .fetchOne();
     }
+
+
 
     //지역코드로 게시물 리스트 불러오기
     @Override
@@ -156,5 +159,15 @@ public class LocalBoardRepositoryImpl implements LocalBoardRepositoryCustom {
         }
 
         update.where(lb.localBoardId.eq(localBoardId)).execute();
+    }
+
+
+    @Override
+    public void boardStatusReport(Long id, LocalBoards.BoardStatus status) {
+        QLocalBoards lb = QLocalBoards.localBoards;
+        queryFactory.update(lb)
+                .set(lb.boardStatus, status)
+                .where(lb.localBoardId.eq(id))
+                .execute();
     }
 }

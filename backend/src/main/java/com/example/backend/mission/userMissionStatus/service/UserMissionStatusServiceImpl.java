@@ -2,6 +2,7 @@ package com.example.backend.mission.userMissionStatus.service;
 
 import com.example.backend.entity.mission.PreviewMissions;
 import com.example.backend.entity.mission.UserMissionStatus;
+import com.example.backend.entity.mission.UserMissions;
 import com.example.backend.entity.reward.RewardItems;
 import com.example.backend.entity.user.UserLevel;
 import com.example.backend.entity.user.UserPoint;
@@ -22,6 +23,7 @@ import com.example.backend.userLevel.repsoitory.UserLevelRepository;
 import com.example.backend.userPoint.dto.request.UserMissionSuccessRequestDTO;
 import com.example.backend.userPoint.repository.UserPointRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -57,6 +59,7 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     // 3. 사용자의 유저 미션 상태 조회
     // 4. 사용자 미션에 맞추어서 유저 미션 상태 업데이트
     @Override
+    @PreAuthorize("isAuthenticated()")
     public void checkStatusUpdate(Long userId){
         List<PreviewMissionListResponseDTO> missinList =  previewMissionService.findPreviewALlActive();
 
@@ -84,6 +87,9 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
                                     ? UserMissionStatus.MissionStatus.PREVIEW
                                     : UserMissionStatus.MissionStatus.ACCEPTED;
                     uploadAndInsertMissionStatus(userId,id,resultStatusBoard,missionStatus);
+                    System.out.println(countBoard);
+                    System.out.println(startAt);
+                    System.out.println(endAt);
                     break;
 
                 // 댓글 개수 조회    
@@ -142,10 +148,10 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
     // 2. 유저 포인트 삽입
     // 3. 유저 미션 십입.
     // 4. 현재 포인트 반영, 총포인트 반영
-    // 5. 필요시 유저 등급 업데이트
     @Transactional
     @Override
-    public void completeUpdateUserStatus(UserMissionSuccessRequestDTO dto) {
+    @PreAuthorize("isAuthenticated() and @userMissionStatusServiceImpl.isOwnerOfUserMissionStatus(#dto.userMissionId, principal.id)")
+    public void completeUpdateUserStatus(Long userId, UserMissionSuccessRequestDTO dto) {
 
         if(dto == null){
             throw new IllegalArgumentException("dto의 값이 없음.");
@@ -182,15 +188,16 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
             userRepository.updateCurrentPoint(plusPoint, dto.getUserId());
             userRepository.updateTotalPoint(totalPlusPoint, dto.getUserId());
 
-            //5. 필요시 유저 등급 업데이트
-            long userLevelId = currentAndTotalPoint.getUserLevelId();
-            if(userLevelId < 4) {
-                long nextLevelId = userLevelId + 1;
-                UserLevel userLevel = userLevelRepository.findUserNextLevels(nextLevelId);
-                    if (userLevel.getMinPoints() <= totalPlusPoint) {
-                        userRepository.updateUserLevelId(nextLevelId, dto.getUserId());
-                    }
-            }
+
+//            //5. 필요시 유저 등급 업데이트
+//            long userLevelId = currentAndTotalPoint.getUserLevelId();
+//            if(userLevelId < 4) {
+//                long nextLevelId = userLevelId + 1;
+//                UserLevel userLevel = userLevelRepository.findUserNextLevels(nextLevelId);
+//                    if (userLevel.getMinPoints() <= totalPlusPoint) {
+//                        userRepository.updateUserLevelId(nextLevelId, dto.getUserId());
+//                    }
+//            }
         }
     }
 
@@ -214,5 +221,12 @@ public class UserMissionStatusServiceImpl implements UserMissionStatusService{
             userMissionStatusRepository.save(dto.toUserMissionStatusUpdateEntity());
         }
 
+    }
+
+    private boolean isOwnerOfUserMissionStatus(Long userMissionStatusId, Long principalId){
+        return userMissionStatusRepository.findById(userMissionStatusId)
+                .map(UserMissionStatus::getUserId)
+                .map(statusUserId -> statusUserId.equals(principalId))
+                .orElse(false);
     }
 }

@@ -10,8 +10,12 @@ import com.example.backend.mission.previewMissions.dto.response.PreViewMissionSt
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListAndUserStatusDTO;
 import com.example.backend.mission.previewMissions.dto.response.PreviewMissionListResponseDTO;
 import com.example.backend.mission.previewMissions.repository.PreviewMissionRepository;
+import com.example.backend.mission.userMissionStatus.service.UserMissionStatusService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -20,7 +24,6 @@ import java.util.*;
 
 @Service
 public class PreviewMissionServiceImpl implements  PreviewMissionService {
-
     private final PreviewMissionRepository previewMissionRepository;
     private final MissionsRepository missionsRepository;
 
@@ -40,6 +43,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
             missionPreviewWeekly(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }else {
             missionPreviewWeekly(PreviewMissions.PreviewMissionStatus.ACTIVE);
+            missionPreviewWeekly(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }
         expiredWeeklyMissionDelete();
     }
@@ -55,6 +59,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
             missionPreviewDaily(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }else {
             missionPreviewDaily(PreviewMissions.PreviewMissionStatus.ACTIVE);
+            missionPreviewDaily(PreviewMissions.PreviewMissionStatus.UPCOMING);
         }
         expiredDailyMissionDaily();
     }
@@ -235,7 +240,11 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
 
     @Override
     public List<PreviewMissionListResponseDTO> findPreviewALlActive() {
-        List<PreviewMissionListResponseDTO> list =  previewMissionRepository.findPreviewALlActive(PreviewMissions.PreviewMissionStatus.ACTIVE);
+        PreviewMissions.PreviewMissionStatus status = PreviewMissions.PreviewMissionStatus.ACTIVE;
+        System.out.println("서비스 사용자 preview 미션 리스트");
+        System.out.println(status);
+        List<PreviewMissionListResponseDTO> list =  previewMissionRepository.findPreviewALlActive(status);
+        System.out.println(list);
         if(list == null || list.isEmpty()){
             throw new IllegalArgumentException("미션이 존재 하지 않습니다.");
         }
@@ -244,12 +253,14 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
 
     // 관리자가 직접 PreviewMissions 삽입,
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewMissionInsert(PreviewMissionRequestDTO dto) {
         previewMissionRepository.save(dto.toPreviewMissionEntity());
     }
 
     // 관리자가 직접 수정
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewMissionUpdate(PreviewMissionUpdateRequestDTO dto) {
         previewMissionRepository.save(dto.toPreviewMissionEntity());
     }
@@ -257,6 +268,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     // 관리자가 직접 삭제
     // 삭제시 프론트단에서 경고 모달 구현해야함!!
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewDeleteById(Long id) {
         previewMissionRepository.deleteById(id);
     }
@@ -264,18 +276,18 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     // 관리자가 직접 삭제
     // 삭제시 프론트단에서 경고 모달 구현해야함!!
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewDeleteByType(PreviewMissions.PreviewMissionType previewMissionType, PreviewMissions.PreviewMissionStatus previewMissionStatus) {
         previewMissionRepository.deleteByAllType(previewMissionType,previewMissionStatus);
     }
 
+    // 미션과 유저의 미션상태를 함께 전달.
     @Override
     public List<PreviewMissionListAndUserStatusDTO> userPreviewMissionAndStatus(Long userId) {
        List<PreviewMissionListAndUserStatusDTO> list =  previewMissionRepository.userPreviewMissionAndStatus(PreviewMissions.PreviewMissionStatus.ACTIVE,userId);
        if(list == null || list.isEmpty()) {
            throw new IllegalArgumentException("미션이 존재 하지 않습니다.");
        }
-        System.out.println(" 유저 Id " + userId);
-        System.out.println("서비스단  : "+list);
        return list;
     }
 }

@@ -44,6 +44,15 @@ public class HaehaeExceptionHandler {
 
         return ResponseEntity.status(status).body(body);
     }
+
+    @ExceptionHandler(PenaltyException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomException(PenaltyException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", ex.getMessage());
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        return ResponseEntity.status(status).body(body);
+    }
 }
 
 

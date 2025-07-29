@@ -80,6 +80,14 @@ export default function SharingDetail() {
     optionModalRef.current?.present();
   };
 
+//   const handleReportPress = () => {
+//       optionModalRef.current?.dismiss();
+//       navigation.navigate('ReportScreen', {
+//         type: 'sharing',
+//         sharingId: sharing?.id,
+//     });
+// };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

@@ -16,6 +16,8 @@ import { formatTOKSTDateTime } from "../../utils/TimeStampToConvert";
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../../navigation/AppNavigator';
+import { useUser } from '../../context/UserContext';
+
 
 
 type RewardScreenNavigationProp = RouteProp<RewardParamList,'RewardPay'>;
@@ -26,6 +28,8 @@ const RewardPay = () => {
   const { userPointId } = route.params;
   const {showModal, hideModal} = useModal();
   const navigation = useNavigation<Navigation>();
+  const {user, setUser} = useUser();
+  const userId =user?.userId;
   
   interface payResultData{
     id : number,

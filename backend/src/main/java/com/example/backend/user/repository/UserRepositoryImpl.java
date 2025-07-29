@@ -37,6 +37,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .fetchOne();
     }
 
+    // 유저 정보 수정
     @Override
     public Long updateUserInfo(Long userId, String address, String bcode,
                                String residenceType, String phoneNumber ){
@@ -61,6 +62,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                     .execute();
     }
 
+    // 탈퇴
     @Override
     public Long deleteAccount (Long userId){
         QUser user = QUser.user;
@@ -72,6 +74,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .execute();
     }
 
+    // 프로필 업데이트
     @Override
     public Long updateProfile(Long userId, String nickname, String profileImageUrl) {
         QUser user  = QUser.user;
@@ -88,6 +91,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return update.execute();
     }
 
+    // 마이페이지에 출력할 정보
     @Override
     public MyPageInfo getMypageInfo(Long userId){
         QUser user = QUser.user;
@@ -123,6 +127,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .fetchOne();
     }
 
+    // 영구정지
+    @Override
+    public void permanentStop(Long userId, User.Status status) {
+        QUser u = QUser.user;
+         queryFactory
+                .update(u)
+                .set(u.status, status)
+                .where(u.id.eq(userId))
+                .execute();
+    }
 
     // 탈퇴 했던 유저 정보 리셋 후 재가입
     @Override

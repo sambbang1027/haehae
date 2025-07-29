@@ -15,4 +15,8 @@ public interface LocalBoardRepository extends JpaRepository<LocalBoards, Long>, 
             " WHERE l.userId =:userId " +
             " AND l.createdAt BETWEEN :startAt AND :endAt")
     Long countLocalBoardCheckMission(@Param("userId") Long userId, @Param("startAt") Timestamp startAt,@Param("endAt") Timestamp endAt);
+
+    @Query( "SELECT l.userId FROM LocalBoards l" +
+            " WHERE l.localBoardId = :localBoardId")
+    Long findLocalBoardUserId(@Param("localBoardId")Long localBoardId);
 }

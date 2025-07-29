@@ -13,6 +13,7 @@ import com.example.backend.user.repository.UserRepository;
 import com.example.backend.userPoint.repository.UserPointRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,8 +31,17 @@ public class UserRewardServiceImpl implements UserRewardService {
         this.rewardRepository = rewardRepository;
     }
 
+
+    // 리워드 결제 등록
+    // 1. 권한 체크
+    // 2. 포인트 예외처리
+    // 3. 유저 포인트 등록
+    // 4. 유저 리워드 등록
+    // 5. 재고 예외처리
+    // 6. 유저 현재 포인트 업데이트
     @Transactional
     @Override
+    @PreAuthorize("isAuthenticated()")
     public Long userRewardPointInsert(UserRewardPointRequestInsertDTO dto) {
         long amount = dto.getAmount();
         long id = dto.getUserId();
@@ -77,8 +87,15 @@ public class UserRewardServiceImpl implements UserRewardService {
         return currentPoint;
     }
 
+    // 환불 로직
+    // 권한 체크와 , 해당 유저가 결제한 정보가 맞는지 확인.
+    // 유저 포인트 환불 업데이트
+    // 유저 리워드 환불 업데이트
+    // 재고 업데이트
+    // 유저의 현재 포인트와 총 포인트 업데이트
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or (isAuthenticated() and @userRewardService.isOwnerOfUserPoint(#userPointId, principal.id))")
     public void userRewardPayRefund(Long userPointId) {
         UserPoint point =  userPointRepository.findById(userPointId)
         .orElseThrow(() -> new RewardException("결제 정보가 존재하지 않습니다."));
@@ -124,5 +141,12 @@ public class UserRewardServiceImpl implements UserRewardService {
         long resultPoint =  currentPoint + point.getAmount();
         userRepository.updateCurrentPoint(resultPoint, point.getUserId());
 
+    }
+
+    // 해당 유저가 결제한 정보가 맞는지 체크하는 로직.
+    private Boolean isOwnerOfUserPoint(Long userPointId, Long userId){
+        return userPointRepository.findById(userPointId)
+                .map(userPoint -> userPoint.getUserId().equals(userId))
+                .orElse(false);
     }
 }
