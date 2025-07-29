@@ -14,13 +14,13 @@ import com.example.backend.user.vo.PhoneNumber;
 import com.querydsl.core.types.Projections;
 import com.example.backend.user.dto.QTotalAndLevelDTO;
 import com.example.backend.user.dto.TotalAndLevelDTO;
-import com.querydsl.jpa.impl.JPAQueryFactory;;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -154,4 +154,30 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .execute();
 
     }
+
+    // 등급 만료 회원 조회
+    @Override
+    public List<Long> todayLevelExpired(LocalDate today){
+        QUser user = QUser.user;
+        return queryFactory
+                .select(user.id)
+                .from(user)
+                .where(user.levelExpireAt.eq(today))
+                .fetch();
+    }
+
+    // 등급 재산정 - 업데이트
+    @Override
+    public Long bulkUpdateUserLevel(Long levelId, List<Long> userIds, LocalDate achievedAt, LocalDate expireAt) {
+        QUser user = QUser.user;
+
+        return queryFactory
+                .update(user)
+                .set(user.userLevelId, levelId)
+                .set(user.levelAchievedAt, achievedAt)
+                .set(user.levelExpireAt, expireAt)
+                .where(user.id.in(userIds))
+                .execute();
+    }
+
 }

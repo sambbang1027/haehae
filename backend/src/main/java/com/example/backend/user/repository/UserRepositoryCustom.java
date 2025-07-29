@@ -10,6 +10,9 @@ import com.example.backend.user.vo.Email;
 import com.example.backend.user.vo.Nickname;
 import com.example.backend.user.vo.PhoneNumber;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface UserRepositoryCustom {
     String getRegionCodeById(String username);
     TotalAndLevelDTO findUserLevelAndPoint(Long userId);
@@ -22,4 +25,8 @@ public interface UserRepositoryCustom {
     MyPageInfo getMypageInfo(Long userId);
     Long updateReActiveUser(LocalRegisterDTO localRegisterDTO, String passwordHash
             , Email email, Nickname nickname, PhoneNumber phoneNumber, Address address);
+
+    List<Long> todayLevelExpired(LocalDate today);
+
+    Long bulkUpdateUserLevel(Long levelId, List<Long> userIds, LocalDate achievedAt, LocalDate expireAt);
 }
