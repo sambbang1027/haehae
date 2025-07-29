@@ -8,6 +8,7 @@ import com.example.backend.mission.missions.repsository.MissionsRepository;
 import com.example.backend.mission.previewMissions.repository.PreviewMissionRepository;
 import com.example.backend.pagination.response.CursorPageResponse;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -53,6 +54,7 @@ public class MissionServiceImpl implements  MissionService {
 
     // 미션 등록
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void missionInsert(MissionInsertRequestDTO dto) {
         if(missionsRepository.existsByMissionContent(dto.getMissionContent())){
             throw new IllegalArgumentException("해당 제목의 미션이 존재합니다.");
@@ -62,6 +64,7 @@ public class MissionServiceImpl implements  MissionService {
 
     // 미션 수정
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void missionUpdate(MissionUpdateRequestDTO dto) {
         if(missionsRepository.existsByMissionContentAndIdNot(dto.getMissionContent(), dto.getId())){
             throw new IllegalArgumentException("해당 제목의 미션이 존재합니다.");
@@ -71,6 +74,7 @@ public class MissionServiceImpl implements  MissionService {
 
     // 미션 삭제
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void missionDelete(Long id) {
         if(!missionsRepository.existsById(id)){
             throw new IllegalArgumentException("해당 미션이 존재 하지 않습니다.");
@@ -80,13 +84,11 @@ public class MissionServiceImpl implements  MissionService {
 
     // 미션 리스트 삭제
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void missionDeleteList(List<Long> idList) {
         if(idList == null || idList.isEmpty()){
             throw new IllegalArgumentException("삭제 할 미션을 선택하지 않았습니다.");
         }
         missionsRepository.deleteAllById(idList);
     }
-
-
-
 }

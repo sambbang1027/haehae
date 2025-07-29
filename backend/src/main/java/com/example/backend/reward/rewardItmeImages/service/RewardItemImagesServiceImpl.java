@@ -4,6 +4,7 @@ import com.example.backend.reward.rewardItmeImages.dto.request.RewardImagesUpdat
 import com.example.backend.reward.rewardItmeImages.repository.RewardImageRepository;
 import com.example.backend.reward.rewardItems.repository.RewardRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
@@ -21,6 +22,7 @@ public class RewardItemImagesServiceImpl implements RewardItemImagesService {
     }
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void rewardItemImagesUpdate(List<RewardImagesUpdateDTO> dtoList) {
         for(RewardImagesUpdateDTO dto : dtoList) {
             if (!rewardRepository.existsById(dto.getRewardItemId())) {
@@ -37,6 +39,7 @@ public class RewardItemImagesServiceImpl implements RewardItemImagesService {
     }
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void rewardItemImagesDelete(String  ids) {
         List<Long> idList = Arrays.stream(ids.split(","))
                 .map(Long::parseLong)
@@ -55,6 +58,7 @@ public class RewardItemImagesServiceImpl implements RewardItemImagesService {
     }
     @Transactional
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void rewardItemIamgeDeleteAll(long id) {
         if(!rewardRepository.existsById(id)){
             throw new IllegalArgumentException("해당 게시물이 존재하지 않습니다.");

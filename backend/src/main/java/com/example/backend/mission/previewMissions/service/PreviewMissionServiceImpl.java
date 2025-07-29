@@ -15,6 +15,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -32,7 +33,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 14 15 * * SUN") // 매주 월요일 오전 9시 0 0 9 * * MON
+    @Scheduled(cron = "0 0 9 * * MON") // 매주 월요일 오전 9시 0 0 9 * * MON
     public void scheduledWeeklyMission(){
         if(previewMissionRepository.existByActiveMission(PreviewMissions.PreviewMissionStatus.ACTIVE, PreviewMissions.PreviewMissionType.WEEKLY)) {
             missionWeeklyActiveUpdate();
@@ -48,7 +49,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 47 14 * * *") // 매일 9시  0 0 9 * * *
+    @Scheduled(cron = "0 0 9 * * *") // 매일 9시  0 0 9 * * *
     public void scheduledDailyMission(){
         if(previewMissionRepository.existByActiveMission(PreviewMissions.PreviewMissionStatus.ACTIVE, PreviewMissions.PreviewMissionType.DAILY)) {
             missionDailyActiveUpdate();
@@ -252,12 +253,14 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
 
     // 관리자가 직접 PreviewMissions 삽입,
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewMissionInsert(PreviewMissionRequestDTO dto) {
         previewMissionRepository.save(dto.toPreviewMissionEntity());
     }
 
     // 관리자가 직접 수정
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewMissionUpdate(PreviewMissionUpdateRequestDTO dto) {
         previewMissionRepository.save(dto.toPreviewMissionEntity());
     }
@@ -265,6 +268,7 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     // 관리자가 직접 삭제
     // 삭제시 프론트단에서 경고 모달 구현해야함!!
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewDeleteById(Long id) {
         previewMissionRepository.deleteById(id);
     }
@@ -272,10 +276,12 @@ public class PreviewMissionServiceImpl implements  PreviewMissionService {
     // 관리자가 직접 삭제
     // 삭제시 프론트단에서 경고 모달 구현해야함!!
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void previewDeleteByType(PreviewMissions.PreviewMissionType previewMissionType, PreviewMissions.PreviewMissionStatus previewMissionStatus) {
         previewMissionRepository.deleteByAllType(previewMissionType,previewMissionStatus);
     }
 
+    // 미션과 유저의 미션상태를 함께 전달.
     @Override
     public List<PreviewMissionListAndUserStatusDTO> userPreviewMissionAndStatus(Long userId) {
        List<PreviewMissionListAndUserStatusDTO> list =  previewMissionRepository.userPreviewMissionAndStatus(PreviewMissions.PreviewMissionStatus.ACTIVE,userId);

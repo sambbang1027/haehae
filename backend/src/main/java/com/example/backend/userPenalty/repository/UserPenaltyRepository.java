@@ -16,4 +16,5 @@ public interface UserPenaltyRepository extends JpaRepository<UserPenalty,Long> {
             " AND up.penaltyStatus = :penaltyStatus" +
             " ORDER BY up.endAt DESC")
     Timestamp existEndAtUserId(@Param("penaltyUserId") Long penaltyUserId,@Param("penaltyStatus") UserPenalty.PenaltyStatus penaltyStatus);
+
 }
