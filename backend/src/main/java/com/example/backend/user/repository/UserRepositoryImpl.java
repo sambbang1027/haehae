@@ -5,13 +5,22 @@ import com.example.backend.entity.user.QUserLevel;
 import com.example.backend.entity.user.User;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
+import com.example.backend.user.dto.LocalRegisterDTO;
 import com.example.backend.user.dto.MyPageInfo;
+import com.example.backend.user.vo.Address;
+import com.example.backend.user.vo.Email;
+import com.example.backend.user.vo.Nickname;
+import com.example.backend.user.vo.PhoneNumber;
 import com.querydsl.core.types.Projections;
-import com.example.backend.entity.user.QUserLevel;
 import com.example.backend.user.dto.QTotalAndLevelDTO;
 import com.example.backend.user.dto.TotalAndLevelDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -28,6 +37,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .fetchOne();
     }
 
+    // 유저 정보 수정
     @Override
     public Long updateUserInfo(Long userId, String address, String bcode,
                                String residenceType, String phoneNumber ){
@@ -52,6 +62,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                     .execute();
     }
 
+    // 탈퇴
     @Override
     public Long deleteAccount (Long userId){
         QUser user = QUser.user;
@@ -63,6 +74,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .execute();
     }
 
+    // 프로필 업데이트
     @Override
     public Long updateProfile(Long userId, String nickname, String profileImageUrl) {
         QUser user  = QUser.user;
@@ -79,6 +91,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return update.execute();
     }
 
+    // 마이페이지에 출력할 정보
     @Override
     public MyPageInfo getMypageInfo(Long userId){
         QUser user = QUser.user;
@@ -124,4 +137,61 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .where(u.id.eq(userId))
                 .execute();
     }
+
+    // 탈퇴 했던 유저 정보 리셋 후 재가입
+    @Override
+    public Long updateReActiveUser(LocalRegisterDTO localRegisterDTO, String passwordHash
+            , Email email, Nickname nickname, PhoneNumber phoneNumber, Address address){
+        QUser user = QUser.user;
+        return queryFactory
+                .update(user)
+                .set(user.userLevelId, 1L)
+                .set(user.levelAchievedAt, LocalDate.now())
+                .set(user.levelExpireAt, LocalDate.now().plusMonths(3))
+                .set(user.email, email.getValue())
+                .set(user.name, localRegisterDTO.getName())
+                .set(user.passwordHash, passwordHash)
+                .set(user.nickname, nickname.getValue())
+                .set(user.profileImageUrl, (String) null)
+                .set(user.socialProvider, (String) null)
+                .set(user.phoneNumber, phoneNumber.getValue())
+                .set(user.birth, localRegisterDTO.getBirth())
+                .set(user.address, address.getRoadAddress())
+                .set(user.bcode, address.getBcode())
+                .set(user.createdAt, Timestamp.valueOf(LocalDateTime.now()))
+                .set(user.residenceType, localRegisterDTO.getResidenceType())
+                .set(user.deletedAt, (Timestamp) null)
+                .set(user.status, User.Status.ACTIVE)
+                .set(user.currentPoint, (Long) null)
+                .set(user.totalPoint, (Long) null)
+                .where(user.email.eq(email.getValue()))
+                .execute();
+
+    }
+
+    // 등급 만료 회원 조회
+    @Override
+    public List<Long> todayLevelExpired(LocalDate today){
+        QUser user = QUser.user;
+        return queryFactory
+                .select(user.id)
+                .from(user)
+                .where(user.levelExpireAt.eq(today))
+                .fetch();
+    }
+
+    // 등급 재산정 - 업데이트
+    @Override
+    public Long bulkUpdateUserLevel(Long levelId, List<Long> userIds, LocalDate achievedAt, LocalDate expireAt) {
+        QUser user = QUser.user;
+
+        return queryFactory
+                .update(user)
+                .set(user.userLevelId, levelId)
+                .set(user.levelAchievedAt, achievedAt)
+                .set(user.levelExpireAt, expireAt)
+                .where(user.id.in(userIds))
+                .execute();
+    }
+
 }

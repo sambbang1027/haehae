@@ -2,8 +2,10 @@ package com.example.backend.auth.service;
 
 import com.example.backend.auth.dto.EmailDTO;
 import com.example.backend.auth.enums.VerificationType;
+import com.example.backend.entity.user.User;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
+import com.example.backend.user.repository.UserRepository;
 import com.example.backend.user.service.LocalUserService;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -32,6 +34,7 @@ public class EmailService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final LocalUserService userService;
     private final String apiKey = Dotenv.load().get("SENDGRID_API_KEY");
+    private final UserRepository userRepository;
 
     // 이메일 발송 핸들러
     public void handleSendMail(EmailDTO emailDTO){
@@ -40,18 +43,25 @@ public class EmailService {
 
         switch (type){
             case SignUp -> {
-                if(userService.isEmailDuplicated(email)){
-                    throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
+                if (userService.isEmailDuplicated(email)) {
+                    User user = userRepository.findByEmail(email).orElseThrow(() ->
+                            new HaehaeException(ErrorCode.USER_NOT_FOUND)); // 안전성 추가
+
+                    if (user.getStatus() != User.Status.INACTIVE) {
+                        throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
+                    }
                 }
+                // 신규 회원가입 or 탈퇴 유저 복구 둘 다 메일 발송
+                sendVerificationMail(type, email);
             }
             case FindPw -> {
                 if(!userService.isEmailDuplicated(email)){
                     throw new HaehaeException(ErrorCode.USER_NOT_FOUND);
                 }
+                sendVerificationMail(type, email);
             }
             default -> throw new HaehaeException(ErrorCode.INVALID_VERIFICATION_TYPE);
         }
-         sendVerificationMail(type, email);
     }
 
 
