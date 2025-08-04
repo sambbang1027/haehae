@@ -52,18 +52,21 @@ public class BoardCommentRepositoryImpl implements BoardCommentRepositoryCustom 
         queryFactory
                 .update(cm)
                 .set(cm.content, updateCommentRequestDTO.getContent())
-                .where(cm.id.eq(updateCommentRequestDTO.getCommentId()))
+                .where(cm.id.eq(updateCommentRequestDTO.getCommentId()),
+                        cm.userId.eq(updateCommentRequestDTO.getUserId())
+                )
                 .execute();
     };
 
     @Transactional
     @Override
-    public void deleteComment(Long commentId){
+    public void deleteComment(Long commentId, Long userId){
         QComments cm = QComments.comments;
 
         queryFactory
                 .delete(cm)
-                .where(cm.id.eq(commentId))
+                .where(cm.id.eq(commentId),
+                        cm.userId.eq(userId))
                 .execute();
     }
 

@@ -53,8 +53,8 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     };
 
     @Override
-    public void deleteComment(Long commentId) {
-        boardCommentRepository.deleteComment(commentId);
+    public void deleteComment(Long commentId,Long userId) {
+        boardCommentRepository.deleteComment(commentId,userId);
     }
 
     @Override

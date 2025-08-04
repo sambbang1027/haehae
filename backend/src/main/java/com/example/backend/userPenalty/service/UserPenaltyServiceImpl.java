@@ -186,7 +186,6 @@ public class UserPenaltyServiceImpl implements UserPenaltyService{
             remainTime = day + "일 "+hours+"시간 "+minutes+"분";
         }
 
-
         return remainTime;
     }
 }

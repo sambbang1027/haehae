@@ -12,7 +12,7 @@ public interface BoardCommentRepositoryCustom {
 
     void modifyComment(UpdateCommentRequestDTO updateCommentRequestDTO);
 
-    void deleteComment(Long commentId);
+    void deleteComment(Long commentId, Long userId);
 
     void commentStatusReport(Long id, Comments.CommentsStatus status);
 }

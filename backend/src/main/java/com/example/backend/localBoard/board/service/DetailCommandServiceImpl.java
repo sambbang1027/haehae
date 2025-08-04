@@ -20,13 +20,15 @@ import java.time.LocalDateTime;
 @Service
 public class DetailCommandServiceImpl implements DetailCommandService {
 
-    private final UserPenaltyService userPenaltyService;
-
     @Autowired
     LocalBoardRepository localBoardRepository;
 
     @Autowired
     BoardImageRepository boardImageRepository;
+
+
+    private final UserPenaltyService userPenaltyService;
+
 
     public DetailCommandServiceImpl(UserPenaltyService userPenaltyService) {
         this.userPenaltyService = userPenaltyService;
