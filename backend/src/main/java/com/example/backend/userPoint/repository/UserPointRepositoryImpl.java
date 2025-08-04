@@ -97,7 +97,7 @@ public class UserPointRepositoryImpl implements UserPointRepositoryCustom{
         LocalDateTime now = LocalDateTime.now();
 
          List<UserPointRecordResponse> record = jpaQueryFactory
-                .select(Projections.constructor(UserPointRecordResponse.class,up.userId,user.currentPoint,
+                .select(Projections.constructor(UserPointRecordResponse.class,up.id,user.currentPoint,
                         up.pointType, up.amount, up.source, up.createdAt))
                 .from(up)
                 .join(user).on(up.userId.eq(user.id))

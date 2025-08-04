@@ -12,16 +12,16 @@ import java.time.LocalDate;
 @Getter
 public class UserPointRecordResponse {
 
-    private Long userId;
+    private Long id;
     private Long currentPoint;
     private String pointType;
     private Long amount;
     private String source;
     private LocalDate createAt;
 
-    public UserPointRecordResponse(Long userId, Long currentPoint, String pointType,
+    public UserPointRecordResponse(Long id, Long currentPoint, String pointType,
                                    Long amount, String source, Timestamp createdAt) {
-        this.userId = userId;
+        this.id = id;
         this.currentPoint = currentPoint;
         this.pointType = pointType;
         this.amount = amount;
