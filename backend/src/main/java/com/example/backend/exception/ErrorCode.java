@@ -19,6 +19,7 @@ public enum ErrorCode {
     DUPLICATE_NICKNAME(ErrorCategory.USER,HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
     INACTIVE_USER(ErrorCategory.USER, HttpStatus.FORBIDDEN, "탈퇴한 회원입니다"),
     BLOCKED_USER(ErrorCategory.USER, HttpStatus.FORBIDDEN, "차단된 회원입니다"),
+    NO_CONTENT_UPDATED(ErrorCategory.USER, HttpStatus.CONFLICT, "변경된 내용이 없습니다." ),
 
     // VALIDATION
     INVALID_EMAIL_FORMAT(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),

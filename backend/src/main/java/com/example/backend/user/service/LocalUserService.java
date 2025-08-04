@@ -18,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class LocalUserService {
@@ -37,14 +40,39 @@ public class LocalUserService {
         Address address = new Address(localRegisterDTO.getAddress(), localRegisterDTO.getBcode());
         PhoneNumber phoneNumber = new PhoneNumber(localRegisterDTO.getPhoneNumber());
 
-        //email & nickname 중복검사
-        validateDuplicateUser(email,nickname);
-
         // 비밀번호 암호화
         String passwordHash = passwordEncoder.encode(password.getValue());
 
+        //email & nickname 중복검사
+        if(duplicateNickname(nickname.getValue())){
+            throw new HaehaeException(ErrorCode.DUPLICATE_NICKNAME);
+        }
+
+        Optional<User> isExisting = userRepository.findByEmail(email.getValue());
+
+        // 유저 이메일이 DB에 존재하면 상태 체크
+        if(isExisting.isPresent()){
+            User userInfo = isExisting.get();
+            if(userInfo.getStatus() == User.Status.INACTIVE) {
+               Long result = userRepository.updateReActiveUser(localRegisterDTO, passwordHash, email, nickname,
+                                                                phoneNumber, address);
+               if(result >0) {
+                   return;
+               }
+            } else if (userInfo.getStatus() == User.Status.BLOCKED) {
+                throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
+            }else {
+                throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
+                // ACTIVE인데도 또 가입 시도하는 경우
+            }
+        }
+
+
         //entity로 변환
         User user = User.builder()
+                .userLevelId(1L)
+                .levelAchievedAt(LocalDate.now())
+                .levelExpireAt(LocalDate.now().plusMonths(3))
                 .email(email.getValue())
                 .name(localRegisterDTO.getName())
                 .passwordHash(passwordHash)
@@ -63,18 +91,6 @@ public class LocalUserService {
             throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
         } catch (Exception e) {
             throw new HaehaeException(ErrorCode.DATABASE_ERROR);
-        }
-    }
-
-    // 이메일, 닉네임 중복검사
-    private void validateDuplicateUser(Email email, Nickname nickname){
-
-
-        if (userRepository.existsByEmail(email.getValue())) {
-            throw new HaehaeException(ErrorCode.DUPLICATE_EMAIL);
-        }
-        if(userRepository.existsByNickname(nickname.getValue())){
-            throw new HaehaeException(ErrorCode.DUPLICATE_NICKNAME);
         }
     }
 
