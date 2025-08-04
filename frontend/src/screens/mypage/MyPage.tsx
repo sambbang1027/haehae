@@ -8,7 +8,6 @@ import { navigate } from '../../navigation/NavigationService.ts';
 import { AppStackParamList } from '../../navigation/AppNavigator';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import api from '../../api/AxiosInstance.ts';
-import { color } from 'react-native-elements/dist/helpers/index';
 
 
 type CategoryItemProps<
@@ -34,7 +33,7 @@ const CategoryItem = <
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      <Text style={styles.menuItem}>{label}</Text>
+      <AppText style={styles.menuItem}>{label}</AppText>
     </TouchableOpacity>
   );
 };
@@ -96,10 +95,19 @@ const MyPage = () => {
     });
   };
 
+    // 숫자에 쉽표 찍기
+  const formatNumber = (num: number): string =>
+    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+
   return (
     <View style={styles.container}>
       <View style={styles.userSection}>
-        <Image source={require('../../assets/icons/profile.png')} style={styles.avatar} />
+        <Image 
+        source={    user?.profileImage
+      ? { uri: user.profileImage }
+      : require('../../assets/icons/profile.png') }
+        style={styles.avatar} />
         <AppText style={styles.nickname}>{user?.nickname}</AppText>
         <TouchableOpacity style={styles.settingIcon} onPress={() => navigate('MyPageStack',{screen: 'SettingPage'})}>
           <Image source={require('../../assets/icons/setting.png')} style={styles.settingIcon} />
@@ -113,19 +121,19 @@ const MyPage = () => {
           ) : (
             <Image source={require('../../assets/icons/seed_level.png')} style={styles.icon} />
           )}
-          <Text style={levelStyle}>{userLevel}</Text>
+          <AppText style={levelStyle}>{userLevel}</AppText>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.pointBox} onPress={() => navigate('MyPageStack',{screen: 'PointRecord'})}>
           <Image source={require('../../assets/icons/point-icon.png')} style={styles.icon} />
-          <AppText>{userPoint}P</AppText>
+          <AppText>{formatNumber(userPoint??0)}P</AppText>
         </TouchableOpacity>
       </View>
 
       <View style={styles.thickDivider} />
 
       <ScrollView style={styles.sectionWrapper}>
-        <Text style={styles.sectionTitle}>나의 활동</Text>
+        <AppText style={styles.sectionTitle}>나의 활동</AppText>
         <CategoryItem label="봉사 활동"  stack="MyPageStack" screen="MyVolunteer" />
         <CategoryItem label="미션 참여"  stack="MyPageStack" screen="MyMission" />
         <CategoryItem label="나의동네 게시판"  stack="MyPageStack" screen="MyLocalBoard" />
@@ -133,14 +141,14 @@ const MyPage = () => {
 
         <View style={styles.divder} />
 
-        <Text style={styles.sectionTitle}>고객센터</Text>
+        <AppText style={styles.sectionTitle}>고객센터</AppText>
         <CategoryItem label="FAQ"  stack="MyPageStack" screen="Faq" />
         <CategoryItem label="공지사항"  stack="MyPageStack" screen="Notice" />
         <CategoryItem label="1:1 문의"  stack="MyPageStack" screen="Inquiry" />
 
         <View style={styles.divder} />
 
-        <Text style={styles.sectionTitle}>앱 설정</Text>
+        <AppText style={styles.sectionTitle}>앱 설정</AppText>
         <CategoryItem label="알림 설정" stack="MyPageStack" screen="NotificationSettings" />
         <CategoryItem label="텍스트 크기"  stack="MyPageStack" screen="FontSize" />
 
@@ -215,8 +223,8 @@ const styles = StyleSheet.create({
     gap: hp('1.5%')
   },
   icon: {
-    width: wp('7.5%'),
-    height: wp('7.5%')
+    width: wp('9%'),
+    height: wp('9%')
   },
   sectionWrapper: {
     marginVertical: hp('1.5%')
