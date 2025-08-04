@@ -17,8 +17,6 @@ public class DetailCommandController {
 
     @PostMapping("/detail/create")
     public ResponseEntity requestBoardDetail(@RequestBody CreateContentRequestDTO createContentRequestDTO) {
-        System.out.println("잘 저장되었는지 확인");
-        System.out.println(createContentRequestDTO);
         detailCommandService.createDetail(createContentRequestDTO);
         return ResponseEntity.ok().build();
     };

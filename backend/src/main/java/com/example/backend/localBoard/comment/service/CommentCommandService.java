@@ -9,7 +9,7 @@ public interface CommentCommandService {
 
     public void modifyComment(UpdateCommentRequestDTO updateCommentRequestDTO);
 
-    public void deleteComment(Long commentId);
+    public void deleteComment(Long commentId,Long userId);
 
     public void createChildComment(ReplyRequestDTO replyRequestDTO);
 }
