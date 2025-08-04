@@ -1,5 +1,6 @@
 package com.example.backend.localBoard.board.service;
 
+import com.example.backend.annotation.CheckPenalty;
 import com.example.backend.exception.PenaltyException;
 import com.example.backend.localBoard.board.dto.request.CreateContentRequestDTO;
 import com.example.backend.localBoard.board.dto.request.ImageRequestDTO;
@@ -36,14 +37,8 @@ public class DetailCommandServiceImpl implements DetailCommandService {
 
     @Override
     @Transactional
+    @CheckPenalty
     public void createDetail(CreateContentRequestDTO createContentRequestDTO){
-      // 유저의 패널티 적용 기간.
-      String penaltyTime =  userPenaltyService.existEndAtUserId(createContentRequestDTO.getUserId());
-      if(penaltyTime != null){
-        throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-      }
-
-
         LocalBoards localBoards
                 = LocalBoards.builder()
                 .userId(createContentRequestDTO.getUserId())
@@ -69,13 +64,8 @@ public class DetailCommandServiceImpl implements DetailCommandService {
     }
 
     @Override
+    @CheckPenalty
     public void updateDetail(long localBoardId, UpdateContentRequestDTO updateContentRequestDTO){
-        // 유저의 패널티 적용 기간.
-        String penaltyTime =  userPenaltyService.existEndAtUserId(updateContentRequestDTO.getUserId());
-        if(penaltyTime != null){
-            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-        }
-
         updateContentRequestDTO.setUpdateAt(Timestamp.valueOf(LocalDateTime.now()));
         localBoardRepository.updateDetailContent(localBoardId, updateContentRequestDTO);
     }

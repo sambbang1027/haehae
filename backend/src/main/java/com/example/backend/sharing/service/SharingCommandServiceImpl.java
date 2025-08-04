@@ -1,5 +1,6 @@
 package com.example.backend.sharing.service;
 
+import com.example.backend.annotation.CheckPenalty;
 import com.example.backend.entity.sharing.SharingImages;
 import com.example.backend.entity.sharing.SharingPosts;
 import com.example.backend.exception.ErrorCode;
@@ -35,16 +36,11 @@ public class SharingCommandServiceImpl implements SharingCommandService {
         this.userPenaltyService = userPenaltyService;
     }
 
+
+    @CheckPenalty
     @Transactional
     @Override
     public void createSharingDetail(CreateSharingRequestDTO createSharingRequestDTO) {
-
-        // 유저의 패널티 적용 기간.
-        String penaltyTime =  userPenaltyService.existEndAtUserId(createSharingRequestDTO.getUserId());
-        if(penaltyTime != null){
-            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-        }
-
         if (!userRepository.existsById(createSharingRequestDTO.getUserId())) {
             throw new HaehaeException(ErrorCode.USER_NOT_FOUND);
         }
@@ -77,15 +73,9 @@ public class SharingCommandServiceImpl implements SharingCommandService {
         sharingRepository.updateSharingStatus(sharingStatusRequestDTO);
     }
 
+    @CheckPenalty
     @Override
     public void updateSharingDetail(UpdateSharingRequestDTO updateSharingRequestDTO) {
-
-        // 유저의 패널티 적용 기간.
-        String penaltyTime =  userPenaltyService.existEndAtUserId(updateSharingRequestDTO.getUserId());
-        if(penaltyTime != null){
-            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-        }
-
         sharingRepository.updateSharingDetail(updateSharingRequestDTO);
     }
 

@@ -10,11 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 
 @Repository
-public interface UserPenaltyRepository extends JpaRepository<UserPenalty,Long> {
-    @Query("SELECT up.endAt FROM UserPenalty up " +
-            " WHERE up.penaltyUserId = :penaltyUserId " +
-            " AND up.penaltyStatus = :penaltyStatus" +
-            " ORDER BY up.endAt DESC")
-    Timestamp existEndAtUserId(@Param("penaltyUserId") Long penaltyUserId,@Param("penaltyStatus") UserPenalty.PenaltyStatus penaltyStatus);
+public interface UserPenaltyRepository extends JpaRepository<UserPenalty,Long> , UserPenaltyCustom{
 
 }

@@ -1,5 +1,6 @@
 package com.example.backend.localBoard.comment.service;
 
+import com.example.backend.annotation.CheckPenalty;
 import com.example.backend.entity.localBoard.Comments;
 import com.example.backend.exception.PenaltyException;
 import com.example.backend.localBoard.comment.dto.request.CommentRequestDTO;
@@ -22,33 +23,20 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         this.userPenaltyService = userPenaltyService;
     }
 
+    @CheckPenalty
     @Override
     public void createComment(CommentRequestDTO commentRequestDTO) {
-
-        // 유저의 패널티 적용 기간.
-        String penaltyTime =  userPenaltyService.existEndAtUserId(commentRequestDTO.getUserId());
-        if(penaltyTime != null){
-            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-        }
-
         Comments comments = Comments.builder()
                 .localBoardId(commentRequestDTO.getLocalBoardId())
                 .userId(commentRequestDTO.getUserId())
                 .content(commentRequestDTO.getContent())
                 .build();
-                ;
-
         boardCommentRepository.save(comments);
     }
 
+    @CheckPenalty
     @Override
     public void modifyComment(UpdateCommentRequestDTO updateCommentRequestDTO) {
-//        // 유저의 패널티 적용 기간.
-//        String penaltyTime =  userPenaltyService.existEndAtUserId(updateCommentRequestDTO);
-//        if(penaltyTime != null){
-//            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-//        }
-
         boardCommentRepository.modifyComment(updateCommentRequestDTO);
     };
 
@@ -57,15 +45,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         boardCommentRepository.deleteComment(commentId,userId);
     }
 
+    @CheckPenalty
     @Override
     public void createChildComment(ReplyRequestDTO replyRequestDTO) {
         System.out.println("🔥 createChildComment() 들어옴!!");
-
-        // 유저의 패널티 적용 기간.
-        String penaltyTime =  userPenaltyService.existEndAtUserId(replyRequestDTO.getUserId());
-        if(penaltyTime != null){
-            throw new PenaltyException("정지 남은 시간 : " +penaltyTime);
-        }
 
         System.out.println("🔥 DTO 값 확인:");
         System.out.println("localBoardId: " + replyRequestDTO.getLocalBoardId());
