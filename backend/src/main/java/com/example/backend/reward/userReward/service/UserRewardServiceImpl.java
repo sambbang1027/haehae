@@ -80,7 +80,7 @@ public class UserRewardServiceImpl implements UserRewardService {
 
     @Override
     public Long userFindPoint(Long userId) {
-        Long currentPoint = userRepository.findCurrentPointByUserId(userId);
+        Long currentPoint = userRepository.findCurrentPointUserId(userId);
         if(currentPoint == null){
             currentPoint = 0l;
         }

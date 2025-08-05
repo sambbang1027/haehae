@@ -23,10 +23,14 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
 
-    // 유저의 현재 포인트
+    // 유저의 현재 포인트 Lock
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT u.currentPoint FROM User u WHERE u.id= :userId")
     long findCurrentPointByUserId(@Param("userId") long userId);
+
+    // 유저의 현재 포인트
+    @Query("SELECT u.currentPoint FROM User u WHERE u.id= :userId")
+    long findCurrentPointUserId(@Param("userId") long userId);
 
 
     //유저의 현재 , 총 포인트, 유저 등급
