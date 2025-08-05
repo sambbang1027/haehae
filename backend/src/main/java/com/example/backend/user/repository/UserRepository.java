@@ -4,9 +4,11 @@ import com.example.backend.entity.user.User;
 import com.example.backend.user.dto.UserCurrentAndTotalPointResponseDTO;
 import com.example.backend.user.vo.Email;
 import com.example.backend.user.vo.Nickname;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import com.example.backend.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     boolean existsByNickname(String nickname);
 
     // 유저의 현재 포인트
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT u.currentPoint FROM User u WHERE u.id= :userId")
     long findCurrentPointByUserId(@Param("userId") long userId);
 
