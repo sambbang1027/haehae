@@ -19,4 +19,19 @@ public class CollectionSpotDto {
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String regionCode;
+
+    public static CollectionSpotDto from(CollectionSpot entity) {
+        return new CollectionSpotDto(
+                entity.getCollectionsSpotId(),
+                entity.getWasteItem(),
+                entity.getLotAddress(),
+                entity.getRoadAddress(),
+                entity.getDescription(),
+                entity.getAvailableTime(),
+                entity.getSpotType(),
+                entity.getLatitude(),
+                entity.getLongitude(),
+                entity.getRegionCode()
+        );
+    }
 }

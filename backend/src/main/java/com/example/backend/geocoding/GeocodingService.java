@@ -1,10 +1,12 @@
-package com.example.backend.collectionspots;
+package com.example.backend.geocoding;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +25,6 @@ public class GeocodingService {
         this.webClient = builder.baseUrl("https://dapi.kakao.com").build();
     }
 
-
     // 1번째 검색 후 결과 반환 함수.
     // 주소 문자열을 받아 위도, 경도, 행정동 코드를 담은 GeoData 객체를 Optional 로 반환.
     public Optional<GeoData> geocode(String address) {
@@ -33,7 +34,7 @@ public class GeocodingService {
                         .queryParam("query", address) // 쿼리 파라미터
                         .queryParam("analyze_type", "similar") // 결과 없을 시 유사 주소 출력
                         .build())
-                .header("Authorization", "KakaoAK " + restKey) // HTTP 헤더에 REST API 키를 추가
+                .header("Authorization", "KakaoAK " + (restKey == null ? "" : restKey.trim())) // HTTP 헤더에 REST API 키를 추가
                 .retrieve() // 서버 응답(response) 가져옴.
                 .bodyToMono(KakaoRes.class) // 본문을 KakaoRes DTO로 비동기 매핑
                 .block(); // 비동기 결과를 동기(Mono -> 실제 객체)로 기다렸다가 리턴, 만약 네트워크 오류 또는 4../5.. 에라가 나면 예외 발생.
@@ -47,8 +48,6 @@ public class GeocodingService {
         } catch (Exception e) {
             System.out.println("❌ Kakao 응답 출력 실패: " + e.getMessage());
         }
-
-
 
         if (res == null || res.getDocuments().isEmpty()) {
             return Optional.empty();
@@ -70,6 +69,39 @@ public class GeocodingService {
         )); // 값들을 담은 GeoData 레코드를 Optional.of(...) 로 감싸서 반환.
 
     }
+
+    // 위도/경도(좌표)를 행정동 코드로 변환하는 메서드
+    public Optional<GeocodingResult> reverseGeocode(double lat, double lng) {
+        String key = restKey == null ? "" : restKey.trim();
+        log.info("🧪 reverseGeocode() call: lat={}, lng={}, keyLen={}", lat, lng, key.length());
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v2/local/geo/coord2regioncode.json")
+                        .queryParam("x", lng)
+                        .queryParam("y", lat)
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, "KakaoAK " + key)
+                .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        resp -> resp.bodyToMono(String.class).flatMap(body -> {
+                            log.error("❌ Kakao reverseGeocode error: status={}, body={}", resp.statusCode(), body);
+                            return Mono.error(new RuntimeException("Kakao reverseGeocode failed: " + resp.statusCode()));
+                        })
+                )
+                .bodyToMono(KakaoRegionRes.class)
+                .map(res -> {
+                    if (res == null || res.documents().isEmpty()) return null;
+                    var doc = res.documents().get(0);
+
+                    log.info("📍 Kakao region2depth: {}", doc.region2depthName());
+
+                    return new GeocodingResult(lat, lng, doc.code());
+                })
+                .blockOptional();  // Optional<GeocodingResult> 반환
+    }
+
 
     // 변환 결과를 담는 내부 DTO
     public static record GeoData(

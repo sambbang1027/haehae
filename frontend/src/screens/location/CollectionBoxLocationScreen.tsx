@@ -9,6 +9,7 @@ import {
   Button,
   TouchableOpacity,
   ScrollView,
+  Switch,
   Platform,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -44,31 +45,32 @@ const CollectionBoxLocationScreen: React.FC = () => {
 
   // 백엔드 수거함 불러오기
   useEffect(() => {
-
-    console.log('🗺 spots state:', spots);
-
-    console.log('📍 useCurrentLocation location:', location);
-
     if (locLoading || locError || !location) return;
+
     (async () => {
       try {
-        //const res = await fetch(`http://localhost:8082/api/collectionspot?wasteItem=재활용정거장`);
-        //const res = await fetch(`http://localhost:8082/api/collectionspot?wasteItem=재활용정거장`);
-        //const res = api.get(`/collectionspot?wasteItem=재활용정거장`);
+        const wasteItem = selectedCategory === '전체' ? '' : selectedCategory;
 
-        let query = selectedCategory === '전체' ? '' : `?wasteItem=${encodeURIComponent(selectedCategory)}`;
+        // ✅ 쿼리 문자열 구성
+        const params = new URLSearchParams({
+          wasteItem: wasteItem,
+          lat: location.latitude.toString(),
+          lng: location.longitude.toString(),
+          radiusMeters: '1000', // 반경 1000m, 필요 시 변경
+        });
 
-        //const res = api.get(`/collectionspot?wasteItem=${encodeURIComponent(selectedCategory)}`);
+        console.log('🚀 [useEffect] 백엔드 호출 시작');
+        console.log('🧭 wasteItem:', wasteItem);
+        console.log('📍 location:', location);
+        console.log('🌐 요청 URL:', `/collectionspot/nearby?${params.toString()}`);
 
-        const res = await api.get(`/collectionspot${query}`);
+        // ✅ 새로운 API 호출
+        const res = await api.get(`/collectionspot/nearby?${params.toString()}`);
 
-        console.log("🛰 요청 보냄");
-        
+        console.log("🛰 요청 보냄 (반경 기반)");
         const data: any[] = res.data;
-        
         console.log('🔥 백엔드에서 받은 raw data:', data);
 
-        // 배열인지 확인 후 setSpots
         if (Array.isArray(data)) {
           setSpots(data.map(d => ({
             label: d.description ?? d.wasteItem,
@@ -80,14 +82,13 @@ const CollectionBoxLocationScreen: React.FC = () => {
           console.warn('❗️백엔드 응답이 배열이 아님:', data);
           Alert.alert('서버에서 받은 데이터 형식이 잘못되었습니다.');
         }
-
       } catch (e) {
         console.error(e);
-        console.log("데이터 에러 : ", e)
         Alert.alert('수거함 데이터를 가져오는 중 오류가 발생했습니다.');
       }
     })();
-  }, [locLoading, locError, location, selectedCategory]); // 선택된 카테고리 변경 시 재요청
+  }, [locLoading, locError, location, selectedCategory]);
+
 
   if (locLoading) return <View style={styles.center}><ActivityIndicator size="large"/></View>;
   if (locError || !location) return <View style={styles.center}><Text>위치 정보를 사용할 수 없습니다.</Text></View>;
@@ -98,7 +99,6 @@ const CollectionBoxLocationScreen: React.FC = () => {
 
   const { latitude: baseLat, longitude: baseLng } = location ?? {latitude: defaultLat, longitude: defaultLng};
 
-  //const { latitude: baseLat, longitude: baseLng } = location as Location;
 
   // 초기 positions JSON
   const initPositions = [
@@ -109,69 +109,96 @@ const CollectionBoxLocationScreen: React.FC = () => {
 
   // HTML 템플릿
   const kakaoHtml = `
-<!DOCTYPE html>
-<html><head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>지도</title>
-<style>html,body,#map{width:100%;height:100%;margin:0;padding:0;}</style>
-<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${Config.KAKAO_JS_KEY}&libraries=services"></script>
-</head><body>
-  <div id="map"></div>
-  <script>
-    var positions = ${positionsJson};
-    var map = new kakao.maps.Map(document.getElementById('map'), {
-      center: new kakao.maps.LatLng(positions[0].lat, positions[0].lng),
-      level: 4
-    });
-    var zoomCtrl = new kakao.maps.ZoomControl();
-    map.addControl(zoomCtrl, kakao.maps.ControlPosition.RIGHT);
-
-
-    window._searchMarkers = [];
-    positions.forEach(function(pos) {
-      var m = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(pos.lat, pos.lng),
-        title: pos.title
-      });
-      window._searchMarkers.push(m);
-    });
-
-    window.moveToLocation = function(lat, lng) {
-      map.panTo(new kakao.maps.LatLng(lat, lng));
-    };
-
-    window.handleSearchResults = function(docs) {
-      console.log('[WebView] handleSearchResults 호출, docs length =', docs.length, docs);
-      // 기존 마커 제거
-      window._searchMarkers.forEach(m => m.setMap(null));
-      window._searchMarkers = [];
-      var bounds = new kakao.maps.LatLngBounds();
-      docs.forEach(function(d) {
-        var lat = parseFloat(d.y), lng = parseFloat(d.x);
-        var m = new kakao.maps.Marker({
-          map: map,
-          position: new kakao.maps.LatLng(lat, lng),
-          title: d.place_name
+    <!DOCTYPE html>
+    <html><head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>지도</title>
+    <style>html,body,#map{width:100%;height:100%;margin:0;padding:0;}</style>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${Config.KAKAO_JS_KEY}&libraries=services"></script>
+    </head><body>
+      <div id="map"></div>
+      <script>
+        var positions = ${positionsJson};
+        var map = new kakao.maps.Map(document.getElementById('map'), {
+          center: new kakao.maps.LatLng(positions[0].lat, positions[0].lng),
+          level: 4
         });
-        window._searchMarkers.push(m);
-        bounds.extend(m.getPosition());
-      });
-      if (docs.length) {
-        console.log('[WebView] map.setBounds to', bounds);
-        map.setBounds(bounds);
-      }
-    };
 
-    window.moveToLocation = function(lat, lng) {
-      map.panTo(new kakao.maps.LatLng(lat, lng));
-    };
+        var zoomCtrl = new kakao.maps.ZoomControl();
+        map.addControl(zoomCtrl, kakao.maps.ControlPosition.RIGHT);
 
-    console.log('[WebView] initialized');
-  </script>
-</body></html>
-`;
+        // 마커 리스트 전역
+        window._searchMarkers = [];
+
+        // 초기 로딩: 내 위치(노란색) + 수거함(파란색)
+        positions.forEach(function(pos, index) {
+          let markerOptions = {
+            map: map,
+            position: new kakao.maps.LatLng(pos.lat, pos.lng),
+            title: pos.title
+          };
+
+          // index === 0이면 내 위치 => 노란색 마커
+          if (index === 0) {
+            const starImg = new kakao.maps.MarkerImage(
+              'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+              new kakao.maps.Size(24, 35),
+              { offset: new kakao.maps.Point(12, 35) }
+            );
+            markerOptions.image = starImg;
+          }
+
+          const marker = new kakao.maps.Marker(markerOptions);
+          window._searchMarkers.push(marker);
+        });
+
+        // 지도 이동 함수
+        window.moveToLocation = function(lat, lng) {
+          map.panTo(new kakao.maps.LatLng(lat, lng));
+        };
+
+        // 검색된 장소 마커 (노란색) + 기존 수거함(파란색) 다시 렌더링 함수
+        window.showSearchLocationMarker = function(lat, lng, title) {
+          console.log('[WebView] showSearchLocationMarker 실행', lat, lng, title);
+
+          // 기존 마커 제거
+          window._searchMarkers.forEach(m => m.setMap(null));
+          window._searchMarkers = [];
+
+          // 검색 장소 (노란색 마커)
+          const searchImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+          const searchImageSize = new kakao.maps.Size(24, 35);
+          const searchMarkerImage = new kakao.maps.MarkerImage(searchImageSrc, searchImageSize);
+
+          const searchMarker = new kakao.maps.Marker({
+            map: map,
+            position: new kakao.maps.LatLng(lat, lng),
+            title: title,
+            image: searchMarkerImage
+          });
+          window._searchMarkers.push(searchMarker);
+          map.panTo(searchMarker.getPosition());
+        };
+
+        // 수거함 마커만 파란색으로 다시 렌더링
+        window.renderCollectionSpots = function(positions) {
+
+          positions.forEach(function(pos) {
+              const marker = new kakao.maps.Marker({
+                map: map,
+                position: new kakao.maps.LatLng(pos.lat, pos.lng),
+                title: pos.title
+                // image 지정 안 함 → 기본 마커 사용
+              });
+              window._searchMarkers.push(marker);
+          });
+        };
+
+        console.log('[WebView] initialized');
+      </script>
+    </body></html>
+    `;
 
   return (
     <View style={styles.container}>
@@ -194,13 +221,117 @@ const CollectionBoxLocationScreen: React.FC = () => {
               // 실제 기기에서는 host IP를 써야 합니다
               const docs = await fetchKakaoKeyword(keyword);
               console.log('▶️ [RN] fetchKakaoKeyword 반환 docs =', docs);
-              // WebView로 결과 전달
-              const js = `window.handleSearchResults(${JSON.stringify(docs)}); true;`;
-              console.log('▶️ [RN] injectJavaScript:', js);
-              webviewRef.current?.injectJavaScript(js);
+
+
+              if (docs.length > 0) {
+                const firstDoc = docs[0];
+                const lat = parseFloat(firstDoc.y);
+                const lng = parseFloat(firstDoc.x);
+
+                // ✅ 1. 검색 장소를 노란색 마커로 WebView에 표시
+                const js = `window.showSearchLocationMarker(${lat}, ${lng}, ${JSON.stringify(firstDoc.place_name)}); true;`;
+                console.log('▶️ [RN] injectJavaScript 검색장소:', js);
+                webviewRef.current?.injectJavaScript(js);
+                
+                // ✅ 2. 해당 위치 기준으로 수거함 재요청
+                const wasteItem = selectedCategory === '전체' ? '' : selectedCategory;
+                const params = new URLSearchParams({
+                  wasteItem,
+                  lat: lat.toString(),
+                  lng: lng.toString(),
+                  radiusMeters: '1000'
+                });
+
+                const res = await api.get(`/collectionspot/nearby?${params.toString()}`);
+                const data: any[] = res.data;
+
+                console.log('🔥 백엔드에서 받은 재요청 데이터:', data);
+
+                if (Array.isArray(data)) {
+                  setSpots(data.map(d => ({
+                    label: d.description ?? d.wasteItem,
+                    lat: d.latitude,
+                    lng: d.longitude,
+                    regionCode: d.regionCode,
+                  })));
+
+                  // 4. WebView에 수거함 마커 찍는 함수 호출
+                  const positionsForJs = JSON.stringify(
+                    data.map(d => ({
+                      title: d.description ?? d.wasteItem,
+                      lat: d.latitude,
+                      lng: d.longitude
+                    }))
+                  );
+
+                  const renderJs = `window.renderCollectionSpots(${positionsForJs}); true;`;
+                  webviewRef.current?.injectJavaScript(renderJs);
+              } else {
+                console.warn('❗️백엔드 응답이 배열이 아님:', data);
+                Alert.alert('서버에서 받은 데이터 형식이 잘못되었습니다.');
+              }
+
+            } else {
+              Alert.alert('검색 결과가 없습니다.');
+            }
+              // console.log('▶️ [RN] fetchKakaoKeyword 반환 docs =', docs);
+              // // WebView로 결과 전달
+              // const js = `window.handleSearchResults(${JSON.stringify(docs)}); true;`;
+              // console.log('▶️ [RN] injectJavaScript:', js);
+              // webviewRef.current?.injectJavaScript(js);
             } catch (err) {
               console.error('❌ [RN] 검색 중 에러:', err);
               Alert.alert('검색 중 오류가 발생했습니다.');
+            }
+          }}
+        />
+
+        <Button 
+          title='초기화' 
+          onPress={async() => {
+            if(!location) {
+              Alert.alert('현재 위치를 가져올 수 없습니다.');
+              return;
+            }
+            try {
+              // 1) 검색어 초기화(옵션)
+              setKeyword('');
+
+              // 2) 내 위치 기준 재조회
+              const wasteItem = selectedCategory === '전체' ? '' : selectedCategory;
+              const params = new URLSearchParams({
+                wasteItem,
+                lat: location.latitude.toString(),
+                lng: location.longitude.toString(),
+                radiusMeters: '1000',
+              });
+              const res = await api.get(`/collectionspot/nearby?${params.toString()}`);
+              const data: any[] = res.data;
+
+              // 3) 리스트 갱신
+              const mapped = data.map(d => ({
+                label: d.description ?? d.wasteItem,
+                lat: d.latitude,
+                lng: d.longitude,
+                regionCode: d.regionCode,
+              }));
+              setSpots(mapped);
+
+              // 4) 지도 갱신: 노란별(내 위치) + 수거함(기본 마커)
+              const moveJs = `
+                window.showSearchLocationMarker(${location.latitude}, ${location.longitude}, "내 위치");
+                true;
+              `;
+              webviewRef.current?.injectJavaScript(moveJs);
+
+              const positionsForJs = JSON.stringify(
+                mapped.map(m => ({ title: m.label, lat: m.lat, lng: m.lng }))
+              );
+              const renderJs = `window.renderCollectionSpots(${positionsForJs}); true;`;
+              webviewRef.current?.injectJavaScript(renderJs);
+            } catch (e) {
+              console.error('❌ 초기화 중 에러:', e);
+              Alert.alert('초기화 중 오류가 발생했습니다.');
             }
           }}
         />
@@ -238,16 +369,17 @@ const CollectionBoxLocationScreen: React.FC = () => {
         </ScrollView>
       </View>
 
-      {/* B. 내 위치 */}
+      {/* B. 내 위치
       <View style={styles.locationBox}>
         <Text style={styles.locationText}>
           내 위치: [{baseLat.toFixed(5)}, {baseLng.toFixed(5)}]
         </Text>
-      </View>
+      </View> */}
 
       {/* C. 지도 (고정 높이) */}
       <View style={styles.mapContainer}>
         <WebView
+          key={positionsJson} // 위치 바뀌면 WebView 강제 재생성됨
           ref={webviewRef}
           originWhitelist={['*']}
           source={{ html: kakaoHtml, baseUrl: 'https://localhost' }}
@@ -366,5 +498,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
-  }
+  },
+
+
 });
