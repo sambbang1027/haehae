@@ -44,7 +44,7 @@ const LoginPage = () => {
   },[]);
 
 
-   // 로컬 로그인 
+   // 로컬 로그인
 const handleLocalLogin = async() => {
     try{
     const res = await api.post('/auth/login', {
@@ -86,14 +86,14 @@ const handleLocalLogin = async() => {
         break;
       case 'USER_NOT_FOUND':
         showToast({ message: '존재하지 않는 계정입니다.' });
-        break;  
+        break;
       default:
         showToast({ message: '로그인 실패. 다시 시도해주세요.' });
     }
   }
 }
 
-  
+
   const handleGoogleLogin = async() => {
     console.log('Google 로그인');
     try{
