@@ -4,9 +4,11 @@ import com.example.backend.entity.user.UserPoint;
 import com.example.backend.entity.reward.UserRewards;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class UserRewardPointRequestInsertDTO {
     private long userId;
     private String pointType;
@@ -15,6 +17,7 @@ public class UserRewardPointRequestInsertDTO {
 
     private long userPointId;
     private long rewardItemId;
+    private long count;
     private UserRewards.Status status;
 
     public UserPoint toEntityUserPoint(){
@@ -22,7 +25,7 @@ public class UserRewardPointRequestInsertDTO {
                 .userId(userId)
                 .pointType(pointType)
                 .amount(amount)
-                .source(pointType)
+                .source(source)
                 .build();
     }
 
@@ -30,7 +33,8 @@ public class UserRewardPointRequestInsertDTO {
         return UserRewards.builder()
                 .userPointId(userPointId)
                 .rewardItemId(rewardItemId)
-                .status(UserRewards.Status.AVAILABLE)
+                .count(count)
+                .status(status)
                 .build();
     }
 }

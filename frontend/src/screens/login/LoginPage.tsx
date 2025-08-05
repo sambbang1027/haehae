@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,65 +13,130 @@ import { navigate } from '../../navigation/NavigationService.ts';
 import api from '../../api/AxiosInstance.ts';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useUser } from '../../context/UserContext.tsx';
+import * as KakaoLogin from '@react-native-seoul/kakao-login';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useToast } from '../../context/ToastContext.tsx';
 
 const LoginPage = () => {
-  
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
   const [saveId, setSaveId] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const { setUser} = useUser();
-
-  // ✅ 인터셉터가 제대로 작동하는지 확인하는 테스트용 useEffect
-  React.useEffect(() => {
-    (async () => {
-      try {
-        console.log('📡 /auth/me 호출 테스트');
-        const res = await api.get('/auth/me');
-        console.log('✅ 응답:', res.data);
-      } catch (err) {
-        console.error('❌ 에러 발생', err);
+  const { login} = useUser();
+  const {showToast} = useToast();
+  useEffect(()=> {
+    GoogleSignin.configure({
+      webClientId : '1032730359503-m2aidsmm9s09ch6g9qq4a9iko7q0p5t7.apps.googleusercontent.com',
+    });
+    const loadSavedEmail = async () =>{
+      const saveId = await EncryptedStorage.getItem('saveId');
+      if(saveId === 'true'){
+        const savedEmail = await EncryptedStorage.getItem('savedEmail');
+        if(savedEmail){
+          setEmail(savedEmail);
+          setSaveId(true);
+        }
+        console.log('🧪 saveId:', saveId);
+        console.log('📩 savedEmail:', savedEmail);
       }
-    })();
-  }, []);
+    };
+    loadSavedEmail();
+  },[]);
 
 
-  const handleLocalLogin = async() => {
+   // 로컬 로그인
+const handleLocalLogin = async() => {
     try{
     const res = await api.post('/auth/login', {
       email,
       password 
     });
-      if (res.status === 200) {
-        await EncryptedStorage.setItem('accessToken', res.data.accessToken);
-        await EncryptedStorage.setItem('refreshToken', res.data.refreshToken);
+      console.log(res.data);
 
-        const userInfo = await api.get('/auth/me');
+     if (res.data.code === "SUCCESS") {
+      const accessToken = res.data.data.accessToken;
+      const refreshToken = res.data.data.refreshToken;
 
-        console.log("유저정보 가져오기");
+      await EncryptedStorage.setItem('accessToken', accessToken);
+      await EncryptedStorage.setItem('refreshToken', refreshToken);
+      await EncryptedStorage.setItem('autoLogin', autoLogin ? 'true' : 'false');
+      await EncryptedStorage.setItem('saveId', saveId? 'true' : 'false')
 
-        if (userInfo.status === 200) {
-          setUser(userInfo.data);
-          
-        }
-      navigate('MainStack', { screen: 'Main' });
-    } else {
-      console.log('로그인 실패: 상태 코드', res.status);
+      if(saveId){
+        console.log('아이디 저장 !!!');
+        await EncryptedStorage.setItem('savedEmail', email);
+      }
+
+      const userInfo = await api.get('/auth/me');
+
+      if (userInfo.data.code === "SUCCESS") {
+        await login(userInfo.data.data );
+        navigate('MainStack', { screen: 'Main' });
+      } else {
+        console.log("❌ 실패");
+      }
     }
-  }catch(error){
-    console.error(error);
+  }catch(error : any){
+   switch(error.response?.data.code) {
+      case 'INACTIVE_USER':
+        showToast({ message: '이미 탈퇴한 계정입니다.' });
+        break;
+      case 'BLOCKED_USER':
+        showToast({ message: '차단된 계정입니다.' });
+        break;
+      case 'USER_NOT_FOUND':
+        showToast({ message: '존재하지 않는 계정입니다.' });
+        break;
+      default:
+        showToast({ message: '로그인 실패. 다시 시도해주세요.' });
+    }
   }
+}
+
+
+  const handleGoogleLogin = async() => {
+    console.log('Google 로그인');
+    try{
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+
+      const {idToken} = await GoogleSignin.getTokens();
+      console.log('idToken Check!!!!!!!!!!!!!', idToken);
+      if(!idToken) throw new Error('Google Id Token Not Found');
+
+      const response = await api.post('auth/social/google', {idToken});
+
+      console.log('로그인 성공', response.data);
+    }catch(error){
+      console.error('구글 로그인 실패 ', error);
+    }
+
+
+  };
+  const handleKakaoLogin = async() => {
+// 사업자 등록해야 이메일과 민감정보 받아올 수 있음.. 좀 더 고려해보는걸로
+    console.log('kakao 로그인');
+  // console.log('📦 KakaoLogin 모듈:', KakaoLogin);
+
+    try{
+      console.log('로그인 시도 전');
+      const response = await KakaoLogin.login(); // ✅
+
+        console.log(response);
+      //  console.log("액세스 토큰 확인 @@ : ",response.accessToken)
+      // const user = await api.post('auth/social/kakao',{
+      //     provider : 'kakao',
+      //     acccessToken: response.accessToken});
+      //   console.log(user.data);
+    }catch(error){
+      console.error('카카오 로그인 실패:', error);
+    }
   }
 
-  
-  const handleGoogleLogin = () => {
-    console.log('Google 로그인');
-  };
-  const handleKakaoLogin = () => {
-    console.log('kakao 로그인');
-  }
+
+
   const goToSignup = () => {
-     navigate('LoginStack' ,{screen : 'Signup'});
+     navigate('LoginStack' ,{screen : 'Signup', params: { loginType: 'LOCAL' }});
   }
   const goToFindId = () => {
       navigate('LoginStack' ,{screen : 'FindId'});

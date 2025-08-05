@@ -1,9 +1,11 @@
 package com.example.backend.sharing.service;
 
+import com.example.backend.annotation.CheckPenalty;
 import com.example.backend.entity.sharing.SharingImages;
 import com.example.backend.entity.sharing.SharingPosts;
 import com.example.backend.exception.ErrorCode;
 import com.example.backend.exception.HaehaeException;
+import com.example.backend.exception.PenaltyException;
 import com.example.backend.sharing.dto.request.CreateSharingRequestDTO;
 import com.example.backend.sharing.dto.request.SharingImageRequestDTO;
 import com.example.backend.sharing.dto.request.SharingStatusRequestDTO;
@@ -11,12 +13,15 @@ import com.example.backend.sharing.dto.request.UpdateSharingRequestDTO;
 import com.example.backend.sharing.repository.sharingPosts.SharingRepository;
 import com.example.backend.sharing.repository.images.SharingImageRepository;
 import com.example.backend.user.repository.UserRepository;
+import com.example.backend.userPenalty.service.UserPenaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SharingCommandServiceImpl implements SharingCommandService {
+
+    private final UserPenaltyService userPenaltyService;
 
     @Autowired
     private SharingRepository sharingRepository;
@@ -27,10 +32,15 @@ public class SharingCommandServiceImpl implements SharingCommandService {
     @Autowired
     private UserRepository userRepository;
 
+    public SharingCommandServiceImpl(UserPenaltyService userPenaltyService) {
+        this.userPenaltyService = userPenaltyService;
+    }
+
+
+    @CheckPenalty
     @Transactional
     @Override
     public void createSharingDetail(CreateSharingRequestDTO createSharingRequestDTO) {
-
         if (!userRepository.existsById(createSharingRequestDTO.getUserId())) {
             throw new HaehaeException(ErrorCode.USER_NOT_FOUND);
         }
@@ -63,6 +73,7 @@ public class SharingCommandServiceImpl implements SharingCommandService {
         sharingRepository.updateSharingStatus(sharingStatusRequestDTO);
     }
 
+    @CheckPenalty
     @Override
     public void updateSharingDetail(UpdateSharingRequestDTO updateSharingRequestDTO) {
         sharingRepository.updateSharingDetail(updateSharingRequestDTO);

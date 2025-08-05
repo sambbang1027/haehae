@@ -5,13 +5,15 @@ import SignupPage from '../screens/login/SignupPage';
 import FindIdPage from '../screens/login/FindIdPage';
 import FindPwPage from '../screens/login/FindPwPage';
 import SetPwPage from '../screens/login/SetPwPage';
+import ShowIdPage from '../screens/login/ShowIdPage';
 
 export type LoginStackParamList = {
   Login: undefined;
   Signup: { loginType?: string } | undefined;
   FindId: undefined;
   FindPw: undefined;
-  SetPw: undefined;
+  SetPw: {token : string};
+  ShowId: { maskedEmail : string }
 };
 
 const Stack = createNativeStackNavigator<LoginStackParamList>();
@@ -48,6 +50,11 @@ const LoginNavigator = () => {
         name="SetPw"
         component={SetPwPage}
         options={{ title: '비밀번호 재설정' }}
+      />
+      <Stack.Screen 
+        name='ShowId'
+        component={ShowIdPage}
+        options={{title: '아이디 찾기'}}
       />
     </Stack.Navigator>
   );

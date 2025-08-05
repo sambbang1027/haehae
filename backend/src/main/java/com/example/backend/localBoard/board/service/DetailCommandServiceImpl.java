@@ -1,5 +1,7 @@
 package com.example.backend.localBoard.board.service;
 
+import com.example.backend.annotation.CheckPenalty;
+import com.example.backend.exception.PenaltyException;
 import com.example.backend.localBoard.board.dto.request.CreateContentRequestDTO;
 import com.example.backend.localBoard.board.dto.request.ImageRequestDTO;
 import com.example.backend.localBoard.board.dto.request.UpdateContentRequestDTO;
@@ -7,6 +9,7 @@ import com.example.backend.entity.localBoard.LocalBoardImages;
 import com.example.backend.entity.localBoard.LocalBoards;
 import com.example.backend.localBoard.board.repository.LocalBoardRepository;
 import com.example.backend.localBoard.image.repository.BoardImageRepository;
+import com.example.backend.userPenalty.service.UserPenaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +27,18 @@ public class DetailCommandServiceImpl implements DetailCommandService {
     @Autowired
     BoardImageRepository boardImageRepository;
 
+
+    private final UserPenaltyService userPenaltyService;
+
+
+    public DetailCommandServiceImpl(UserPenaltyService userPenaltyService) {
+        this.userPenaltyService = userPenaltyService;
+    }
+
     @Override
     @Transactional
+    @CheckPenalty
     public void createDetail(CreateContentRequestDTO createContentRequestDTO){
-
         LocalBoards localBoards
                 = LocalBoards.builder()
                 .userId(createContentRequestDTO.getUserId())
@@ -38,19 +49,22 @@ public class DetailCommandServiceImpl implements DetailCommandService {
 
         localBoardRepository.save(localBoards);
 
-        for(String imageUrl : createContentRequestDTO.getLocalBoardImageUrl()){
+        if(createContentRequestDTO.getLocalBoardImageUrl() != null) {
+            for (String imageUrl : createContentRequestDTO.getLocalBoardImageUrl()) {
 
-            LocalBoardImages localBoardImages
-                    = LocalBoardImages.builder()
-                    .localBoardId(localBoards.getLocalBoardId())
-                    .localBoardImgUrl(imageUrl)
-                    .build();
+                LocalBoardImages localBoardImages
+                        = LocalBoardImages.builder()
+                        .localBoardId(localBoards.getLocalBoardId())
+                        .localBoardImgUrl(imageUrl)
+                        .build();
 
-            boardImageRepository.save(localBoardImages);
+                boardImageRepository.save(localBoardImages);
+            }
         }
     }
 
     @Override
+    @CheckPenalty
     public void updateDetail(long localBoardId, UpdateContentRequestDTO updateContentRequestDTO){
         updateContentRequestDTO.setUpdateAt(Timestamp.valueOf(LocalDateTime.now()));
         localBoardRepository.updateDetailContent(localBoardId, updateContentRequestDTO);

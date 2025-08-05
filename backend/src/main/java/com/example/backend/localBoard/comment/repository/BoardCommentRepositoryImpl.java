@@ -1,5 +1,6 @@
 package com.example.backend.localBoard.comment.repository;
 
+import com.example.backend.entity.localBoard.Comments;
 import com.example.backend.localBoard.comment.dto.request.UpdateCommentRequestDTO;
 import com.example.backend.localBoard.comment.dto.response.CommentResponseDTO;
 import com.example.backend.localBoard.comment.dto.response.QCommentResponseDTO;
@@ -51,18 +52,32 @@ public class BoardCommentRepositoryImpl implements BoardCommentRepositoryCustom 
         queryFactory
                 .update(cm)
                 .set(cm.content, updateCommentRequestDTO.getContent())
-                .where(cm.id.eq(updateCommentRequestDTO.getCommentId()))
+                .where(cm.id.eq(updateCommentRequestDTO.getCommentId()),
+                        cm.userId.eq(updateCommentRequestDTO.getUserId())
+                )
                 .execute();
     };
 
     @Transactional
     @Override
-    public void deleteComment(Long commentId){
+    public void deleteComment(Long commentId, Long userId){
         QComments cm = QComments.comments;
 
         queryFactory
                 .delete(cm)
-                .where(cm.id.eq(commentId))
+                .where(cm.id.eq(commentId),
+                        cm.userId.eq(userId))
                 .execute();
+    }
+
+    @Override
+    public void commentStatusReport(Long id, Comments.CommentsStatus status) {
+        QComments cm = QComments.comments;
+
+        queryFactory.update(cm)
+                .set(cm.commentsStatus, status)
+                .where(cm.id.eq(id))
+                .execute();
+
     }
 }

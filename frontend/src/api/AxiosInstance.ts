@@ -11,7 +11,7 @@ const reissueAccessToken = async() =>{
     const refreshToken = await EncryptedStorage.getItem('refreshToken');
     if(!refreshToken) throw new Error('RefreshToken이 존재하지 않습니다.');
 
-    const res = await axios.post('http://10.0.2.2:8082/api/auth/refresh',
+    const res = await axios.post('http://10.0.2.2:8082/api/auth/refresh', 
         {}, //body -> null
         {
             headers: {
@@ -37,8 +37,6 @@ const api = axios.create({
 api.interceptors.request.use(
     async(config) =>{
         const token = await EncryptedStorage.getItem('accessToken');
-
-        console.log('🔥 accessToken:', token); // 콘솔 찍어보세요
 
         if(token) {
             config.headers.Authorization= `Bearer ${token}`;

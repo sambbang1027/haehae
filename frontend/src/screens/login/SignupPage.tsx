@@ -1,13 +1,11 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState , useEffect} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Image,
   StyleSheet,
   ScrollView,
-  Modal,
 } from 'react-native';
 
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -41,14 +39,28 @@ import {
 
 type SignupParams = {
   params?: {
-    loginType?: string;
+    loginType?: 'local'| 'google' | 'kakao';
+    email? : string;
+    name? : string;
   };
 };
 
 const SignupPage= () => {
 
-  const route = useRoute<RouteProp<SignupParams>>()
-  const isSocial = route.params?.loginType === 'social';
+  // 로컬인지 소셜인지 파악 
+  const route = useRoute<RouteProp<SignupParams>>();
+  const loginType = route.params?.loginType?? 'local';
+  const isSocial = loginType !== 'local';
+
+  useEffect (()=>{
+    if(isSocial && route.params){
+      socialDispatch({type: 'SET_FIELD', field: 'email', value :route.params?.email || ''});
+      socialDispatch({type: 'SET_FIELD', field: 'name', value :route.params?.name || ''});
+      socialDispatch({type: 'SET_FIELD', field: 'socialProvider', value : loginType.toUpperCase()});
+    }
+   
+  },[]);
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
@@ -69,6 +81,7 @@ const SignupPage= () => {
   address: string;
   bcode: string;
   residenceType: string;
+  socialProvider : string;
 };
 
 const finalPayload: State = {
@@ -81,6 +94,7 @@ const finalPayload: State = {
   address: commonState.address,
   bcode: commonState.bcode, // ← 이건 address 선택시 함께 설정되도록 만들어야 함
   residenceType: commonState.residenceType,
+  socialProvider: loginType.toUpperCase(),
 };
 
 
@@ -91,8 +105,7 @@ const finalPayload: State = {
       const url = isSocial ? '/user/register/social' : 'user/register/local';
 
       const response = await api.post(url, finalPayload);
-      
-      if(response.status === 200){
+      if(response.data.code = "SUCCESS"){
         showToast({message: '회원가입 완료'});
         commonDispatch({type : 'RESET'});
         navigate('LoginStack', {screen: 'Login'});
@@ -111,7 +124,7 @@ const handleSendCode = async() =>{
     });
     console.log(response);
 
-    if(response?.status === 200){
+    if(response.data.code === "SUCCESS"){
       showToast({ message: '인증코드가 발송되었습니다.' });
       handleTimer(); // 타이머 시작
     }
@@ -179,9 +192,9 @@ const handleSendCode = async() =>{
         nickname: commonState.nickname,
       },
     });
-      if(response.data === false){
+      if(response.data.data === false){
         showToast({message : '사용가능한 닉네임입니다'})
-      }else if(response.data === true){
+      }else if(response.data.data === true){
         showToast({message: '이미 사용중인 닉네임입니다'})
       }
     }catch(error){
@@ -218,6 +231,10 @@ const handleSendCode = async() =>{
       showDatePicker={showDatePicker}
       setShowDatePicker={setShowDatePicker}
       onDuplicateNickname = {handleDuplicateNickname}
+      onSelectAddress={(address, bcode) => {
+      commonDispatch({ type: 'SET_FIELD', field: 'address', value : address });
+      commonDispatch({ type: 'SET_FIELD', field: 'bcode', value: bcode });
+       }}
     />
     <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
       <Text style={styles.signupText}>완료</Text>

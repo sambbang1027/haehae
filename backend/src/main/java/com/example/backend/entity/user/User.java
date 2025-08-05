@@ -25,6 +25,10 @@ public class User {
     @Builder.Default
     @Column(name = "user_level_id")
     private Long userLevelId = 1L;
+    @Column(name = "level_achieved_at")
+    private LocalDate levelAchievedAt;
+    @Column(name = "level_expire_at")
+    private LocalDate levelExpireAt;
     private String email;
     private String name;
     @Column(name = "password_hash")
@@ -36,7 +40,7 @@ public class User {
     private String socialProvider;
     private String address;
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
     @Builder.Default
@@ -74,4 +78,13 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
     private LocalDate birth;
+
+
+
+    public void updatePassword(String encodedPassword) {
+        this.passwordHash = encodedPassword;
+    }
+
 }
+
+

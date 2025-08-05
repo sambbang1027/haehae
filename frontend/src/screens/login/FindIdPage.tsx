@@ -1,11 +1,33 @@
 import React from 'react';
 import { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import api from '../../api/AxiosInstance';
+import { navigate } from '../../navigation/NavigationService';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-const FindIdPage: React.FC = () => {
+
+const FindIdPage = () => {
   const [name, setName] = useState<string>('');
-  const [birth, setBirth] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
+  
+
+
+  const handleFindId = async() =>{
+    try{
+      // 요청에 개인정보가 포함되면 POST로 보내는 게 보안적으로 안전하고 RESTful하다.
+      const response = await api.post('/user/find/id', {
+        name : name,
+        phoneNumber : phone
+      });
+      if(response.data.code === "SUCCESS"){
+        const maskedEmail = response.data.data;
+        navigate('LoginStack', {screen: 'ShowId', params:{maskedEmail : maskedEmail}});
+      }
+
+    }catch(err){
+      console.error('아이디 찾기 실패',  err);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -25,12 +47,7 @@ const FindIdPage: React.FC = () => {
                 value={name}
                 onChangeText={setName}
             />
-            <TextInput 
-                style={styles.inputBox}
-                placeholder='법정생년월일 6자리'
-                value={birth}
-                onChangeText={setBirth}
-            />
+
             <TextInput 
                 style={styles.inputBox}
                 placeholder='휴대전화번호 - 없이 입력'
@@ -39,7 +56,7 @@ const FindIdPage: React.FC = () => {
             />
     </View>
        
-      <TouchableOpacity style={styles.submitButton}>
+      <TouchableOpacity style={styles.submitButton} onPress={handleFindId}>
         <Text style={styles.submitText}>아이디 찾기</Text>
       </TouchableOpacity>
 
@@ -56,76 +73,79 @@ const FindIdPage: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
     flex: 1,
-    position: 'relative',
+    backgroundColor: '#fff',
   },
-  headerBox:{
-    flexDirection:'column',
-    gap: 30,
-    marginBottom: 30,
-    marginLeft: 30,
+  headerBox: {
+    marginTop: hp('5%'),
+    marginBottom: hp('4%'),
+    gap: hp('3%'),
+    paddingHorizontal: wp('5%'),
   },
   logo: {
-    marginTop: 40,
-    width: 138,
-    height: 39,
+    width: wp('35%'),
+    height: hp('5%'),
     resizeMode: 'contain',
   },
   subtitle: {
-    fontSize: 23,
-    fontFamily: 'Inter-Regular',
+    fontSize: hp('2.6%'),
+    lineHeight: hp('3.2%'),
     color: '#000',
-    lineHeight: 28,
+    fontFamily: 'Inter-Regular',
   },
-  inputConatainer:{
-    gap: 15,
-    alignItems: 'center'
+  inputConatainer: {
+    gap: hp('2%'),
+    alignItems: 'center',
   },
   inputBox: {
-    width: 358,
-    height: 55,
+    width: wp('90%'),
+    height: hp('7%'),
     borderWidth: 1,
     borderColor: '#959595',
-    borderRadius: 3,
-    paddingHorizontal: 15,
+    borderRadius: 5,
+    paddingHorizontal: wp('4%'),
+    fontSize: hp('2%'),
   },
   submitButton: {
-    marginTop: 25,
-    width: 358,
-    height: 55,
-    borderRadius: 5,
+    marginTop: hp('3%'),
+    width: wp('90%'),
+    height: hp('7%'),
     backgroundColor: '#C8F589',
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   submitText: {
+    fontSize: hp('2%'),
     fontWeight: '700',
-    fontSize: 15,
     color: '#000',
   },
   footer: {
-    marginTop: 30,
+    marginTop: hp('5%'),
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    height: 55,
-    width: '100%',
-    alignSelf: 'center',
-    justifyContent: 'center'
+    height: hp('6%'),
+    justifyContent: 'center',
   },
   footerTitle: {
-    fontSize: 17,
+    fontSize: hp('2.2%'),
     color: '#000',
-    paddingHorizontal: 20,
+    paddingHorizontal: wp('5%'),
   },
   notice: {
-    fontSize: 15,
+    fontSize: hp('2%'),
     color: '#000',
-    width: 350,
-    marginVertical: 30,  // 상하
-    marginHorizontal: 20 // 좌우
+    marginTop: hp('3%'),
+    paddingHorizontal: wp('5%'),
+    lineHeight: hp('2.8%'),
   },
 });
+
 export default FindIdPage;

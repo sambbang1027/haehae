@@ -10,14 +10,19 @@ import com.example.backend.security.CustomUserDetails;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.backend.entity.user.User.Status.BLOCKED;
+import static com.example.backend.entity.user.User.Status.INACTIVE;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -31,7 +36,12 @@ public class AuthService {
      User user = userRepository.findByEmail(loginRequestDTO.getEmail())
              .orElseThrow(()-> new HaehaeException(ErrorCode.USER_NOT_FOUND));
 
-     // 비밀번호 일치 검증
+     if(user.getStatus().equals(INACTIVE)){
+        throw new HaehaeException(ErrorCode.INACTIVE_USER);
+     } else if (user.getStatus().equals(BLOCKED)) {
+         throw new HaehaeException(ErrorCode.BLOCKED_USER);
+     }
+        // 비밀번호 일치 검증
         matchingPassword(loginRequestDTO.getPassword(),user.getPasswordHash());
 
      // 토큰 생성
@@ -47,6 +57,7 @@ public class AuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+        log.info("✅ RefreshToken Redis 저장: key = {}, value = {}", "refresh:" + refreshToken, user.getId());
 
         return response;
     }

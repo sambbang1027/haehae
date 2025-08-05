@@ -16,6 +16,7 @@ import NotificationSettings from '../screens/mypage/NotificationSettingPage';
 import Faq from '../screens/mypage/FaqPage';
 import Notice from '../screens/mypage/NoticePage';
 import Inquiry from '../screens/mypage/InquiryPage';
+import ChangePw from'../screens/mypage/ChangePwPage';
 
 // 네비게이션 스택 타입 정의
 export type MyPageStackParamList = {
@@ -35,6 +36,7 @@ export type MyPageStackParamList = {
   Faq: undefined;
   Notice: undefined;
   Inquiry: undefined;
+  ChangePw: undefined;
 };
 
 const Stack = createNativeStackNavigator<MyPageStackParamList>();
@@ -126,6 +128,11 @@ const MyPageNavigator = () => {
         name='Inquiry'
         component={Inquiry}
         options={{title:'1 : 1 문의'}}
+      />
+      <Stack.Screen 
+        name='ChangePw'
+        component={ChangePw}
+        options={{title: '비밀번호 변경'}}
       />
     </Stack.Navigator>
   );

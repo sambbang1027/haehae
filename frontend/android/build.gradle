@@ -1,5 +1,4 @@
 buildscript {
-  
     ext {
         buildToolsVersion = "35.0.0"
         minSdkVersion = 24
@@ -8,18 +7,28 @@ buildscript {
         ndkVersion = "27.1.12297006"
         kotlinVersion = "1.9.22"
     }
+
     repositories {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}") 
-        classpath 'com.google.gms:google-services:4.3.14'
 
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.3.0") // ✅ AGP 8.3.0은 compileSdk 35과 호환
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22") // ✅ 네가 쓰던 버전
+        classpath("com.google.gms:google-services:4.3.14")
     }
+
+    allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://devrepo.kakao.com/nexus/content/groups/public/" } // ✅ 요거 추가
+        maven { url "https://jitpack.io" } // react-native 모듈용
+    }
+}
+
 }
 
 apply plugin: "com.facebook.react.rootproject"

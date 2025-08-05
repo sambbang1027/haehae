@@ -13,8 +13,6 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
-import com.example.backend.reward.rewardItems.dto.response.QFindRewardDetailDTO;
-import com.example.backend.reward.rewardItems.dto.response.QFindRewardListDTO;
 
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
     QRewardItemImages subQri = new QRewardItemImages("subQri");
 
     @Override
-    public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType) {
+    public List<FindRewardListDTO> findRewardList(RewardItems.RewardType rewardType, Long cursor , int limitPlusOne) {
         return jpaQueryFactory
                 .select(new QFindRewardListDTO(
                         ri.id,
@@ -47,14 +45,15 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                             )
                         ))
                 .from(ri)
-//                .leftJoin(qri)
-//                .on(qri.rewardItemId.eq(ri.id))
                 .where(
                         rewardType !=null ? ri.rewardType.eq(rewardType) : null,
-                        ri.stock.gt(0)
+                        ri.stock.gt(0),
+                        cursor != null ? ri.id.lt(cursor) : null
                 )
+                .orderBy(ri.id.desc())
+                .limit(limitPlusOne)
                 .fetch();
-    }
+            }
 
     @Override
     public FindRewardDetailDTO findRewardDetailById(long id) {
@@ -68,8 +67,10 @@ public class RewardRepositoryImpl implements RewardRepositoryCustom {
                                 ri.name,
                                 ri.description,
                                 ri.pointCost,
+                                ri.organization,
                                 ri.createdAt,
                                 ri.updatedAt,
+                                ri.rewardType,
                                 GroupBy.list(qri.id),
                                 GroupBy.list(qri.rewardItemsImgUrl) // 이미지 여러 개 리스트로
                         )

@@ -11,6 +11,7 @@ import { useFireBaseImage } from '../../hooks/UseFirebaseImage';
 import { useImagePicker } from '../../hooks/useImagePicker';
 //imagePriview UI
 import ImagePreviewList from '../../components/image/ImagePreviewList';
+import { useModal } from '../../context/ModalContext';
 
 export default function WriteLocalBoardPost() {
   const {user, setUser} = useUser();
@@ -18,6 +19,7 @@ export default function WriteLocalBoardPost() {
   const [content, setContent] = useState('');
   const { images, pickImages, deleteImage } = useImagePicker();
   const { uploadImage, deleteImageFB, uploading, error } = useFireBaseImage();
+  const {showModal, hideModal} = useModal();
 
   const handleSubmit =  async () =>{
     let uploadedImageUrls: string[] | null = null;
@@ -36,13 +38,21 @@ export default function WriteLocalBoardPost() {
           localBoardImageUrl: uploadedImageUrls
         };
 
-      await api.post('local-board/detail/create', formData);
+  await api.post('local-board/detail/create', formData);
 
-    } catch (error) {
+    } catch (error :any) {
       console.error('게시글 등록 실패:', error);
         if(uploadedImageUrls != null && uploadedImageUrls.length > 0){
               await deleteImageFB(uploadedImageUrls);
         }
+        const message =
+            error.response?.data?.message ||
+            error.message
+            '알 수 없는 오류가 발생했습니다.';
+            showModal({
+                type:'confirm',
+                content : message,
+            })  
     }
   };
 

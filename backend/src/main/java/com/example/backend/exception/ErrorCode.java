@@ -10,13 +10,16 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_MATCH(ErrorCategory.AUTH, HttpStatus.UNAUTHORIZED, "토큰이 일치하지 않습니다."),
     ACCESS_DENIED(ErrorCategory.AUTH, HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
     EMAIL_IO_ERROR(ErrorCategory.AUTH, HttpStatus.SERVICE_UNAVAILABLE, "이메일 전송 중 네트워크 오류 발생"),
-    INVALID_VERIFICATION_CODE(ErrorCategory.AUTH, HttpStatus.BAD_REQUEST,"인증 코드가 유효하지 않습니다."),
+    GOOGLE_VERIFY_FAILED(ErrorCategory.AUTH, HttpStatus.UNAUTHORIZED, "구글 토큰 검증 중 오류 발생"),
+    VERIFICATION_TOKEN_NOT_FOUND(ErrorCategory.AUTH, HttpStatus.NOT_FOUND, "해당 토큰을 찾을 수 없습니다"),
 
     // USER
     USER_NOT_FOUND(ErrorCategory.USER,HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다."),
     DUPLICATE_EMAIL(ErrorCategory.USER, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(ErrorCategory.USER,HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
-
+    INACTIVE_USER(ErrorCategory.USER, HttpStatus.FORBIDDEN, "탈퇴한 회원입니다"),
+    BLOCKED_USER(ErrorCategory.USER, HttpStatus.FORBIDDEN, "차단된 회원입니다"),
+    NO_CONTENT_UPDATED(ErrorCategory.USER, HttpStatus.CONFLICT, "변경된 내용이 없습니다." ),
 
     // VALIDATION
     INVALID_EMAIL_FORMAT(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
@@ -25,6 +28,9 @@ public enum ErrorCode {
     INVALID_ADDRESS(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST	,"도로명 주소 입력은 필수입니다."),
     INVALID_BCODE(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST,"행정동 코드 입력은 필수입니다."),
     INVALID_PHONE_NUMBER(ErrorCategory.VALIDATION,HttpStatus.BAD_REQUEST, "유효하지않은 전화번호 형식입니다."),
+    INVALID_VERIFICATION_TYPE(ErrorCategory.VALIDATION, HttpStatus.BAD_REQUEST,"유효하지않은 인증 타입입니다."),
+    INVALID_VERIFICATION_CODE(ErrorCategory.VALIDATION, HttpStatus.BAD_REQUEST,"인증 코드가 유효하지 않습니다."),
+    INVALID_RESIDENCE_TYPE(ErrorCategory.VALIDATION, HttpStatus.BAD_REQUEST, "잘못된 주거 타입입니다."),
 
     //SHARING
     POST_TITLE_REQUIRED(ErrorCategory.SHARING, HttpStatus.BAD_REQUEST, "제목 입력은 필수 입니다."),

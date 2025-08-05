@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Table(name = "user_points")
 @Entity
@@ -24,6 +24,10 @@ public class UserPoint {
     private String source;
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    // 환불한 ID 추척 컬럼 추가
+    @Column(name = "refunded_from_id")
+    private Long refundedFromId;
 
     @PrePersist
     protected void onCreate(){

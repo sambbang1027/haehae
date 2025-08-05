@@ -36,8 +36,9 @@ public class SharingPosts {
     @Column(name = "region_code")
     private String regionCode;
 
+
     public enum Status {
-        AVAILABLE, RESERVED, COMPLETED
+        AVAILABLE, RESERVED, COMPLETED ,REPORT
     }
 
     public enum Category {
@@ -48,4 +49,6 @@ public class SharingPosts {
     public void prePersist() {
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
+
+
 }

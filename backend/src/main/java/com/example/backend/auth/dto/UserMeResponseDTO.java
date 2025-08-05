@@ -15,4 +15,6 @@ public class UserMeResponseDTO {
     private String nickname;
     private String profileImage;
     private User.Role role;
+    private User.Status status;
+    private String socialProvider;
 }

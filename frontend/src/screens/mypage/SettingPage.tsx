@@ -1,47 +1,120 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { MyPageStackParamList } from '../../navigation/MyPageNavigator'; 
-import { LoginStackParamList } from '../../navigation/LoginNavigator';
-
+import { navigate } from '../../navigation/NavigationService';
+import { useUser } from '../../context/UserContext';
+import api from '../../api/AxiosInstance';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { useModal } from '../../context/ModalContext';
+import DeleteUserModal from '../../components/modal/DeleteUserModal';
 
 type SettingItemProps = {
   label: string;
-  route:
-    | keyof MyPageStackParamList
-    | {
-        stack: 'LoginStack';
-        screen: keyof LoginStackParamList;
-        params?: LoginStackParamList[keyof LoginStackParamList];
-      };
+  route: {
+    screen: keyof MyPageStackParamList;
+    params?: MyPageStackParamList[keyof MyPageStackParamList];
+  };
   style?: object;
 };
 
 const SettingItem = ({ label, route, style }: SettingItemProps) => {
-  const navigation = useNavigation<any>();
-
   const handlePress = () => {
-    if (typeof route === 'string') {
-      navigation.navigate(route); // 같은 스택 내 단일 스크린 이동
-    } else {
-      navigation.navigate(route.stack, {
-        screen: route.screen,
-        params: route.params,
-      });
-    }
+    navigate('MyPageStack', {
+      screen: route.screen,
+      params: route.params,
+    });
   };
 
-
   return (
-    <TouchableOpacity onPress={handlePress}>
-      <Text style={[styles.itemText, style]}>{label}</Text>
+    <TouchableOpacity onPress={handlePress} >
+      <Text style={style}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
 const SettingPage = () => {
-  const userName = '김정우';
-  const residenceType = '아파트';
+
+useEffect(()=>{
+  getUserInfo();
+},[]);
+
+  const {user} = useUser();
+  const [residenceType, setResidenceType] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
+  const {showModal, hideModal} = useModal();
+  const [password, setPassword] = useState<string>('');
+
+  // 유저 정보 셋팅 
+  const getUserInfo = async()=> {
+    try{
+      const response = await api.get('/user/setting/info', {
+        params :{userId:  user?.userId }
+      });
+      console.log('받아온 데이터 : ', response.data);
+      if(response.data.code === 'SUCCESS'){
+        setUserName(response.data.data.username);
+        setResidenceType(response.data.data.residenceType == 'HOUSE_VILLA'? '주택/빌라' : '아파트/오피스텔');
+      }
+    }catch(error){
+      console.error('유저 정보 셋팅 실패', error);
+    }
+  }
+
+  // 회원 탈퇴
+  const handledeleteUser = () =>{
+    showModal({
+      type: 'default',
+      content : <DeleteUserModal />,
+        // <View>
+        //   <View>
+        //     <Text>
+        //       탈퇴 시 모든 정보는 삭제되며 복구되지 않습니다.
+        //     </Text>
+        //     <Text>
+        //       비밀번호를 다시 입력해주세요.
+        //     </Text>
+        //   </View>
+        //   <TextInput
+        //     value={password}
+        //     onChangeText={(text) => setPassword(text)}
+        //     secureTextEntry
+        //     style={{
+        //       borderWidth: 1,
+        //       borderColor: '#ccc',
+        //       borderRadius: 5,
+        //       padding: 10,
+        //       marginTop: 10,
+        //     }}
+        //   />
+        //   <View>
+        //     <TouchableOpacity onPress={hideModal}>
+        //       <Text>취소</Text>
+        //     </TouchableOpacity>
+        //     <TouchableOpacity onPress={handleConfirmDelete}>
+        //       <Text>탈퇴하기</Text>
+        //     </TouchableOpacity>
+        //   </View>
+        // </View>
+      
+      
+    });
+  }
+  // 회원 탈퇴 서버 처리 
+  const handleConfirmDelete = async()=>{
+     try{
+      const response = await api.post('/user/delete',{
+         userId : user?.userId,
+         password : password,
+      });
+      if(response.data.code === 'SUCCESS'){
+        hideModal();
+        navigate('LoginStack', {screen: 'Login'});
+      }
+    }catch(error){
+      console.error('회원 탈퇴 성공 :' , error )
+    }
+  }
+   
 
   return (
     <View style={styles.container}>
@@ -50,56 +123,60 @@ const SettingPage = () => {
           <Text style={styles.userName}>{userName}님</Text>
           <Text style={styles.residence}>{residenceType}</Text>
         </View>
-
-        <SettingItem label="회원정보 수정" route="CheckPw" />
-        <SettingItem label="프로필 수정" route="EditProfile" />
-        <SettingItem label="비밀번호 변경" route={{ stack: 'LoginStack', screen: 'SetPw' }} />
+        <SettingItem label="회원정보 수정" route={{screen :"CheckPw"}} style={styles.itemText} />
+        <SettingItem label="프로필 수정" route={{screen :"EditProfile"}} style={styles.itemText}/>
+        <SettingItem label="비밀번호 변경" route={{screen :"ChangePw"}} style={styles.itemText} />
 
         <View style={styles.grayDivider} />
 
-        <SettingItem label="회원탈퇴" route="Withdraw" style={styles.withdrawText} />
+
+      <TouchableOpacity onPress={handledeleteUser} >
+        <Text style={styles.withdrawText}>회원탈퇴</Text>
+      </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
 
 export default SettingPage;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   contentWrapper: {
-    paddingTop: 24
+    paddingTop: hp('3%'),
   },
-  userSection:{
-    paddingHorizontal: 24,
-    marginBottom: 30,
+  userSection: {
+    paddingHorizontal: wp('6%'),
+    marginBottom: hp('3.5%'),
   },
   userName: {
-    fontSize: 23,
+    fontSize: wp('5.5%'),
     fontWeight: '600',
-    color: '#000'
+    color: '#000',
   },
   residence: {
-    fontSize: 17,
+    fontSize: wp('4.3%'),
     color: '#9c9c9c',
-    marginTop: 10
+    marginTop: hp('1%'),
   },
   grayDivider: {
-    height: 8,
+    height: hp('1%'),
     backgroundColor: '#f0f0f0',
-    marginVertical: 30
+    marginVertical: hp('3%'),
   },
   itemText: {
-    fontSize: 18,
-    marginLeft: 30,
-    marginBottom: 25,
-    paddingHorizontal: 24,
+    fontSize: wp('4.5%'),
+    marginLeft: wp('6%'),
+    marginBottom: hp('2.5%'),
+    paddingHorizontal: wp('6%'),
   },
   withdrawText: {
     color: '#9c9c9c',
-    textDecorationLine: 'underline'
+    textDecorationLine: 'underline',
+    fontSize: wp('4.2%'),
+    paddingHorizontal: wp('6%'),
   },
 });
+

@@ -1,7 +1,7 @@
 import 'react-native-reanimated';
 import React from 'react';
 
-import { NavigationContainer, useNavigationState } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -14,11 +14,15 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import FooterLayout from './src/components/layouts/FooterLayout';
 import { navigationRef } from './src/navigation/NavigationService';
 import { UserProvider } from './src/context/UserContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+const queryClient = new QueryClient();
 
 export default function App() {
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
       <TextSizeProvider>
         <SafeAreaProvider>
           <PaperProvider>
@@ -29,7 +33,7 @@ export default function App() {
                       <BottomSheetModalProvider>
                         <AppNavigator />
                         <ModalHost />
-                        <FooterLayout />
+                        <FooterLayout  navigationRef={navigationRef}/>
                       </BottomSheetModalProvider>
                   </NavigationContainer>
                 </UserProvider>
@@ -38,6 +42,7 @@ export default function App() {
           </PaperProvider>
         </SafeAreaProvider>
       </TextSizeProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

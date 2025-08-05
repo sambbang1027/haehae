@@ -38,7 +38,8 @@ public class ChatRooms {
 
     public enum RoomStatus{
         ACTIVE,
-        CLOSED
+        CLOSED,
+        REPORT
     }
 
     @PrePersist

@@ -35,6 +35,14 @@ export default function LocalBoardDetail() {
     const activeOptionModal = () =>{
       optionModalRef.current?.present()
     };
+
+    const handleReportPress = () => {
+      optionModalRef.current?.dismiss();
+      navigation.navigate('ReportScreen', {
+        type: 'post',
+        postId: post?.id,
+    });
+};
   
     useLayoutEffect(() => {
       navigation.setOptions({
@@ -50,17 +58,7 @@ export default function LocalBoardDetail() {
       fetchPostDetail(id);
     },[navigation])
 
-  // const postingInfo = [
-  //   {
-  //     id: id,
-  //     authorId: 1001,
-  //     author: '서샘이',
-  //     date: '2025년 4월 24일',
-  //     title: '광주 vs 광주',
-  //     content: '경기도 광주 vs 광주광역시 누가 더 시골이라고 생각하시나요?',
-  //     image: 'https://via.placeholder.com/350x200',
-  //   },
-  // ];
+
   
 
       const [postingInfo, setPost] = useState<{
@@ -229,9 +227,6 @@ export default function LocalBoardDetail() {
           <Text style={styles.date}>{post.date}</Text>
           <Text style={styles.content}>{post.content}</Text>
 
-          {/* {post.image && (
-            <Image source={{ uri: post.image }} style={styles.postImage} />
-          )} */}
 
         {post?.image && post.image.length > 0 && (
           post.image.map((imgUrls, index) => (

@@ -1,42 +1,51 @@
 package com.example.backend.localBoard.comment.service;
 
+import com.example.backend.annotation.CheckPenalty;
 import com.example.backend.entity.localBoard.Comments;
+import com.example.backend.exception.PenaltyException;
 import com.example.backend.localBoard.comment.dto.request.CommentRequestDTO;
 import com.example.backend.localBoard.comment.dto.request.ReplyRequestDTO;
 import com.example.backend.localBoard.comment.dto.request.UpdateCommentRequestDTO;
 import com.example.backend.localBoard.comment.repository.BoardCommentRepository;
+import com.example.backend.userPenalty.service.UserPenaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CommentCommandServiceImpl implements CommentCommandService {
 
+    private final UserPenaltyService userPenaltyService;
+
     @Autowired
     BoardCommentRepository boardCommentRepository;
 
+    public CommentCommandServiceImpl(UserPenaltyService userPenaltyService) {
+        this.userPenaltyService = userPenaltyService;
+    }
+
+    @CheckPenalty
     @Override
     public void createComment(CommentRequestDTO commentRequestDTO) {
-
         Comments comments = Comments.builder()
                 .localBoardId(commentRequestDTO.getLocalBoardId())
                 .userId(commentRequestDTO.getUserId())
                 .content(commentRequestDTO.getContent())
                 .build();
-                ;
-
         boardCommentRepository.save(comments);
     }
 
+    @CheckPenalty
     @Override
     public void modifyComment(UpdateCommentRequestDTO updateCommentRequestDTO) {
         boardCommentRepository.modifyComment(updateCommentRequestDTO);
     };
 
     @Override
-    public void deleteComment(Long commentId) {
-        boardCommentRepository.deleteComment(commentId);
+    public void deleteComment(Long commentId,Long userId) {
+        boardCommentRepository.deleteComment(commentId,userId);
     }
 
+    @CheckPenalty
     @Override
     public void createChildComment(ReplyRequestDTO replyRequestDTO) {
         System.out.println("🔥 createChildComment() 들어옴!!");
