@@ -3,18 +3,15 @@ package com.example.backend.reward.userReward.service;
 import com.example.backend.entity.reward.RewardItems;
 import com.example.backend.entity.reward.UserRewards;
 import com.example.backend.entity.user.UserPoint;
-import com.example.backend.exception.InsufficientPointException;
-
 import com.example.backend.exception.RewardException;
 import com.example.backend.reward.rewardItems.repository.RewardRepository;
 import com.example.backend.reward.userReward.dto.request.UserRewardPointRequestInsertDTO;
 import com.example.backend.reward.userReward.repository.UserRewardRepository;
 import com.example.backend.user.repository.UserRepository;
 import com.example.backend.userPoint.repository.UserPointRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserRewardServiceImpl implements UserRewardService {
@@ -39,27 +36,30 @@ public class UserRewardServiceImpl implements UserRewardService {
     // 4. 유저 리워드 등록
     // 5. 재고 예외처리
     // 6. 유저 현재 포인트 업데이트
-    @Transactional
+    @Transactional(timeout = 5)
     @Override
     @PreAuthorize("isAuthenticated()")
     public Long userRewardPointInsert(UserRewardPointRequestInsertDTO dto) {
         long amount = dto.getAmount();
         long id = dto.getUserId();
 
-
+        // 1. 특정 유저의 현재 포인트 조회 쿼리(Lock 적용)
         long currentPoint = userRepository.findCurrentPointByUserId(id);
+
         if (currentPoint == 0) {
             throw new RewardException("보유하신 포인트가 없습니다.");
         } else if (currentPoint < amount) {
             throw new RewardException("보유하신 포인트가 적습니다. 보유 : " + currentPoint + "p , 차감 : " + amount + "p");
         }
-
+        // 2. 유저 포인트 테이블 등록 (로그)
         UserPoint point = userPointRepository.save(dto.toEntityUserPoint());
         long userPointId = point.getId();
+
+        // 3. 유저 리워드 테이블 등록(로그,  결제 정보)
         userRewardRepository.save(dto.toEntityUserReward(userPointId));
 
-
-        RewardItems rewardItems = rewardRepository.findById(dto.getRewardItemId())
+        // 4. 리워드 상품의 재고 조회 쿼리(Lock 적용)
+        RewardItems rewardItems = rewardRepository.findByRewardItemInfo(dto.getRewardItemId())
                 .orElseThrow(() -> new RewardException("해당 상품이 존재 하지 않습니다."));
 
         if (rewardItems.getRewardType() != RewardItems.RewardType.DONATION) {
@@ -80,7 +80,7 @@ public class UserRewardServiceImpl implements UserRewardService {
 
     @Override
     public Long userFindPoint(Long userId) {
-        Long currentPoint = userRepository.findCurrentPointByUserId(userId);
+        Long currentPoint = userRepository.findCurrentPointUserId(userId);
         if(currentPoint == null){
             currentPoint = 0l;
         }
@@ -94,10 +94,11 @@ public class UserRewardServiceImpl implements UserRewardService {
     // 재고 업데이트
     // 유저의 현재 포인트와 총 포인트 업데이트
     @Override
-    @Transactional
+    @Transactional(timeout = 5)
     @PreAuthorize("hasRole('ADMIN') or (isAuthenticated() and @userRewardService.isOwnerOfUserPoint(#userPointId, principal.id))")
     public void userRewardPayRefund(Long userPointId) {
-        UserPoint point =  userPointRepository.findById(userPointId)
+        // LOCK 적용.
+        UserPoint point =  userPointRepository.findByUserPoint(userPointId)
         .orElseThrow(() -> new RewardException("결제 정보가 존재하지 않습니다."));
 
         if(point.getPointType().equals("환불")){
@@ -114,6 +115,8 @@ public class UserRewardServiceImpl implements UserRewardService {
                 .build();
         userPointRepository.save(refundPoint);
 
+
+        // Lock 적용.
         UserRewards userRewards =  userRewardRepository.findByPointId(userPointId)
                 .orElseThrow(() -> new RewardException("결제 정보가 존재하지 않습니다."));
 
@@ -129,7 +132,8 @@ public class UserRewardServiceImpl implements UserRewardService {
                 .build();
         userRewardRepository.save(refundReward);
 
-        RewardItems rewardItem = rewardRepository.findById(refundReward.getRewardItemId())
+        // Lock 적용.
+        RewardItems rewardItem = rewardRepository.findByRewardItemInfo(refundReward.getRewardItemId())
                 .orElseThrow(() -> new RewardException("해당 상품이 존재 하지 않습니다."));
 
         if (rewardItem.getRewardType() != RewardItems.RewardType.DONATION) {
@@ -137,6 +141,7 @@ public class UserRewardServiceImpl implements UserRewardService {
             rewardRepository.save(rewardItem);
         }
 
+        // Lock 적용.
         long currentPoint = userRepository.findCurrentPointByUserId(point.getUserId());
         long resultPoint =  currentPoint + point.getAmount();
         userRepository.updateCurrentPoint(resultPoint, point.getUserId());

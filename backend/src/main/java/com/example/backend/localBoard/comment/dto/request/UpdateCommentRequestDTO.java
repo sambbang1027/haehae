@@ -10,4 +10,5 @@ import lombok.*;
 public class UpdateCommentRequestDTO {
     private long commentId;
     private String content;
+    private long userId;
 }
