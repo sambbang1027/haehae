@@ -1,42 +1,30 @@
 import React, { useState , useEffect} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList,  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import CustomDropDown from '../../components/common/CustomDropDown';
-import axios from 'axios';
+import api from '../../api/AxiosInstance';
+import AppText from '../../components/common/AppText';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import usePagination from '../../hooks/UsePagination';
+
 
 type MissonItem = {
-  id: string;
-  name: string;
-  description: string;
-  date: string;
+  missionId: number;
+  completedAt: string;
+  missionType: string;
+  missionPoint : number;
+  missionContent: string;
 };
 
+
 const MyMission = () => {
-  const [data, setData] = useState<MissonItem[]>([]);
+  const [filterRange, setFilterRange] = useState(1);  
+  const {
+    items: missionHistory, fetchNextPage, hasNextPage,isFetchingNextPage, isLoading,} = usePagination<MissonItem>({
+    path: `/myActivity/missionHistory/${filterRange}`,
+    limit: 15,
+  });
 
-useEffect(() => {
-  const dummyData: MissonItem[] = [
-    {
-      id: '1',
-      name: '미션명',
-      description: '미션 설명',
-      date: '2025.01.01',
-    },
-  ];
-  setData(dummyData);
-}, []);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get();
-  //       setData(response.data);
-  //     } catch (error) {
-  //       console.error('데이터 불러오기 실패:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // });
+  console.log(missionHistory);
 
   
   return (
@@ -44,7 +32,15 @@ useEffect(() => {
       <CustomDropDown
         options={['1개월', '3개월', '6개월', '12개월']}
         selected="기간 조회"
-        onSelect={(value) => console.log('선택한 기간:', value)}
+        onSelect={(value) => {
+              switch (value) {
+                case '1개월': setFilterRange(1); break;
+                case '3개월': setFilterRange(3); break;
+                case '6개월': setFilterRange(6); break;
+                case '12개월': setFilterRange(12); break;
+                default: setFilterRange(1); break;
+              }
+            }}
         width={355}
         buttonStyle={{ backgroundColor: '#fff', marginTop:20 }}
         textStyle={{ color: '#333' }}
@@ -53,24 +49,30 @@ useEffect(() => {
 
 
       {/* Section Title */}
-      <Text style={styles.sectionTitle}>미션 참여 기록</Text>
+      <AppText style={styles.sectionTitle}>미션 참여 기록</AppText>
 
       {/* Volunteer Cards */}
    <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
+        data={missionHistory}
+        keyExtractor={(item) => item.missionId.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={styles.cardLeft}>
-              <Text style={styles.cardTitle}>{item.name}</Text>
-              <Text style={styles.cardDesc}>{item.description}</Text>
+              <AppText style={styles.cardTitle}>{item.missionType}</AppText>
+              <AppText style={styles.cardDesc}>{item.missionContent}</AppText>
             </View>
             <View style={styles.cardRight}>
-              <Text style={styles.date}>{item.date}</Text>
+              <AppText style={styles.date}>{item.completedAt}</AppText>
+              <AppText style={styles.cardPoint}>+{item.missionPoint}P</AppText>
             </View>
           </View>
         )}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#000" /> : null}
+        onEndReached={() => {
+            if (hasNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.2}
+        contentContainerStyle={{ paddingBottom : 40,flexGrow: 1 }}
       />
 
       <View style={styles.bottomSpacer} />
@@ -84,14 +86,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
+    paddingHorizontal: wp('5.5%'), // 20 기준
   },
   tabRow: {
     flexDirection: 'row',
   },
   tabButton: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: hp('1.8%'), // 14 기준
     backgroundColor: '#fff',
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -101,53 +103,62 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   tabText: {
-    fontSize: 16,
+    fontSize: wp('4.5%'), // 16 기준
     color: '#848383',
-    fontWeight:700
+    fontWeight: '700',
   },
   activeTabText: {
     color: '#fff',
     fontWeight: '700',
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: wp('4.5%'), // 16 기준
+    fontWeight: '700',
     textAlign: 'center',
     borderTopWidth: 2,
-    borderColor:'#ccc',
-    backgroundColor:'#f0f0f0',
-    height: 40,
-    textAlignVertical:'center',
-    marginTop: 20
+    borderColor: '#ccc',
+    backgroundColor: '#F7F7F7',
+    height: hp('5%'), // 40 기준
+    textAlignVertical: 'center',
+    marginTop: hp('2.5%'), // 20 기준
   },
   card: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderColor: '#eee',
-    paddingVertical: 20,
+    paddingVertical: hp('2.5%'), // 20 기준
   },
-  cardLeft: {},
-  cardRight: { alignItems: 'flex-end', flexDirection:'column-reverse' },
+  cardLeft: {
+    width: wp('60%')
+  },
+  cardRight: {
+    alignItems: 'flex-end',
+    flexDirection: 'column-reverse',
+  },
   cardTitle: {
-    fontSize: 17,
+    fontSize: wp('4.7%'), // 17 기준
     fontWeight: '500',
-    marginBottom: 10
+    marginBottom: hp('1.2%'), // 10 기준
   },
   cardDesc: {
-    fontSize: 15,
+    fontSize: wp('4.2%'), // 15 기준
     color: '#787878',
+
   },
   label: {
-    fontSize: 15,
+    fontSize: wp('4.2%'), // 15 기준
     color: '#787878',
   },
   date: {
-    fontSize: 15,
+    fontSize: wp('4.2%'), // 15 기준
     color: '#787878',
   },
+  cardPoint: {
+    marginBottom: hp('2.5%'),
+    color : '#5153FF',
+  },
   bottomSpacer: {
-    height: 50,
+    height: hp('6.2%'), // 50 기준
   },
 });
-
