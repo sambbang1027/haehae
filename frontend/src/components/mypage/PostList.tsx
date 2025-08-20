@@ -5,7 +5,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { navigate } from '../../navigation/NavigationService';
-import LocalBoardDetail from '../../screens/localBoard/LocalBoardDetail';
 
 export type PostItem = {
   postId: string;
@@ -21,6 +20,12 @@ export type MyPostProps = {
 };
 
 const MyPost = ({data, onEndReached, isLoading}: MyPostProps) => {
+    const safeData =
+    Array.isArray(data)
+      ? data.filter(Boolean).filter(it => it?.postId != null)
+      : [];
+console.log('safeData len', safeData.length);
+
 
   const routeToDetail = (id : number) => {
     navigate('CommunityStack',{screen: 'LocalBoardStack', params:{screen: 'LocalBoardDetail', params:{id}}})
@@ -29,7 +34,8 @@ const MyPost = ({data, onEndReached, isLoading}: MyPostProps) => {
  return ( 
         <View>
           <FlatList
-            data={data}
+            data={safeData}
+            extraData={{ len: safeData.length }}
             keyExtractor={(item) => item.postId.toString()}
             numColumns={2}
             columnWrapperStyle={{
@@ -46,8 +52,15 @@ const MyPost = ({data, onEndReached, isLoading}: MyPostProps) => {
                 <ActivityIndicator size="small" color="#000" />
               ) : null
             }
+            ListEmptyComponent={
+              !isLoading?(
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>아직 작성한 게시글이 없어요 🥲</Text>
+                </View>
+              ) : null       
+            }
             renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => routeToDetail(Number(item.postId))} style={styles.toDetail}>
+            <TouchableOpacity onPress={() => routeToDetail(Number(item.postId))}>
               <View style={styles.card}>
                 <View style={styles.cardImage}>
                   {item.postImageUrl ? (
@@ -137,7 +150,13 @@ const styles = StyleSheet.create({
     height: wp('20%'),
     tintColor: '#aaa',
   },
-  toDetail: {
-    
-  },
+  emptyContainer: {
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: hp('10%'),
+},
+emptyText: {
+  fontSize: wp('4%'),
+  color: '#aaa',
+},
 });

@@ -34,6 +34,7 @@ public enum ErrorCode {
 
     //SHARING
     POST_TITLE_REQUIRED(ErrorCategory.SHARING, HttpStatus.BAD_REQUEST, "제목 입력은 필수 입니다."),
+    POST_NOT_FOUND(ErrorCategory.SHARING, HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
 
 
     //SYSTEM

@@ -8,11 +8,15 @@ export const useFireBaseImage = ()=> {
     const [error, setError] = useState<Error | null>(null);
 
     const uploadImage = async(images: Asset[], folder: string) => {
+        console.log('파이어베이스 등록 시작');
+        
         setUploading(true);
         try{
             const uploadImageUrls = await Promise.all(
                 images.map(async (image) => {
                     const uploadImage = await uploadImageToFirebase(image,folder);
+                    console.log('업로드 완성', uploadImage);
+                    
                     return uploadImage;
                 })
             );

@@ -7,16 +7,16 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import usePagination from '../../hooks/UsePagination';
 
   type CommentItem = {
-  id: string;
+  commentId: string;
   comment: string;
   postTitle: string;
-  date: string;
+  createdAt: string;
 };
 
   type PostItem = {
   postId: string;
   title: string;
-  postImageUrl: string; // 추후 String 변경 해야함
+  postImageUrl: string; 
   createdAt: string;
 };
 
@@ -24,35 +24,32 @@ const MyLocalBoard = () => {
   const [activeTab, setActiveTab] = useState<'post' | 'comment'>('post');
   const [selectedPeriod, setSelectedPeriod] = useState('기간 조회');
   const [filterRange, setFilterRange] = useState(0);  
- const [commentData, setCommentData] = useState<CommentItem[]>([]);
   
-    const {
+  const {
     items: postHistory, fetchNextPage, hasNextPage,isFetchingNextPage, isLoading,} = usePagination<PostItem>({
     path: `/myActivity/localBoard/post/${filterRange}`,
     limit: 15, enabled: activeTab === 'post',
   });
-  console.log(postHistory);
+
+  console.log('postHistory len', Array.isArray(postHistory) ? postHistory.length : 'NA');
+
+  
+
+  const {
+  items: commentHistory,
+  fetchNextPage: cmFetchNextPage,
+  hasNextPage: cmHasNextPage,
+  isFetchingNextPage: cmIsFetchingNextPage,
+  isLoading: cmIsLoading,
+  } = usePagination<CommentItem>({
+  path: `/myActivity/localBoard/comment/${filterRange}`,
+  limit: 15,
+  enabled: activeTab === 'comment',
+});
+console.log(commentHistory);
 
 useEffect(() => {
-  // if (activeTab === 'post') {
-   
-  // } else {
-  //   const dummyCommentData = [
-  //     {
-  //       id: '1',
-  //       comment: '이거 진짜 유용하네요!',
-  //       postTitle: '재활용 아이디어 공유',
-  //       date: '2025.01.02',
-  //     },
-  //     {
-  //       id: '2',
-  //       comment: '어디에 버려야 할지 궁금했는데 감사합니다.',
-  //       postTitle: '우리 동네 분리수거 팁',
-  //       date: '2025.01.04',
-  //     },
-  //   ];
-  //   setCommentData(dummyCommentData);
-  // }
+  
 }, [activeTab]);
 
   return (
@@ -104,12 +101,19 @@ useEffect(() => {
       </Text>
 
       {activeTab === 'post' ? (
-        <PostList data={postHistory}
+        <PostList
+         key={`post-${activeTab}-${filterRange}`} // 리마운트 
+         data={postHistory}
          onEndReached={hasNextPage ? fetchNextPage : undefined}
          isLoading={isFetchingNextPage}
         />
       ) : (
-        <CommentList data={commentData} />
+        <CommentList
+          key={`comment-${activeTab}-${filterRange}`}
+          data={commentHistory} 
+          onEndReached={cmHasNextPage ? cmFetchNextPage : undefined}
+          isLoading = {cmIsFetchingNextPage}
+        />
       )}
     </View>
   );

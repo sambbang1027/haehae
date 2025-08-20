@@ -38,7 +38,7 @@ public class SharingPosts {
 
 
     public enum Status {
-        AVAILABLE, RESERVED, COMPLETED ,REPORT
+        AVAILABLE, RESERVED, COMPLETED ,REPORT, CANCEL
     }
 
     public enum Category {
@@ -48,6 +48,14 @@ public class SharingPosts {
     @PrePersist
     public void prePersist() {
         this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public void cancel(){
+        this.status = Status.CANCEL;
+    }
+
+    public void completed(){
+        this.status = Status.COMPLETED;
     }
 
 
