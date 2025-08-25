@@ -3,3 +3,5 @@ android/app/google-services.json
 
 # Release-key
 android/app/my-release-key.keystore
+
+.java-version

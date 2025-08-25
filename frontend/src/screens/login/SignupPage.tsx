@@ -49,7 +49,8 @@ const SignupPage= () => {
 
   // 로컬인지 소셜인지 파악 
   const route = useRoute<RouteProp<SignupParams>>();
-  const loginType = route.params?.loginType?? 'local';
+  const loginTypeRaw = route.params?.loginType ?? 'local';
+  const loginType = loginTypeRaw.toLowerCase(); // 🚨 소문자로 강제 변환 Local| LOCAL 로 전달되면 true가 되버리기 때문에
   const isSocial = loginType !== 'local';
 
   useEffect (()=>{
@@ -121,6 +122,7 @@ const handleSendCode = async() =>{
   try{
     const response = await api.post('/email/send/code', {
       email : localState.email,
+      verificationType : 'SignUp'
     });
     console.log(response);
 
@@ -166,6 +168,7 @@ const handleSendCode = async() =>{
      const body = {
       email: localState.email,
       code: localState.authCode,
+      verificationType : 'SignUp'
     };
     try{
       const response = await api.post('/email/verify/code', body)
