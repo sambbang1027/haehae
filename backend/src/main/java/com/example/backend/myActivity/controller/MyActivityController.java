@@ -2,10 +2,7 @@ package com.example.backend.myActivity.controller;
 
 
 import com.example.backend.common.response.HaehaeResponse;
-import com.example.backend.myActivity.dto.MyLocalBoardCommentResponse;
-import com.example.backend.myActivity.dto.MyLocalBoardPostResponse;
-import com.example.backend.myActivity.dto.MyMissionHistoryResponse;
-import com.example.backend.myActivity.dto.MySharingActivityResponse;
+import com.example.backend.myActivity.dto.*;
 import com.example.backend.myActivity.service.LocalBoardHistoryService;
 import com.example.backend.myActivity.service.MissionHistoryService;
 import com.example.backend.myActivity.service.SharingPostHistoryService;
@@ -29,7 +26,7 @@ public class MyActivityController {
 
     // 참여한 미션 내역 확인
     @GetMapping("/missionHistory/{filterRange}")
-    public ResponseEntity<CursorPageResponse<MyMissionHistoryResponse>> missionHistory
+    public ResponseEntity<CursorPageResponse<MyMissionHistoryResponse>> getMissionHistory
             (@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable int filterRange,
              @RequestParam(required = false) Long cursor, @RequestParam int limit){
         CursorPageResponse<MyMissionHistoryResponse> responses =
@@ -40,7 +37,7 @@ public class MyActivityController {
 
     // 작성한 게시글 목록 불러오기
     @GetMapping("/localBoard/post/{filterRange}")
-    public ResponseEntity<CursorPageResponse<MyLocalBoardPostResponse>> localBoardPostHistory
+    public ResponseEntity<CursorPageResponse<MyLocalBoardPostResponse>> getLocalBoardPostHistory
             (@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable int filterRange,
              @RequestParam(required = false) Long cursor, @RequestParam int limit){
 
@@ -52,7 +49,7 @@ public class MyActivityController {
 
     // 작성한 댓글 목록 불러오기
     @GetMapping("/localBoard/comment/{filterRange}")
-    public ResponseEntity<CursorPageResponse<MyLocalBoardCommentResponse>> localBoardCommentHistory
+    public ResponseEntity<CursorPageResponse<MyLocalBoardCommentResponse>> getLocalBoardCommentHistory
             (@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable int filterRange,
              @RequestParam(required = false) Long cursor, @RequestParam int limit){
 
@@ -64,7 +61,7 @@ public class MyActivityController {
 
     //  나눔중인 목록 조회
     @GetMapping("/sharing/post/{filterRange}")
-    public ResponseEntity<CursorPageResponse<MySharingActivityResponse>> mySharingHistory
+    public ResponseEntity<CursorPageResponse<MySharingActivityResponse>> getMySharingHistory
             (@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable int filterRange,
              @RequestParam(required = false)Long cursor, @RequestParam int limit){
         CursorPageResponse<MySharingActivityResponse> response =
@@ -84,5 +81,16 @@ public class MyActivityController {
     public ResponseEntity<HaehaeResponse<Void>> completeSharing (@PathVariable Long postId){
         sharingPostHistoryService.completeSharing(postId);
         return ResponseEntity.ok(HaehaeResponse.ok());
+    }
+
+    // 나눔 내역(나눔 했던, 나눔 받았던) 조회
+    @GetMapping("/shared/all/{filterRange}")
+    public ResponseEntity<CursorPageResponse<SharingHistory>> getAllSharedHistory
+    (@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable int filterRange,
+     @RequestParam(required = false)Long cursor, @RequestParam int limit ){
+        CursorPageResponse<SharingHistory> response
+                = sharingPostHistoryService.getSharingHistory(userDetails.getId(), cursor, limit, filterRange);
+
+        return ResponseEntity.ok(response);
     }
 }

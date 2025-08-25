@@ -85,7 +85,7 @@ console.log('safeData len', safeData.length);
         ListEmptyComponent={()=>
           !isLoading ? (
             <View style={styles.emptyContainer}>
-              <AppText style={styles.emptyText}>아직 작성한 게시글이 없어요 🥲</AppText>
+              <AppText style={styles.emptyText}>나눔 중인 게시글이 없어요 🥲</AppText>
             </View>
           ) : null
         }
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderColor: '#eee',
-    paddingBottom: hp('3%'),
+    paddingBottom: hp('3%a'),
     paddingRight: wp('1%'),
   },
   cardLeft: {

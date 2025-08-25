@@ -21,7 +21,7 @@ public class SharingLogs {
     // SharingPost 테이블 연관관계
     @Column(name = "sharing_post_id")
     private Long sharingPostId;
-    
+
     // 구매한 유저아이디
     @Column(name = "buy_user_id")
     private Long buyUserId;
@@ -33,22 +33,16 @@ public class SharingLogs {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
 
-    public enum LogType{
+    public enum LogType {
         COMPLETED,
         CANCEL,
         REPORT
     }
 
     @PrePersist
-    public void prePersist(){
-        this.createdAt= new Timestamp(System.currentTimeMillis());
+    public void prePersist() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    @PreUpdate
-    public void preUpdate(){
-        this.updatedAt =new Timestamp(System.currentTimeMillis());
-    }
 }

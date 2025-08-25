@@ -18,10 +18,10 @@ type SharingItem = {
 };
 
 type SharedListItem = {
-  postId: string;
+  historyId: number;
   title: string;
-  status: string;
-  createAt: string;
+  createdAt: string;
+  statusType: string;
 };
 
 const MySharing = () => {
@@ -35,6 +35,20 @@ const MySharing = () => {
     path: `/myActivity/sharing/post/${filterRange}`,
     limit: 15, enabled: activeTab === 'sharing',
   });
+
+
+
+  const {
+  items: sharedData,
+  fetchNextPage: sharedFetchNextPage,
+  hasNextPage: sharedHasNextPage,
+  isFetchingNextPage: sharedIsFetchingNextPage,
+  isLoading: sharedIsLoading,
+  } = usePagination<SharedListItem>({
+  path: `/myActivity/shared/all/${filterRange}`,
+  limit: 15, enabled: activeTab === 'sharingRecord',
+});
+console.log(sharedData);
 
 
   // 나눔 취소 로직 
@@ -136,14 +150,11 @@ const MySharing = () => {
           onComplete={handleComplete}
         />
       ) : (
-                <SharingList data={sharingData}
-          onEndReached={hasNextPage? fetchNextPage : undefined}
-          isLoading={isFetchingNextPage}
-        />
-        //  <SharedList data={sharingData}
-        //   onEndReached={hasNextPage? fetchNextPage : undefined}
-        //   isLoading={isFetchingNextPage}
-        //  />
+
+          <SharedList data={sharedData}
+           onEndReached={sharedHasNextPage? sharedFetchNextPage : undefined}
+           isLoading={sharedIsFetchingNextPage}
+          />
       )}
     </View>
   );

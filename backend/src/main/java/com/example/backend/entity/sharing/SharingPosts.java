@@ -36,6 +36,9 @@ public class SharingPosts {
     @Column(name = "region_code")
     private String regionCode;
 
+    @Column(name = "reserved_user_id")
+    private Long reservedUserId;
+
 
     public enum Status {
         AVAILABLE, RESERVED, COMPLETED ,REPORT, CANCEL
