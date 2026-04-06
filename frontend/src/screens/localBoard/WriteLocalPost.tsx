@@ -22,6 +22,8 @@ export default function WriteLocalBoardPost() {
   const {showModal, hideModal} = useModal();
 
   const handleSubmit =  async () =>{
+    console.log('게시글 등록 시작 ');
+    
     let uploadedImageUrls: string[] | null = null;
     // 밑에 함수에서 반환되는게 null일 수도 있으니 null도 추가.
 
@@ -37,9 +39,10 @@ export default function WriteLocalBoardPost() {
           content: content,
           localBoardImageUrl: uploadedImageUrls
         };
-
-  await api.post('local-board/detail/create', formData);
-
+        console.log('어떤 데이터? ', formData);
+    const response =  await api.post('local-board/detail/create', formData);
+        console.log(response);
+        
     } catch (error :any) {
       console.error('게시글 등록 실패:', error);
         if(uploadedImageUrls != null && uploadedImageUrls.length > 0){

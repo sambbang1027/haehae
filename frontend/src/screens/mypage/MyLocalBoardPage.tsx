@@ -3,103 +3,82 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CustomDropDown from '../../components/common/CustomDropDown';
 import PostList from '../../components/mypage/PostList';
 import CommentList from '../../components/mypage/CommentList';
-import axios from 'axios';
-import { ImageSourcePropType } from 'react-native'; // 프론트 작업할 때 삭제 요망
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import usePagination from '../../hooks/UsePagination';
 
+  type CommentItem = {
+  commentId: string;
+  comment: string;
+  postTitle: string;
+  createdAt: string;
+};
+
+  type PostItem = {
+  postId: string;
+  title: string;
+  postImageUrl: string; 
+  createdAt: string;
+};
 
 const MyLocalBoard = () => {
   const [activeTab, setActiveTab] = useState<'post' | 'comment'>('post');
   const [selectedPeriod, setSelectedPeriod] = useState('기간 조회');
-  const [postData, setPostData] = useState<PostItem[]>([]);
-  const [commentData, setCommentData] = useState<CommentItem[]>([]);
+  const [filterRange, setFilterRange] = useState(0);  
+  
+  const {
+    items: postHistory, fetchNextPage, hasNextPage,isFetchingNextPage, isLoading,} = usePagination<PostItem>({
+    path: `/myActivity/localBoard/post/${filterRange}`,
+    limit: 15, enabled: activeTab === 'post',
+  });
 
-  type CommentItem = {
-  id: string;
-  comment: string;
-  postTitle: string;
-  date: string;
-};
+  console.log('postHistory len', Array.isArray(postHistory) ? postHistory.length : 'NA');
 
-  type PostItem = {
-  id: string;
-  postTitle: string;
-  postImage: ImageSourcePropType; // 추후 String 변경 해야함
-  date: string;
-};
+  
+
+  const {
+  items: commentHistory,
+  fetchNextPage: cmFetchNextPage,
+  hasNextPage: cmHasNextPage,
+  isFetchingNextPage: cmIsFetchingNextPage,
+  isLoading: cmIsLoading,
+  } = usePagination<CommentItem>({
+  path: `/myActivity/localBoard/comment/${filterRange}`,
+  limit: 15,
+  enabled: activeTab === 'comment',
+});
+console.log(commentHistory);
 
 useEffect(() => {
-  if (activeTab === 'post') {
-    const dummyPostData = [
-      {
-        id: '1',
-        postTitle: '재활용 아이디어 공유',
-        postImage: require('../../assets/images/jw.jpeg'),
-        date: '2025.01.01',
-      },
-      {
-        id: '2',
-        postTitle: '우리 동네 분리수거 팁',
-        postImage: require('../../assets/images/jw2.jpeg'),
-        date: '2025.01.03',
-      },
-      {
-        id: '3',
-        postTitle: '우리 동네 분리수거 팁',
-        postImage: '',
-        date: '2025.01.03',
-      },
-    ];
-    setPostData(dummyPostData);
-  } else {
-    const dummyCommentData = [
-      {
-        id: '1',
-        comment: '이거 진짜 유용하네요!',
-        postTitle: '재활용 아이디어 공유',
-        date: '2025.01.02',
-      },
-      {
-        id: '2',
-        comment: '어디에 버려야 할지 궁금했는데 감사합니다.',
-        postTitle: '우리 동네 분리수거 팁',
-        date: '2025.01.04',
-      },
-    ];
-    setCommentData(dummyCommentData);
-  }
+  
 }, [activeTab]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const periodParam = convertPeriodToDays(selectedPeriod); // 예: '1개월' -> 30
-  //     try {
-  //       if (activeTab === 'post') {
-  //         const res = await axios.get(`/api/posts?period=${periodParam}`);
-  //         setPostData(res.data);
-  //       } else {
-  //         const res = await axios.get(`/api/comments?period=${periodParam}`);
-  //         setCommentData(res.data);
-  //       }
-  //     } catch (err) {
-  //       console.error('데이터 불러오기 실패', err);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [activeTab, selectedPeriod]);
 
   return (
     <View style={styles.container}>
       {/* Dropdown */}
     <CustomDropDown
-        options={['전체','1개월', '3개월', '6개월', '12개월']}
-        selected={selectedPeriod}
-        onSelect={(value) => {console.log('선택한 기간:', value),setSelectedPeriod(value)}}
-        width={355}
-        buttonStyle={{ backgroundColor: '#fff', marginTop:20 }}
-        textStyle={{ color: '#333' }}
-        contentStyle={{ marginTop: 60, width:355, backgroundColor: '#FAFFF3', }}
-      />
+      options={['전체','1개월', '3개월', '6개월', '12개월']}
+      selected='기간 조회'
+      onSelect={(value) => {
+        switch(value){
+          case '전체' : {setFilterRange(0); break;}
+          case '1개월' : {setFilterRange(1); break;}
+          case '3개월' : {setFilterRange(3); break;}
+          case '6개월' : {setFilterRange(6); break;}
+          case '12개월' : {setFilterRange(12); break;}
+        }
+        
+      }}
+      width={wp('90%')}
+      buttonStyle={{ backgroundColor: '#fff', marginTop: hp('2%') }}
+      textStyle={{ color: '#333' }}
+      contentStyle={{
+        marginTop: hp('7%'),
+        width: wp('90%'),
+        backgroundColor: '#FAFFF3',
+      }}
+    />
+
+
   {/* Tab Buttons */}
     <View style={styles.tabRow}>
       <TouchableOpacity
@@ -122,22 +101,24 @@ useEffect(() => {
       </Text>
 
       {activeTab === 'post' ? (
-        <PostList data={postData} />
+        <PostList
+         key={`post-${activeTab}-${filterRange}`} // 리마운트 
+         data={postHistory}
+         onEndReached={hasNextPage ? fetchNextPage : undefined}
+         isLoading={isFetchingNextPage}
+        />
       ) : (
-        <CommentList data={commentData} />
+        <CommentList
+          key={`comment-${activeTab}-${filterRange}`}
+          data={commentHistory} 
+          onEndReached={cmHasNextPage ? cmFetchNextPage : undefined}
+          isLoading = {cmIsFetchingNextPage}
+        />
       )}
     </View>
   );
 };
 
-const convertPeriodToDays = (label: string): number => {
-  switch (label) {
-    case '1개월': return 30;
-    case '3개월': return 90;
-    case '6개월': return 180;
-    default: return 30;
-  }
-};
 
 export default MyLocalBoard;
 
@@ -145,14 +126,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
+    paddingHorizontal: wp('5%'),
   },
   tabRow: {
     flexDirection: 'row',
   },
   tabButton: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: hp('1.8%'),
     backgroundColor: '#fff',
     alignItems: 'center',
     borderBottomWidth: 2,
@@ -162,23 +143,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   tabText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     color: '#848383',
-    fontWeight:700
+    fontWeight: '700',
   },
   activeTabText: {
     color: '#fff',
     fontWeight: '700',
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: '600',
     textAlign: 'center',
     borderTopWidth: 1,
-    borderColor:'#ccc',
-    backgroundColor:'#f0f0f0',
-    height: 40,
-    textAlignVertical:'center'
+    borderColor: '#ccc',
+    backgroundColor: '#f0f0f0',
+    height: hp('5%'),
+    textAlignVertical: 'center',
   },
 });
 
